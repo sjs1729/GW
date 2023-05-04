@@ -199,6 +199,8 @@ def xirr(rate,cash_flow,terminal_value=0):
 
 st.markdown('<p style="font-size:36px;font-weight: bold;text-align:center;vertical-align:middle;color:blue;margin:0px;padding:0px">Retirement Planning</p>', unsafe_allow_html=True)
 st.markdown('<p style="font-size:36px;font-weight: bold;text-align:center;vertical-align:middle;color:blue;margin:0px;padding:0px"></p>', unsafe_allow_html=True)
+st.markdown('<p style="font-size:36px;font-weight: bold;text-align:center;vertical-align:middle;color:blue;margin:0px;padding:0px"></p>', unsafe_allow_html=True)
+st.markdown('<p style="font-size:36px;font-weight: bold;text-align:center;vertical-align:middle;color:blue;margin:0px;padding:0px"></p>', unsafe_allow_html=True)
 
 user_inputs = st.columns((4,4,1,12))
 
@@ -229,11 +231,15 @@ user_inputs[1].markdown('<p style="font-size:12px;font-weight: bold;text-align:c
 cagr = round(user_inputs[0].number_input(":blue[Return on Assets]", step=0.10),2)
 inflation = user_inputs[1].number_input(":blue[Inflation]", step =0.1)
 #user_inputs[2].markdown('<p style="font-size:12px;font-weight: bold;text-align:center;vertical-align:middle;color:red;margin:0px;padding:0px">****</p>', unsafe_allow_html=True)
-placeholder_header = user_inputs[3].empty()
-placeholder_chart = user_inputs[3].empty()
 placeholder_header_1 = user_inputs[3].empty()
 placeholder_score = user_inputs[3].empty()
+placeholder_header_2 = user_inputs[3].empty()
+placeholder_chart = user_inputs[3].empty()
 placeholder_fund = user_inputs[3].empty()
+
+placeholder_header_1.markdown('<p style="font-size:20px;font-weight:bold;text-align:center;vertical-align:middle;color:brown;margin:0px;padding:0px"><u>Retirement Score</u></p>', unsafe_allow_html=True)
+
+n_Retire_1 = st.button('Retirement  Score')
 
 
 st_age = curr_age + yrs_to_retire
@@ -271,10 +277,10 @@ edited_df_goals = st.experimental_data_editor(df_goals)
 placeholder_goals = st.empty()
 placeholder_goals.markdown(":blue[Validations - Start Age => {}, End Age < {}, Frequency 0,1,2,...10 ]".format(curr_age + yrs_to_retire,plan_till))
 
-n_Retire = st.button('Calc Retirement Plan')
+n_Retire_2 = st.button('Retirement Score')
 
 
-if n_Retire:
+if n_Retire_1 or n_Retire_2:
 
     validation_flag = 'Y'
     df_ret_income = edited_df_post_ret_income[edited_df_post_ret_income['Amount'] > 0]
@@ -300,7 +306,7 @@ if n_Retire:
         gc_amt = df_goals.loc[i]['Amount']
         gc_freq =df_goals.loc[i][4]
         gc_infl = df_goals.loc[i][5]
-        if gc_st_age > (curr_age + yrs_to_retire - 1) and gc_end_age < (plan_till + 1) and gc_freq in [0,1,2,3,4,5,6,7,8,9,10]:
+        if gc_st_age > (curr_age - 1) and gc_end_age < (plan_till + 1) and gc_freq in [0,1,2,3,4,5,6,7,8,9,10]:
             try:
                 gc_amt  = int(gc_amt)
                 gc_infl = int(gc_infl)
@@ -418,6 +424,7 @@ if n_Retire:
 
         column_name = retirement_assets.columns[2]
         c_max = retirement_assets[column_name].max()
+        c_min = retirement_assets[column_name].min()
 
         c_corpus = c_corpus /10000000
         config = {'displayModeBar': False}
@@ -430,17 +437,19 @@ if n_Retire:
                           xaxis_title="Age (in Years) ",
                           yaxis_title="Retirement Fund (Crores)")
 
-        fig.update_layout(margin=dict(l=1,r=1,b=1,t=3))
-        yrange = [0 - c_corpus, min(4*c_corpus,c_max)]
-        fig.update_yaxes(range=yrange, dtick=0.5,showgrid=True)
+        fig.update_layout(margin=dict(l=1,r=11,b=1,t=1))
+        yrange = [0, min(6*c_corpus,c_max)]
+        fig.update_yaxes(range=yrange, dtick=1,showgrid=True)
         fig.update_xaxes(showgrid=True)
         fig.update_layout(legend_title='')
+        #fig.update_yaxes(automargin=True)
+        #fig.update_xaxes(automargin=True)
 
         fig.update_layout(height=300)
-        fig.update_layout(width=450)
+        fig.update_layout(width=550)
         fig.update_layout(legend=dict(
             yanchor="bottom",
-            y=-0.1,
+            y=-0.25,
             xanchor="left",
             x=0.7
         ))
@@ -448,8 +457,12 @@ if n_Retire:
         user_inputs[2].write("   ")
         user_inputs[2].write("   ")
 
-        placeholder_header.markdown('<p style="font-size:20px;font-weight: bold;text-align:center;vertical-align:middle;color:blue;margin:0px;padding:0px">Lifetime - Expense vs Savings</p>', unsafe_allow_html=True)
         #user_inputs[2].write("   ")
+
+        placeholder_header_2.markdown('<p style="font-size:18px;font-weight: bold;text-align:center;vertical-align:middle;color:brown;margin:0px;padding:0px"><u>Lifetime - Expense vs Savings Chart</u></p>', unsafe_allow_html=True)
+        user_inputs[3].markdown('<BR>',unsafe_allow_html=True)
+        user_inputs[3].markdown('<BR>',unsafe_allow_html=True)
+
 
         placeholder_chart.plotly_chart(fig,config=config)
 
@@ -460,23 +473,24 @@ if n_Retire:
                 mode = "gauge+number",
                 title = {'text': ""},
                 gauge = {'axis': {'range': [None, 100]},
+                        'bar': {'color': "darkblue"},
+
                 'steps' : [
                     {'range': [0, 75], 'color': "red"},
                     {'range': [75, 95], 'color': "orange"},
                     {'range': [95, 100], 'color': "green"}]
                 }))
-        fig_1.update_layout(margin=dict(l=130,r=1,b=30,t=1))
+        fig_1.update_layout(margin=dict(l=130,r=10,b=30,t=1))
         fig_1.update_layout(height=200)
         fig_1.update_layout(width=400)
         #fig_1.update_layout(paper_bgcolor = "lavender", font = {'color': "darkblue", 'family': "Arial"})
-        fig_1.update_layout(title_text="Fund needed for Retirement - {}".format(display_amount(opt_corpus)),
-                  title_x=0.3,
+        fig_1.update_layout(title_text="Min Fund Needed - {}".format(display_amount(opt_corpus)),
+                  title_x=0.32,
                   title_y=0.1,
-                  titlefont=dict(size=13, color='blue', family='Arial, sans-serif'),
+                  titlefont=dict(size=15, color='blue', family='Arial, sans-serif'),
                   xaxis_title="Optimised Corpus Required is {}".format(display_amount(opt_corpus)),
                   yaxis_title="")
 
-        placeholder_header_1.markdown('<p style="font-size:13px;font-weight: normal;text-align:center;vertical-align:middle;color:blue;margin:0px;padding:0px">Retirement Score</p>', unsafe_allow_html=True)
 
         placeholder_score.plotly_chart(fig_1,config=config)
         #placeholder_score.markdown(":blue[ Retirement Score : {} %]".format(retirement_score))
