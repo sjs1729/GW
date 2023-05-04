@@ -329,19 +329,20 @@ if n_Retire_1 or n_Retire_2:
         nyear = 0
 
         goals = []
+        if len(df_goals) > 0:
 
-        for i in df_goals.index:
-            gc_st_age = df_goals.loc[i][0]
-            gc_end_age = df_goals.loc[i][1]
-            gc_amt = df_goals.loc[i]['Amount']
-            gc_freq =df_goals.loc[i][4]
-            gc_incr = df_goals.loc[i][5]
-            g_desc = df_goals.loc[i][2]
+            for i in df_goals.index:
+                gc_st_age = df_goals.loc[i][0]
+                gc_end_age = df_goals.loc[i][1]
+                gc_amt = df_goals.loc[i]['Amount']
+                gc_freq =df_goals.loc[i][4]
+                gc_incr = df_goals.loc[i][5]
+                g_desc = df_goals.loc[i][2]
 
-            if gc_amt !=0:
-                goals = goals + get_goals(gc_st_age, gc_end_age, g_desc, gc_amt, gc_freq, gc_incr)
-                #st.write(goals)
-        goals_df=pd.DataFrame(goals,columns=['Years','Desc','Amount'])
+                if gc_amt !=0:
+                    goals = goals + get_goals(gc_st_age, gc_end_age, g_desc, gc_amt, gc_freq, gc_incr)
+                    #st.write(goals)
+            goals_df=pd.DataFrame(goals,columns=['Years','Desc','Amount'])
         #st.write(goals_df.groupby(['Years']).sum())
         #st.write(goals_df)
 
@@ -375,17 +376,16 @@ if n_Retire_1 or n_Retire_2:
         #st.write(cagr,curr_age, c_annual_income, age_at_retirement, c_corpus)
 
         fut_income = []
+        if len(df_ret_income) > 0:
+            for i in df_ret_income.index:
+                gc_st_age = df_ret_income.loc[i][0]
+                gc_end_age = df_ret_income.loc[i][1]
+                gc_amt = df_ret_income.loc[i]['Amount']
+                gc_freq =df_ret_income.loc[i][4]
+                gc_incr = df_ret_income.loc[i][5]
 
-
-        for i in df_ret_income.index:
-            gc_st_age = df_ret_income.loc[i][0]
-            gc_end_age = df_ret_income.loc[i][1]
-            gc_amt = df_ret_income.loc[i]['Amount']
-            gc_freq =df_ret_income.loc[i][4]
-            gc_incr = df_ret_income.loc[i][5]
-
-            if gc_amt > 0:
-                fut_income = fut_income + get_fut_income(st_age,end_age,gc_amt,gc_freq,gc_incr)
+                if gc_amt > 0:
+                    fut_income = fut_income + get_fut_income(st_age,end_age,gc_amt,gc_freq,gc_incr)
 
         #st.write(fut_income)
 
@@ -438,14 +438,14 @@ if n_Retire_1 or n_Retire_2:
                           yaxis_title="Retirement Fund (Crores)")
 
         fig.update_layout(margin=dict(l=1,r=11,b=1,t=1))
-        yrange = [0, min(6*c_corpus,c_max)]
-        fig.update_yaxes(range=yrange, dtick=1,showgrid=True)
+        yrange = [0, min(5*c_corpus,c_max)]
+        #fig.update_yaxes(range=yrange, dtick=1,showgrid=True)
         fig.update_xaxes(showgrid=True)
         fig.update_layout(legend_title='')
         #fig.update_yaxes(automargin=True)
         #fig.update_xaxes(automargin=True)
 
-        fig.update_layout(height=300)
+        fig.update_layout(height=350)
         fig.update_layout(width=550)
         fig.update_layout(legend=dict(
             yanchor="bottom",
