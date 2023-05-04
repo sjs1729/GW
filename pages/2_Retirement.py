@@ -17,9 +17,7 @@ np.set_printoptions(precision=2)
 
 st.set_page_config(layout="wide")
 
-with open('style.css') as f:
-    st.markdown(f'<style>{f.read}</style>',unsafe_allow_html=True)
-tday = dt.datetime.today()
+
 
 col1, col2 = st.sidebar.columns(2)
 col1.image('gw_logo.png', width=300)
