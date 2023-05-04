@@ -9,7 +9,6 @@ from scipy.optimize import minimize
 from scipy import optimize
 import random
 import math
-import matplotlib.pyplot as plt
 
 
 
