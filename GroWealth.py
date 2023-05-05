@@ -10,7 +10,7 @@ from urllib.request import urlopen
 import json
 
 st.set_page_config(
-    page_title="Hello",
+    page_title="GroWealth Investments",
     page_icon="👋",
     layout="wide",
 )
