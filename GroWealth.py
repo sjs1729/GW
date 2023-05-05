@@ -10,8 +10,8 @@ from urllib.request import urlopen
 import json
 
 st.set_page_config(
-    page_title="GroWealth Investments",
-    page_icon="👋",
+    page_title="GroWealth Investments       ",
+    page_icon="nirvana.ico",
     layout="wide",
 )
 
