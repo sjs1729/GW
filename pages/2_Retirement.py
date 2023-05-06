@@ -206,30 +206,30 @@ user_inputs = st.columns((4,4,1,12))
 
 
 name = user_inputs[0].text_input(":blue[Name]",value="John Doe")
-curr_age = user_inputs[1].number_input(":blue[Your Current Age?]", min_value=18, max_value=100, step=1, value=18)
-yrs_to_retire = user_inputs[0].number_input(":blue[Years to Retire:]", min_value=0, max_value=30, step=1, value=0,help="How many years till Retirement")
+curr_age = user_inputs[1].number_input(":blue[Your Current Age?]", min_value=18, max_value=100, step=1, value=40)
+yrs_to_retire = user_inputs[0].number_input(":blue[Years to Retire:]", min_value=0, max_value=30, step=1, value=10,help="How many years till Retirement")
 
 plan_till = user_inputs[1].number_input("Plan Till", min_value=curr_age + yrs_to_retire, max_value=100, step=1, value=90,help="Till what age you want to plan for?")
 
 
 
 
-c_annual_income = user_inputs[0].number_input(":blue[Annual Income]", value=0,step=100000)
+c_annual_income = user_inputs[0].number_input(":blue[Annual Income]", value=1200000,step=100000)
 user_inputs[0].markdown('<p style="font-size:12px;font-weight: bold;text-align:center;vertical-align:middle;color:red;margin:0px;padding:0px">({})</p>'.format(display_amount(c_annual_income)), unsafe_allow_html=True)
-c_annual_expense = user_inputs[1].number_input(":blue[Annual Expense]", value=0,step=100000)
+c_annual_expense = user_inputs[1].number_input(":blue[Annual Expense]", value=800000,step=100000)
 user_inputs[1].markdown('<p style="font-size:12px;font-weight: bold;text-align:center;vertical-align:middle;color:red;margin:0px;padding:0px">({})</p>'.format(display_amount(c_annual_expense)), unsafe_allow_html=True)
 
-ann_hike = user_inputs[0].number_input(":blue[Annual Hike %]", min_value=0.0, max_value=20.0, step=0.1, value=0.0, help="Expected % increase in Annual Income")
+ann_hike = user_inputs[0].number_input(":blue[Annual Hike %]", min_value=0.0, max_value=20.0, step=0.1, value=4.0, help="Expected % increase in Annual Income")
 exp_cap_at = user_inputs[1].number_input(":blue[Expense Cap]", min_value=curr_age + yrs_to_retire, max_value=plan_till, step=1, value=plan_till, help="Age after which expense will not increase due to Inflation")
 
-c_corpus = user_inputs[0].number_input(":blue[Current Corpus]", value=0,step=100000,help="Your Total Current Savings")
+c_corpus = user_inputs[0].number_input(":blue[Current Corpus]", value=7500000,step=100000,help="Your Total Current Savings")
 user_inputs[0].markdown('<p style="font-size:12px;font-weight: bold;text-align:center;vertical-align:middle;color:red;margin:0px;padding:0px">({})</p>'.format(display_amount(c_corpus)), unsafe_allow_html=True)
 
 terminal_corpus = user_inputs[1].number_input(":blue[Terminal Corpus]", value=0,step=100000, help="Money you want to leave behind")
 user_inputs[1].markdown('<p style="font-size:12px;font-weight: bold;text-align:center;vertical-align:middle;color:red;margin:0px;padding:0px">({})</p>'.format(display_amount(terminal_corpus)), unsafe_allow_html=True)
 
-cagr = round(user_inputs[0].number_input(":blue[Return on Assets]", step=0.10,help="Expected Rate of Return on your Assets"),2)
-inflation = user_inputs[1].number_input(":blue[Inflation]", step =0.1,help="Expected Inflation Rate")
+cagr = round(user_inputs[0].number_input(":blue[Return on Assets]", value=8.0,step=0.10,help="Expected Rate of Return on your Assets"),2)
+inflation = user_inputs[1].number_input(":blue[Inflation]", value=4.0,step =0.1,help="Expected Inflation Rate")
 #user_inputs[2].markdown('<p style="font-size:12px;font-weight: bold;text-align:center;vertical-align:middle;color:red;margin:0px;padding:0px">****</p>', unsafe_allow_html=True)
 placeholder_header_1 = user_inputs[3].empty()
 placeholder_score = user_inputs[3].empty()
@@ -407,9 +407,9 @@ if n_Retire_1 or n_Retire_2:
 
         try:
             root=round(optimize.newton(get_optimised_rate, 25, tol=0.0000001, args=(curr_age, c_annual_income, age_at_retirement, c_corpus, df_expense,terminal_corpus, fut_income)),2)
-            st.write(root)
+            #st.write(root)
             opt_corpus = round(optimize.newton(get_optimised_corpus, c_corpus,tol=0.0001,args=(cagr,curr_age, c_annual_income, age_at_retirement, df_expense,terminal_corpus, fut_income)),0)
-            st.write(opt_corpus)
+            #st.write(opt_corpus)
 
         #st.write(opt_corpus)
         #st.write(root)
