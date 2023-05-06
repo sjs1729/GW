@@ -10,7 +10,19 @@ from scipy import optimize
 import random
 import math
 
+st.set_page_config(
+    page_title="GroWealth Investments       ",
+    page_icon="nirvana.ico",
+    layout="wide",
+)
 
+
+np.set_printoptions(precision=3)
+
+tday = dt.datetime.today()
+
+col1, col2 = st.sidebar.columns(2)
+col1.image('gw_logo.png', width=300)
 
 def get_emi(emi, rate, nperiods,target_amt,present_corpus):
     tot_val = present_corpus * pow((1+ rate/100),nperiods/12)
@@ -57,12 +69,12 @@ def display_amount(amount):
         if cr_bal > 0:
             amt_str = amt_str + str(cr_amt) + "," + str(lkh_amt).rjust(2,'0') + "," + str(th_amt).rjust(2,'0') + "," + str(th_bal).rjust(3,'0') + "." + decimal_part
         else:
-            amt_str = amt_str + str(cr_amt) + ",00,000.00"
+            amt_str = amt_str + str(cr_amt) + ",00,00,000.00"
     elif lkh_amt > 0:
         if lkh_bal > 0:
             amt_str = amt_str + str(lkh_amt) + "," + str(th_amt).rjust(2,'0') + "," + str(th_bal).rjust(3,'0') + "." + decimal_part
         else:
-            amt_str = amt_str + str(lkh_amt) + ",000.00"
+            amt_str = amt_str + str(lkh_amt) + ",00,000.00"
     elif th_amt > 0:
         amt_str = amt_str + str(th_amt) + "," + str(th_bal).rjust(3,'0') + "." + decimal_part
     else:
@@ -70,6 +82,7 @@ def display_amount(amount):
 
 
     return amt_str
+
 
 
 left,centre,right = st.columns((8,1,6))
@@ -92,9 +105,12 @@ left.image(image_path)
 gp_flds = st.columns((4,1,4))
 
 goal_amount = right.number_input(f"Cost of {goal_type} (in Today's Price)", value=0,step=10000)
+right.markdown('<p style="font-size:12px;font-weight: bold;text-align:center;vertical-align:middle;color:red;margin:0px;padding:0px">({})</p>'.format(display_amount(goal_amount)), unsafe_allow_html=True)
+
 years_to_goal = right.slider("Years to Goal?", min_value=1, max_value=30, step=1, value=3)
 
 present_corpus = right.number_input("Corpus I Already Have", value=0,step=10000)
+right.markdown('<p style="font-size:12px;font-weight: bold;text-align:center;vertical-align:middle;color:red;margin:0px;padding:0px">({})</p>'.format(display_amount(present_corpus)), unsafe_allow_html=True)
 
 rate = round(right.number_input("Return on Assets", step=0.10),2)
 infl = right.number_input("Inflation", step =0.1)
@@ -108,8 +124,8 @@ tot_mths = 12*years_to_goal
 mthly_amt=round(optimize.newton(get_emi, 0, tol=0.0000001, args=(rate, tot_mths,adj_amount,present_corpus)),2)
 
 
-html_text = '<p style="font-family:Courier; color:Blue; font-size: 18px;">Onetime Investment Required: ' + "Rs. {:,.2f}</p>".format(present_value - present_corpus)
+html_text = '<p style="font-family:Courier; color:Blue; font-size: 18px;">Onetime Investment Required: ' + " {}</p>".format(display_amount(present_value - present_corpus))
 
 left.markdown(html_text, unsafe_allow_html=True)
-html_text = '<p style="font-family:Courier; color:Blue; font-size: 18px;">Monthly SIP Required: ' + "Rs. {:,.2f}</p>".format(mthly_amt)
+html_text = '<p style="font-family:Courier; color:Blue; font-size: 18px;">Monthly SIP Required: ' + " {}</p>".format(display_amount(mthly_amt))
 left.markdown(html_text, unsafe_allow_html=True)

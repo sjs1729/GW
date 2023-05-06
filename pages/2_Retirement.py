@@ -10,19 +10,19 @@ from scipy import optimize
 import random
 import math
 
+st.set_page_config(
+    page_title="GroWealth Investments       ",
+    page_icon="nirvana.ico",
+    layout="wide",
+)
 
 
+np.set_printoptions(precision=3)
 
-np.set_printoptions(precision=2)
-
-st.set_page_config(layout="wide")
-
-
+tday = dt.datetime.today()
 
 col1, col2 = st.sidebar.columns(2)
 col1.image('gw_logo.png', width=300)
-#col1.image('logo_gwi.png',width=500)
-#col2.title("GroWealth Dashboard")
 
 
 
@@ -209,7 +209,7 @@ name = user_inputs[0].text_input(":blue[Name]",value="John Doe")
 curr_age = user_inputs[1].number_input(":blue[Your Current Age?]", min_value=18, max_value=100, step=1, value=18)
 yrs_to_retire = user_inputs[0].number_input(":blue[Years to Retire:]", min_value=0, max_value=30, step=1, value=0,help="How many years till Retirement")
 
-plan_till = user_inputs[1].number_input("Plan Till", min_value=curr_age + yrs_to_retire, max_value=100, step=1, value=90,)
+plan_till = user_inputs[1].number_input("Plan Till", min_value=curr_age + yrs_to_retire, max_value=100, step=1, value=90,help="Till what age you want to plan for?")
 
 
 
@@ -222,14 +222,14 @@ user_inputs[1].markdown('<p style="font-size:12px;font-weight: bold;text-align:c
 ann_hike = user_inputs[0].number_input(":blue[Annual Hike %]", min_value=0.0, max_value=20.0, step=0.1, value=0.0, help="Expected % increase in Annual Income")
 exp_cap_at = user_inputs[1].number_input(":blue[Expense Cap]", min_value=curr_age + yrs_to_retire, max_value=plan_till, step=1, value=plan_till, help="Age after which expense will not increase due to Inflation")
 
-c_corpus = user_inputs[0].number_input(":blue[Current Corpus]", value=0,step=100000)
+c_corpus = user_inputs[0].number_input(":blue[Current Corpus]", value=0,step=100000,help="Your Total Current Savings")
 user_inputs[0].markdown('<p style="font-size:12px;font-weight: bold;text-align:center;vertical-align:middle;color:red;margin:0px;padding:0px">({})</p>'.format(display_amount(c_corpus)), unsafe_allow_html=True)
 
-terminal_corpus = user_inputs[1].number_input(":blue[Terminal Corpus]", value=0,step=100000)
+terminal_corpus = user_inputs[1].number_input(":blue[Terminal Corpus]", value=0,step=100000, help="Money you want to leave behind")
 user_inputs[1].markdown('<p style="font-size:12px;font-weight: bold;text-align:center;vertical-align:middle;color:red;margin:0px;padding:0px">({})</p>'.format(display_amount(terminal_corpus)), unsafe_allow_html=True)
 
-cagr = round(user_inputs[0].number_input(":blue[Return on Assets]", step=0.10),2)
-inflation = user_inputs[1].number_input(":blue[Inflation]", step =0.1)
+cagr = round(user_inputs[0].number_input(":blue[Return on Assets]", step=0.10,help="Expected Rate of Return on your Assets"),2)
+inflation = user_inputs[1].number_input(":blue[Inflation]", step =0.1,help="Expected Inflation Rate")
 #user_inputs[2].markdown('<p style="font-size:12px;font-weight: bold;text-align:center;vertical-align:middle;color:red;margin:0px;padding:0px">****</p>', unsafe_allow_html=True)
 placeholder_header_1 = user_inputs[3].empty()
 placeholder_score = user_inputs[3].empty()
@@ -405,26 +405,28 @@ if n_Retire_1 or n_Retire_2:
 
         retirement_score = round(100 * (be_year - curr_age)/(plan_till - curr_age),2)
 
-        root=round(optimize.newton(get_optimised_rate, 25, tol=0.0000001, args=(curr_age, c_annual_income, age_at_retirement, c_corpus, df_expense,terminal_corpus, fut_income)),2)
-
-        opt_corpus = round(optimize.newton(get_optimised_corpus, c_corpus,tol=0.0001,args=(cagr,curr_age, c_annual_income, age_at_retirement, df_expense,terminal_corpus, fut_income)),0)
+        try:
+            root=round(optimize.newton(get_optimised_rate, 25, tol=0.0000001, args=(curr_age, c_annual_income, age_at_retirement, c_corpus, df_expense,terminal_corpus, fut_income)),2)
+            st.write(root)
+            opt_corpus = round(optimize.newton(get_optimised_corpus, c_corpus,tol=0.0001,args=(cagr,curr_age, c_annual_income, age_at_retirement, df_expense,terminal_corpus, fut_income)),0)
+            st.write(opt_corpus)
 
         #st.write(opt_corpus)
         #st.write(root)
-        if 0 < root < 25:
-            optimised_rate = get_corpus(root,curr_age, c_annual_income, age_at_retirement, c_corpus, df_expense, fut_income,"Optimised Corpus@{}%".format(root))
-            retirement_assets = retirement_assets.merge(optimised_rate, on='Years')
+            if 0 < root < 25:
+                optimised_rate = get_corpus(root,curr_age, c_annual_income, age_at_retirement, c_corpus, df_expense, fut_income,"Optimised Corpus@{}%".format(root))
+                retirement_assets = retirement_assets.merge(optimised_rate, on='Years')
+            else:
+                placeholder_fund.markdown(":red[ Error: Optimized Rate out of Range. Check input data!]")
 
-
+        except:
+            placeholder_fund.markdown(":red[ Error: Solution for Optimized Rate not possible. Check input data!]")
         #optimised_corpus = get_corpus(cagr,curr_age, c_annual_income, age_at_retirement, opt_corpus, df_expense, fut_income,"Optimised Corpus-{}".format(cagr))
         #retirement_assets = retirement_assets.merge(optimised_corpus, on='Years')
 
 
         retirement_assets = retirement_assets / 10000000
 
-        column_name = retirement_assets.columns[2]
-        c_max = retirement_assets[column_name].max()
-        c_min = retirement_assets[column_name].min()
 
         c_corpus = c_corpus /10000000
         config = {'displayModeBar': False}
@@ -438,8 +440,8 @@ if n_Retire_1 or n_Retire_2:
                           yaxis_title="Retirement Fund (Crores)")
 
         fig.update_layout(margin=dict(l=1,r=11,b=1,t=1))
-        yrange = [0, min(5*c_corpus,c_max)]
-        #fig.update_yaxes(range=yrange, dtick=1,showgrid=True)
+        yrange = [-1*c_corpus, 5*c_corpus]
+        fig.update_yaxes(range=yrange, dtick=1,showgrid=True)
         fig.update_xaxes(showgrid=True)
         fig.update_layout(legend_title='')
         #fig.update_yaxes(automargin=True)
@@ -491,7 +493,8 @@ if n_Retire_1 or n_Retire_2:
                   xaxis_title="Optimised Corpus Required is {}".format(display_amount(opt_corpus)),
                   yaxis_title="")
 
-
-        placeholder_score.plotly_chart(fig_1,config=config)
+        with user_inputs[3].container():
+            placeholder_header_1.markdown('<p style="font-size:20px;font-weight:bold;text-align:center;vertical-align:middle;color:brown;margin:0px;padding:0px"><u>Retirement Score</u></p>', unsafe_allow_html=True)
+            placeholder_score.plotly_chart(fig_1,config=config)
         #placeholder_score.markdown(":blue[ Retirement Score : {} %]".format(retirement_score))
         #placeholder_fund.markdown('<p style="font-size:16px;font-weight: normal;text-align:center;vertical-align:middle;color:blue;margin:0px;padding:0px">Optimised Fund : {}</p>'.format(display_amount(opt_corpus)), unsafe_allow_html=True)

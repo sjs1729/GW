@@ -7,6 +7,21 @@ import plotly.express as px
 from urllib.request import urlopen
 import json
 
+
+st.set_page_config(
+    page_title="GroWealth Investments       ",
+    page_icon="nirvana.ico",
+    layout="wide",
+)
+
+
+np.set_printoptions(precision=3)
+
+tday = dt.datetime.today()
+
+col1, col2 = st.sidebar.columns(2)
+col1.image('gw_logo.png', width=300)
+
 @st.cache_data()
 def get_mf_portfolio():
 
@@ -139,51 +154,67 @@ st.title('Stocks in Mutual Funds')
 
 df_perf,df_port_dtl, stock_list = get_mf_portfolio()
 
-s_layout = st.columns((3,9,8))
-s_layout[0].markdown(" ")
-s_layout[0].markdown(" ")
-s_layout[0].markdown('<p style="font-size:20px;font-weight: bold;text-align:right   ;vertical-align:middle;color:brown;margin:0px;padding:0px">Search a Stock</p>', unsafe_allow_html=True)
+with st.expander("Top 10 Stocks in MF"):
+    for status in ['New Addition','Increased','Decreased','Removed']:
+        df_1 = df_port_dtl[df_port_dtl['Status']== status]
+        result = df_1.groupby('Asset_Name').size().reset_index(name='Count')
+        result = result.sort_values(by='Count',ascending=False).head(10)
+        result.columns = ["Top 10 Stocks - {}".format(status),"{} - Count".format(status)]
+        result.index = [0,1,2,3,4,5,6,7,8,9]
 
-stk_select = s_layout[1].selectbox("Search a Stock",stock_list,0,label_visibility="hidden")
+        if status == 'New Addition':
+            df_x = result
+        else:
+            df_x = pd.concat([df_x,result],join="outer", axis=1)
 
-df_search = df_port_dtl[df_port_dtl['Asset_Name']==stk_select][['Scheme_Name','Pct_Holding','Status']]
+    html_text = get_markdown_table(df_x)
+    st.markdown(html_text,unsafe_allow_html=True)
 
-df_search['AUM'] = 0.0
 
-for i in df_search.index:
-    sch_name = df_search.loc[i]['Scheme_Name']
-    df_search.at[i,'AUM'] = df_perf.loc[sch_name]['AUM']
+with st.expander("Stock Reverse Search"):
+    s_layout = st.columns((3,9,8))
+    s_layout[0].markdown('<p style="font-size:18px;font-weight: bold;text-align:right   ;vertical-align:middle;color:brown;margin:0px;padding:0px">Search a Stock</p>', unsafe_allow_html=True)
 
-tot_increase = df_search[df_search['Status'] == 'Increased']['Scheme_Name'].count()
-tot_decrease = df_search[df_search['Status'] == 'Decreased']['Scheme_Name'].count()
-tot_new_add  = df_search[df_search['Status'] == 'New Addition']['Scheme_Name'].count()
-tot_removed  = df_search[df_search['Status'] == 'Removed']['Scheme_Name'].count()
-tot_nochange = df_search[df_search['Status'] == 'No Change']['Scheme_Name'].count()
-total = df_search['Scheme_Name'].count()
+    stk_select = s_layout[1].selectbox("Search a Stock",stock_list,0,label_visibility="collapsed")
 
-st.markdown(" ")
-st.markdown(" ")
+    df_search = df_port_dtl[df_port_dtl['Asset_Name']==stk_select][['Scheme_Name','Pct_Holding','Status']]
 
-s_layout = st.columns((1,1,1,1,1,1))
-html_text = '<p><strong><span style="font-family: Verdana, Geneva, sans-serif; font-size: 13px;color:blue;">New Addition: </span></strong>'
-html_text = html_text + '<span style="font-family: Verdana, Geneva, sans-serif; font-size: 13px;color:brown;">{}</span>'.format(tot_new_add)
-s_layout[0].markdown(html_text,unsafe_allow_html=True)
-html_text = '<p style="text-align:center;"><strong><span style="font-family: Verdana, Geneva, sans-serif; font-size: 13px;color:blue;">Increased: </span></strong>'
-html_text = html_text + '<span style="font-family: Verdana, Geneva, sans-serif; font-size: 13px;color:brown;">{}  </span>'.format(tot_increase)
-s_layout[1].markdown(html_text,unsafe_allow_html=True)
-html_text = '<p style="text-align:center;"><strong><span style="font-family: Verdana, Geneva, sans-serif; font-size: 13px;color:blue;">Decreased: </span></strong>'
-html_text = html_text + '<span style="font-family: Verdana, Geneva, sans-serif; font-size: 13px;color:brown;">{}  </span>'.format(tot_decrease)
-s_layout[2].markdown(html_text,unsafe_allow_html=True)
-html_text = '<p style="text-align:center;"><strong><span style="font-family: Verdana, Geneva, sans-serif; font-size: 13px;color:blue;">Removed: </span></strong>'
-html_text = html_text + '<span style="font-family: Verdana, Geneva, sans-serif; font-size: 13px;color:brown;">{} </span>'.format(tot_removed)
-s_layout[3].markdown(html_text,unsafe_allow_html=True)
-html_text = '<p style="text-align:center;"><strong><span style="font-family: Verdana, Geneva, sans-serif; font-size: 13px;color:blue;">No Change: </span></strong>'
-html_text = html_text + '<span style="font-family: Verdana, Geneva, sans-serif; font-size: 13px;color:brown;">{}  </span>'.format(tot_nochange)
-s_layout[4].markdown(html_text,unsafe_allow_html=True)
+    df_search['AUM'] = 0.0
 
-html_text = '<p style="text-align:right;"><strong><span style="font-family: Verdana, Geneva, sans-serif; font-size: 13px;color:red;">Total: </span></strong>'
-html_text = html_text + '<span style="font-family: Verdana, Geneva, sans-serif; font-size: 13px;color:brown;">{}  </span>'.format(total)
-s_layout[5].markdown(html_text,unsafe_allow_html=True)
+    for i in df_search.index:
+        sch_name = df_search.loc[i]['Scheme_Name']
+        df_search.at[i,'AUM'] = df_perf.loc[sch_name]['AUM']
 
-html_text = get_markdown_table(df_search)
-st.markdown(html_text,unsafe_allow_html=True)
+    tot_increase = df_search[df_search['Status'] == 'Increased']['Scheme_Name'].count()
+    tot_decrease = df_search[df_search['Status'] == 'Decreased']['Scheme_Name'].count()
+    tot_new_add  = df_search[df_search['Status'] == 'New Addition']['Scheme_Name'].count()
+    tot_removed  = df_search[df_search['Status'] == 'Removed']['Scheme_Name'].count()
+    tot_nochange = df_search[df_search['Status'] == 'No Change']['Scheme_Name'].count()
+    total = df_search['Scheme_Name'].count()
+
+    st.markdown(" ")
+    st.markdown(" ")
+
+    s_layout = st.columns((1,1,1,1,1,1))
+    html_text = '<p style="text-align:center;"><strong><span style="font-family: Verdana, Geneva, sans-serif; font-size: 13px;color:blue;">New Addition: </span></strong>'
+    html_text = html_text + '<span style="font-family: Verdana, Geneva, sans-serif; font-size: 13px;color:brown;">{}</span>'.format(tot_new_add)
+    s_layout[0].markdown(html_text,unsafe_allow_html=True)
+    html_text = '<p style="text-align:center;"><strong><span style="font-family: Verdana, Geneva, sans-serif; font-size: 13px;color:blue;">Increased: </span></strong>'
+    html_text = html_text + '<span style="font-family: Verdana, Geneva, sans-serif; font-size: 13px;color:brown;">{}  </span>'.format(tot_increase)
+    s_layout[1].markdown(html_text,unsafe_allow_html=True)
+    html_text = '<p style="text-align:center;"><strong><span style="font-family: Verdana, Geneva, sans-serif; font-size: 13px;color:blue;">Decreased: </span></strong>'
+    html_text = html_text + '<span style="font-family: Verdana, Geneva, sans-serif; font-size: 13px;color:brown;">{}  </span>'.format(tot_decrease)
+    s_layout[2].markdown(html_text,unsafe_allow_html=True)
+    html_text = '<p style="text-align:center;"><strong><span style="font-family: Verdana, Geneva, sans-serif; font-size: 13px;color:blue;">Removed: </span></strong>'
+    html_text = html_text + '<span style="font-family: Verdana, Geneva, sans-serif; font-size: 13px;color:brown;">{} </span>'.format(tot_removed)
+    s_layout[3].markdown(html_text,unsafe_allow_html=True)
+    html_text = '<p style="text-align:center;"><strong><span style="font-family: Verdana, Geneva, sans-serif; font-size: 13px;color:blue;">No Change: </span></strong>'
+    html_text = html_text + '<span style="font-family: Verdana, Geneva, sans-serif; font-size: 13px;color:brown;">{}  </span>'.format(tot_nochange)
+    s_layout[4].markdown(html_text,unsafe_allow_html=True)
+
+    html_text = '<p style="text-align:center;"><strong><span style="font-family: Verdana, Geneva, sans-serif; font-size: 13px;color:red;">Total: </span></strong>'
+    html_text = html_text + '<span style="font-family: Verdana, Geneva, sans-serif; font-size: 13px;color:brown;">{}  </span>'.format(total)
+    s_layout[5].markdown(html_text,unsafe_allow_html=True)
+
+    html_text = get_markdown_table(df_search)
+    st.markdown(html_text,unsafe_allow_html=True)

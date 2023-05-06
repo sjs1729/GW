@@ -7,6 +7,20 @@ import plotly.express as px
 from urllib.request import urlopen
 import json
 
+st.set_page_config(
+    page_title="GroWealth Investments       ",
+    page_icon="nirvana.ico",
+    layout="wide",
+)
+
+
+np.set_printoptions(precision=3)
+
+tday = dt.datetime.today()
+
+col1, col2 = st.sidebar.columns(2)
+col1.image('gw_logo.png', width=300)
+
 @st.cache_data()
 def get_mf_perf():
     df = pd.read_csv('mf_data.csv')
@@ -124,12 +138,12 @@ def display_amount(amount):
         if cr_bal > 0:
             amt_str = amt_str + str(cr_amt) + "," + str(lkh_amt).rjust(2,'0') + "," + str(th_amt).rjust(2,'0') + "," + str(th_bal).rjust(3,'0') + "." + decimal_part
         else:
-            amt_str = amt_str + str(cr_amt) + ",00,000.00"
+            amt_str = amt_str + str(cr_amt) + ",00,00,000.00"
     elif lkh_amt > 0:
         if lkh_bal > 0:
             amt_str = amt_str + str(lkh_amt) + "," + str(th_amt).rjust(2,'0') + "," + str(th_bal).rjust(3,'0') + "." + decimal_part
         else:
-            amt_str = amt_str + str(lkh_amt) + ",000.00"
+            amt_str = amt_str + str(lkh_amt) + ",00,000.00"
     elif th_amt > 0:
         amt_str = amt_str + str(th_amt) + "," + str(th_bal).rjust(3,'0') + "." + decimal_part
     else:
