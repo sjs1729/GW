@@ -154,21 +154,7 @@ st.title('Stocks in Mutual Funds')
 
 df_perf,df_port_dtl, stock_list = get_mf_portfolio()
 
-with st.expander("Top 10 Stocks in MF"):
-    for status in ['New Addition','Increased','Decreased','Removed']:
-        df_1 = df_port_dtl[df_port_dtl['Status']== status]
-        result = df_1.groupby('Asset_Name').size().reset_index(name='Count')
-        result = result.sort_values(by='Count',ascending=False).head(10)
-        result.columns = ["Top 10 Stocks - {}".format(status),"{} - Count".format(status)]
-        result.index = [0,1,2,3,4,5,6,7,8,9]
 
-        if status == 'New Addition':
-            df_x = result
-        else:
-            df_x = pd.concat([df_x,result],join="outer", axis=1)
-
-    html_text = get_markdown_table(df_x)
-    st.markdown(html_text,unsafe_allow_html=True)
 
 
 with st.expander("Stock Reverse Search"):
@@ -217,4 +203,20 @@ with st.expander("Stock Reverse Search"):
     s_layout[5].markdown(html_text,unsafe_allow_html=True)
 
     html_text = get_markdown_table(df_search)
+    st.markdown(html_text,unsafe_allow_html=True)
+
+with st.expander("Top 20 Most Traded Stocks in MF"):
+    for status in ['New Addition','Increased','Decreased','Removed']:
+        df_1 = df_port_dtl[df_port_dtl['Status']== status]
+        result = df_1.groupby('Asset_Name').size().reset_index(name='Count')
+        result = result.sort_values(by='Count',ascending=False).head(20)
+        result.columns = ["Top 20 Stocks - {}".format(status),"{} - Count".format(status)]
+        result.index = [i for i in range(20)]
+
+        if status == 'New Addition':
+            df_x = result
+        else:
+            df_x = pd.concat([df_x,result],join="outer", axis=1)
+
+    html_text = get_markdown_table(df_x)
     st.markdown(html_text,unsafe_allow_html=True)

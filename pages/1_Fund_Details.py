@@ -239,8 +239,12 @@ s_layout = st.columns((4,4,4))
 
 df_schm_port = df_port_dtl[df_port_dtl['Scheme_Code']==amfi_code]
 
+num_stocks = df_mf_perf.loc[amfi_code]['NumStocks']
 
-dict_port_info_1 = {'No of Stocks': int(df_mf_perf.loc[amfi_code]['NumStocks']),
+if num_stocks == num_stocks:
+    num_stocks = int(df_mf_perf.loc[amfi_code]['NumStocks'])
+
+dict_port_info_1 = {'No of Stocks': num_stocks,
              'Equity %': df_mf_perf.loc[amfi_code]['Equity_Holding'],
              'Large Cap %': round(df_schm_port[df_schm_port['M-Cap']=='Large Cap']['Pct_Holding'].sum(),2),
              'Mid Cap %': round(df_schm_port[df_schm_port['M-Cap']=='Mid Cap']['Pct_Holding'].sum(),2),
@@ -344,16 +348,17 @@ for i in range(len(df_top10_stks)):
                   stk_added, stk_increased, stk_decreased, stk_removed
     rec.append(values)
 
-values = 'Total','',round(df_top10_stks['Pct_Holding'].sum(),2),'',round(df_top10_sector.sum(),2),'','','',''
-rec.append(values)
+if len(rec) > 0:
+    values = 'Total','',round(df_top10_stks['Pct_Holding'].sum(),2),'',round(df_top10_sector.sum(),2),'','','',''
+    rec.append(values)
 
-df_top10_port = pd.DataFrame(rec,columns=['Serial','Top10 Stocks','Top10 Stock %', 'Top10 Sectors','Top10 Sector %',    \
+    df_top10_port = pd.DataFrame(rec,columns=['Serial','Top10 Stocks','Top10 Stock %', 'Top10 Sectors','Top10 Sector %',    \
                                           'Stocks Added', 'Stocks Increased','Stocks Decreased','Stocks Removed'
                                          ])
-html_script = get_markdown_table(df_top10_port)
+    html_script = get_markdown_table(df_top10_port)
 
-st.markdown('<BR><BR>Fund Portfolio Details',unsafe_allow_html=True)
-st.markdown(html_script,unsafe_allow_html=True)
+    st.markdown('<BR><BR>Fund Portfolio Details',unsafe_allow_html=True)
+    st.markdown(html_script,unsafe_allow_html=True)
 #s_layout[2].write(df_top10_sector.index)
 #except:
 #st.markdown('<BR><BR>*** Data Not Available for {}'.format(schm_select),unsafe_allow_html=True)
