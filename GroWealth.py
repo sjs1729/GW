@@ -23,7 +23,7 @@ tday = dt.datetime.today()
 col1, col2 = st.sidebar.columns(2)
 col1.image('gw_logo.png', width=300)
 
-st.write("# Welcome to Growealth Investments! 👋")
+st.write("# Welcome to Growealth Investments! ")
 
 html_text = '<p><strong><span style="font-family: Verdana, Geneva, sans-serif; font-size: 20px;">'
 html_text = html_text + '<em><span style="color: rgb(65, 168, 95);">GroWealth Investments</span></em>'
