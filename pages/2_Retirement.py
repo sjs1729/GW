@@ -9,6 +9,7 @@ from scipy.optimize import minimize
 from scipy import optimize
 import random
 import math
+from shared_functions import *
 
 st.set_page_config(
     page_title="GroWealth Investments       ",
@@ -26,57 +27,7 @@ col1.image('gw_logo.png', width=300)
 
 
 
-def display_amount(amount):
 
-    if amount != amount:
-        amount = 0
-
-    if amount < 0:
-        amt_str = '₹ -'
-        amount = abs(amount)
-    else:
-        amt_str = '₹ '
-
-    decimal_part_str = str(round(amount,2)).split(".")
-
-    if len(decimal_part_str) > 1:
-        decimal_part = decimal_part_str[1][:2]
-        if len(decimal_part) == 1:
-            decimal_part = decimal_part.ljust(2,'0')
-        else:
-            decimal_part = decimal_part.rjust(2,'0')
-    else:
-        decimal_part = '00'
-
-
-    amount = round(amount,2)
-    cr_amt = int(amount/10000000)
-    cr_bal = int(amount - cr_amt * 10000000)
-
-    lkh_amt = int (cr_bal/100000)
-    lkh_bal = int(cr_bal - lkh_amt * 100000)
-
-    th_amt  = int(lkh_bal/1000)
-    th_bal  = int(lkh_bal - th_amt * 1000)
-
-
-    if cr_amt > 0:
-        if cr_bal > 0:
-            amt_str = amt_str + str(cr_amt) + "," + str(lkh_amt).rjust(2,'0') + "," + str(th_amt).rjust(2,'0') + "," + str(th_bal).rjust(3,'0') + "." + decimal_part
-        else:
-            amt_str = amt_str + str(cr_amt) + ",00,00,000.00"
-    elif lkh_amt > 0:
-        if lkh_bal > 0:
-            amt_str = amt_str + str(lkh_amt) + "," + str(th_amt).rjust(2,'0') + "," + str(th_bal).rjust(3,'0') + "." + decimal_part
-        else:
-            amt_str = amt_str + str(lkh_amt) + ",00,000.00"
-    elif th_amt > 0:
-        amt_str = amt_str + str(th_amt) + "," + str(th_bal).rjust(3,'0') + "." + decimal_part
-    else:
-        amt_str = amt_str + str(th_bal) + "." + decimal_part
-
-
-    return amt_str
 
 def get_goals(st_age,end_age,desc,amt,freq,infl):
     goals = []
