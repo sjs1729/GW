@@ -214,6 +214,7 @@ with sip:
         #col1.write("Total Investment - {} | Value - {}".format(display_amount(df_mf['Tran_Value'].sum()),display_amount(df_mf['Fund Value'].iloc[-1])))
         #df_mf = df_mf[schm_select]
         #col1.write(df_mf)
+        #df_mf.to_csv('SIP.csv')
         df_cash_flow = df_mf[df_mf['Tran_Value'] != 0][['Tran_Value','Num_Days']]
         mkt_amt_invested = df_mf['Tran_Value'].sum()
         mkt_value = df_mf['Fund Value'].iloc[-1]
@@ -224,10 +225,10 @@ with sip:
         html_text = '<p style="text-align:center">'
         html_text = html_text + '<strong><span style="font-family: Verdana, Geneva, sans-serif; font-size: 11px;">'
         html_text = html_text + '<span style="color: rgb(65, 168, 95);text-align:center;">Investment Value:</span></strong>'
-        html_text = html_text + '<span style="color: rgb(0,0, 200);"> {}</span>'.format(display_amount(mkt_amt_invested))
+        html_text = html_text + '<span style="color: rgb(0,0, 200);"> {}</span>'.format(display_amount(mkt_value))
         html_text = html_text + '<BR><strong><span style="font-family: Verdana, Geneva, sans-serif; font-size: 11px;">'
         html_text = html_text + '<span style="color: rgb(65, 168, 95);text-align:center;">Amt Invested:</span></strong>'
-        html_text = html_text + '<span style="color: rgb(0,0, 200);"> {}</span><span>  | </span>'.format(display_amount(mkt_value))
+        html_text = html_text + '<span style="color: rgb(0,0, 200);"> {}</span><span>  | </span>'.format(display_amount(mkt_amt_invested))
         html_text = html_text + '<strong><span style="font-family: Verdana, Geneva, sans-serif; font-size: 11px;">'
         html_text = html_text + '<span style="color: rgb(65, 168, 95);text-align:center;">Total Gain:</span></strong>'
         html_text = html_text + '<span style="color: rgb(0,0, 200);"> {}  </span><span>  | </span>'.format(display_amount(mkt_gains))
