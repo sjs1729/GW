@@ -73,6 +73,75 @@ def xirr(rate,cash_flow,terminal_value=0):
 
     return  npv+terminal_value
 
+
+def get_swp(df, ini_inv, swp_amt, swp_freq,inflation):
+    ndays = 0
+    rec = []
+    tday = dt.date.today()
+    num_swp = 0
+    for i in df.index:
+        num_days = 0
+        units_sold = 0
+        swp_a = 0
+        curr_nav = df.loc[i]['Nav']
+        cashflow =0
+        cap_gains = 0.0
+        holding_period = 0
+        tax_year=""
+        tax_amt = 0
+        if ndays == 0:
+            pur_units = ini_inv/curr_nav
+            bal_units = pur_units
+            net_value = ini_inv
+            cashflow  = -1*ini_inv
+            num_days = (tday - i).days
+            pur_date = i
+            pur_nav = curr_nav
+        ndays = ndays + 1
+
+        if i.month < 4:
+            fin_year = i.year
+        else:
+            fin_year = i.year+1
+
+        if ndays % swp_freq == 0:
+
+
+            units_sold = swp_amt/curr_nav
+            swp_a = swp_amt
+
+            bal_units = bal_units - units_sold
+            cashflow  = swp_a
+            num_days = (tday - i).days
+            cap_gains = units_sold * (curr_nav - pur_nav)
+            holding_period = (i - pur_date).days
+            if holding_period < 365:
+                tax_amt= cap_gains * 0.15
+            else:
+                tax_amt= cap_gains * 0.1
+
+
+
+            num_swp = num_swp + 1
+            if num_swp % 12 == 0:
+                swp_amt = swp_amt * (1+inflation)
+
+
+        net_value = round(bal_units * curr_nav,0)
+
+        values = i,curr_nav, bal_units, units_sold,swp_a,net_value,cashflow,num_days,cap_gains,holding_period,fin_year,tax_amt
+
+        rec.append(values)
+
+
+
+    swp  = pd.DataFrame(rec, columns=['Date','Nav','Bal_Units','Units_Sold','SWP_AMOUNT','Net_Value','Tran_Value','Num_Days','Cap Gains','Holding Period','FY','TAX_AMOUNT'])
+
+    swp.set_index('Date',inplace=True)
+
+    return swp
+
+config = {'displayModeBar': False}
 html_text = '<p style="text-align:center">'
 html_text = html_text + '<strong><span style="font-family: Verdana, Geneva, sans-serif; font-size: 30px;">'
 html_text = html_text + '<span style="color: rgb(9, 0, 220);text-align:center;">Systematic Investment Calculators</span></strong>'
@@ -82,6 +151,7 @@ st.markdown(html_text,unsafe_allow_html=True)
 df, df_mf_perf, df_port_dtl = get_mf_perf()
 
 sip, swp = st.tabs(["SIP - Calculator", "SWP - Calculator"])
+
 
 with sip:
     col1,col,col2 = st.columns((6,1,7))
@@ -126,7 +196,6 @@ with sip:
     html_text = html_text + '<BR></p>'
     col2.markdown(html_text,unsafe_allow_html=True)
 
-    config = {'displayModeBar': False}
 
     fig = px.line(sip_df[['Fund Value']])
 
@@ -272,8 +341,116 @@ with sip:
 
 with swp:
 
-    html_text = '<p style="text-align:center">'
-    html_text = html_text + '<strong><span style="font-family: Verdana, Geneva, sans-serif; font-size: 24px;">'
-    html_text = html_text + '<span style="color: rgb(65, 168, 95);text-align:center;">SWP Calculator Coming Soon:</span></strong>'
 
-    st.markdown(html_text,unsafe_allow_html=True)
+
+
+    col1,col,col2 = st.columns((10,1,12))
+
+   #st.image("https://static.streamlit.io/examples/cat.jpg", width=200)
+    corpus = col1.number_input("Initial Corpus", min_value=0, step=100000, value=10000000)
+
+    col2.markdown("   ")
+
+    html_text = '<p style="text-align:left">'
+    html_text = html_text + '<BR><strong><span style="font-family: Verdana, Geneva, sans-serif; font-size: 15px;">'
+    html_text = html_text + '<span style="color: rgb(65, 168, 95);text-align:center;">{}</span></strong>'.format(display_amount(corpus))
+    col2.markdown(html_text, unsafe_allow_html=True)
+    swp_withdrawal_freq   = col1.selectbox("SWP Frequency",['Monthly','Fortnightly','Quarterly','Annually'],0)
+
+    if swp_withdrawal_freq == 'Monthly':
+        swp_def_value = 0.005 * corpus
+        swp_freq = 21
+    elif swp_withdrawal_freq == 'Fortnightly':
+        swp_def_value = 0.0025 * corpus
+        swp_freq = 10
+    elif swp_withdrawal_freq == 'Quarterly':
+        swp_def_value = 0.015 * corpus
+        swp_freq = 126
+    elif swp_withdrawal_freq == 'Annualy':
+        swp_def_value = 0.06 * corpus
+        swp_freq = 252
+
+    swp_def_value = max(100 * int(swp_def_value/100),1000)
+    swp_withdrawal_amount = col2.number_input("SWP ", min_value=1000, step=1000, value=swp_def_value, help="Monthly Withdraw amount is recommended to be roughly 0.5% (i.e 6% annually)")
+
+    swp_st_date = col1.date_input("SWP Start Date", dt.date(2018, 1, 1))
+    swp_st_date = dt.datetime(swp_st_date.year, swp_st_date.month, swp_st_date.day)
+    swp_st_date = swp_st_date - dt.timedelta(days=1)
+    #start_date = start_date.date()
+
+    swp_end_date = col2.date_input("SWP End Date", dt.date.today(), min_value=st_date)
+    swp_end_date = dt.datetime(swp_end_date.year, swp_end_date.month, swp_end_date.day)
+    swp_end_date = swp_end_date + dt.timedelta(days=1)
+
+    swp_inflation = col1.number_input("Annual % Increase in Withdrawal", min_value=0.0, max_value=50.0, value=0.0, step=0.5,help="Annual % Increase in Withdrawal Amount due to Inflation")
+    df_mf_perf_sel = df_mf_perf[df_mf_perf['Inception_Date'] < swp_st_date]
+    schm_list = [ "{}-{}".format(j, df_mf_perf_sel.loc[j]['Scheme_Name']) for j in df_mf_perf_sel.index ]
+
+
+
+    schm_select = col2.selectbox("Select SWP Scheme",schm_list,0)
+    amfi_code = int(schm_select.split("-")[0])
+    schm_select = schm_select.split("-")[1]
+    #col1.write(swp_st_date)
+    #col1.write(swp_end_date)
+
+    df_mf = get_historical_nav(amfi_code,tday.day)
+    df_mf = df_mf[(df_mf.index > swp_st_date.date()) & (df_mf.index < swp_end_date.date())]
+
+    df_swp = get_swp(df_mf,corpus, swp_withdrawal_amount, swp_freq,swp_inflation)
+
+    fy_rec = []
+    for fy in df_swp['FY'].unique():
+        swp_amt_fy   = df_swp[df_swp['FY']==fy]['SWP_AMOUNT'].sum()
+        cap_gains_fy = df_swp[df_swp['FY']==fy]['Cap Gains'].sum()
+        net_value_fy_close_bal = df_swp[df_swp['FY']==fy]['Net_Value'].iloc[-1]
+        net_value_fy_open_bal = df_swp[df_swp['FY']==fy]['Net_Value'].iloc[0]
+
+
+        values = fy, display_amount(net_value_fy_open_bal),display_amount(swp_amt_fy),display_amount(net_value_fy_close_bal),  \
+                    display_amount(cap_gains_fy)
+        fy_rec.append(values)
+
+    values = "",display_amount(df_swp['Net_Value'].iloc[0]),display_amount(df_swp['SWP_AMOUNT'].sum()),  \
+                display_amount(df_swp['Net_Value'].iloc[-1]), display_amount(df_swp['Cap Gains'].sum())
+    fy_rec.append(values)
+
+    df_fy_data = pd.DataFrame(fy_rec,columns=['FY','Open Bal','SWP Withdrawal','Close Bal','Capital Gains'])
+    st.markdown("-----------------------------------------")
+    col1,col2 = st.columns((12,9))
+
+    df_cash_flow = df_swp[df_swp['Tran_Value'] != 0][['Tran_Value','Num_Days']]
+    mkt_value = df_swp['Net_Value'].iloc[-1]
+    #col1.write(df_cash_flow)
+    #col1.write(mkt_value)
+    swp_xirr = round(optimize.newton(xirr, 3, args=(df_cash_flow, mkt_value,)),2)
+    html_table = get_markdown_table(df_fy_data)
+    col1.markdown(html_table,unsafe_allow_html=True)
+    #col1.write(df_fy_data)
+
+    fig = px.line(df_swp[['Net_Value']])
+
+
+    fig.update_layout(title_text="SWP XIRR  ( {}% )".format(str(swp_xirr)),
+                              title_x=0.35,
+                              title_font_size=16,
+                              xaxis_title="Months",
+                              yaxis_title="Fund")
+
+    fig.update_layout(margin=dict(l=1,r=1,b=1,t=30))
+
+    fig.update_layout(showlegend=False)
+    fig.update_layout(legend_title='')
+    fig.update_layout(legend=dict(
+                        x=0.3,
+                        y=-0.25,
+                        traceorder='normal',
+                        font=dict(size=12,)
+                     ))
+
+    fig.update_layout(height=450)
+    fig.update_layout(width=400)
+
+    #col2.markdown('<BR>',unsafe_allow_html=True)
+    col2.plotly_chart(fig,config=config)
+    #st.markdown(html_text,unsafe_allow_html=True)
