@@ -378,7 +378,7 @@ with swp:
     swp_st_date = swp_st_date - dt.timedelta(days=1)
     #start_date = start_date.date()
 
-    swp_end_date = col2.date_input("SWP End Date", dt.date.today(), min_value=st_date)
+    swp_end_date = col2.date_input("SWP End Date", dt.date.today(), min_value=swp_st_date)
     swp_end_date = dt.datetime(swp_end_date.year, swp_end_date.month, swp_end_date.day)
     swp_end_date = swp_end_date + dt.timedelta(days=1)
 
