@@ -383,6 +383,8 @@ with swp:
     swp_end_date = swp_end_date + dt.timedelta(days=1)
 
     swp_inflation = col1.number_input("Annual % Increase in Withdrawal", min_value=0.0, max_value=50.0, value=0.0, step=0.5,help="Annual % Increase in Withdrawal Amount due to Inflation")
+    df_mf_perf['Inception_Date']= pd.to_datetime(df_mf_perf['Inception_Date'])
+
     df_mf_perf_sel = df_mf_perf[df_mf_perf['Inception_Date'] < swp_st_date]
     schm_list = [ "{}-{}".format(j, df_mf_perf_sel.loc[j]['Scheme_Name']) for j in df_mf_perf_sel.index ]
 
