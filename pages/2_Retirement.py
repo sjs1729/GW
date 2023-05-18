@@ -22,8 +22,18 @@ np.set_printoptions(precision=3)
 
 tday = dt.datetime.today()
 
-col1, col2 = st.sidebar.columns(2)
-col1.image('gw_logo.png', width=300)
+st.markdown(
+    """
+    <style>
+    .css-k1vhr4 {
+        margin-top: -60px;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+c_1, c_2 = st.columns((8,4))
+c_2.image('growealth-logo_long.png', width=300)
 
 
 
@@ -213,14 +223,14 @@ placeholder_income.markdown(":blue[Validations - Start Age => {}, End Age < {}, 
 
 df_goals = pd.DataFrame(
     [
-        { "Goal Start Age": curr_age, "Goal End Age": end_age, "Goal Description":"","Amount":0,"Frequency (Frequency = 3 if Once in 3 years, Frequency=0 if OneTime)":0,"Inflation Rate":0.0},
-        { "Goal Start Age": curr_age, "Goal End Age": end_age, "Goal Description":"","Amount":0,"Frequency (Frequency = 3 if Once in 3 years, Frequency=0 if OneTime)":0,"Inflation Rate":0.0},
-        { "Goal Start Age": curr_age, "Goal End Age": end_age, "Goal Description":"","Amount":0,"Frequency (Frequency = 3 if Once in 3 years, Frequency=0 if OneTime)":0,"Inflation Rate":0.0},
-        { "Goal Start Age": curr_age, "Goal End Age": end_age, "Goal Description":"","Amount":0,"Frequency (Frequency = 3 if Once in 3 years, Frequency=0 if OneTime)":0,"Inflation Rate":0.0},
-        { "Goal Start Age": curr_age, "Goal End Age": end_age, "Goal Description":"","Amount":0,"Frequency (Frequency = 3 if Once in 3 years, Frequency=0 if OneTime)":0,"Inflation Rate":0.0},
-        { "Goal Start Age": curr_age, "Goal End Age": end_age, "Goal Description":"","Amount":0,"Frequency (Frequency = 3 if Once in 3 years, Frequency=0 if OneTime)":0,"Inflation Rate":0.0},
-        { "Goal Start Age": curr_age, "Goal End Age": end_age, "Goal Description":"","Amount":0,"Frequency (Frequency = 3 if Once in 3 years, Frequency=0 if OneTime)":0,"Inflation Rate":0.0},
-        { "Goal Start Age": curr_age, "Goal End Age": end_age, "Goal Description":"","Amount":0,"Frequency (Frequency = 3 if Once in 3 years, Frequency=0 if OneTime)":0,"Inflation Rate":0.0},
+        { "Goal Start Age": curr_age, "Goal End Age": end_age, "Goal Description":"","Amount":0,"Frequency (Frequency = 3 if Once in 3 years, Frequency=0 if OneTime)":0,"Inflation Rate":inflation},
+        { "Goal Start Age": curr_age, "Goal End Age": end_age, "Goal Description":"","Amount":0,"Frequency (Frequency = 3 if Once in 3 years, Frequency=0 if OneTime)":0,"Inflation Rate":inflation},
+        { "Goal Start Age": curr_age, "Goal End Age": end_age, "Goal Description":"","Amount":0,"Frequency (Frequency = 3 if Once in 3 years, Frequency=0 if OneTime)":0,"Inflation Rate":inflation},
+        { "Goal Start Age": curr_age, "Goal End Age": end_age, "Goal Description":"","Amount":0,"Frequency (Frequency = 3 if Once in 3 years, Frequency=0 if OneTime)":0,"Inflation Rate":inflation},
+        { "Goal Start Age": curr_age, "Goal End Age": end_age, "Goal Description":"","Amount":0,"Frequency (Frequency = 3 if Once in 3 years, Frequency=0 if OneTime)":0,"Inflation Rate":inflation},
+        { "Goal Start Age": curr_age, "Goal End Age": end_age, "Goal Description":"","Amount":0,"Frequency (Frequency = 3 if Once in 3 years, Frequency=0 if OneTime)":0,"Inflation Rate":inflation},
+        { "Goal Start Age": curr_age, "Goal End Age": end_age, "Goal Description":"","Amount":0,"Frequency (Frequency = 3 if Once in 3 years, Frequency=0 if OneTime)":0,"Inflation Rate":inflation},
+        { "Goal Start Age": curr_age, "Goal End Age": end_age, "Goal Description":"","Amount":0,"Frequency (Frequency = 3 if Once in 3 years, Frequency=0 if OneTime)":0,"Inflation Rate":inflation},
     ]
 )
 st.markdown('<p style="font-size:20px;font-weight: bold;text-align:left;vertical-align:middle;color:blue;margin:0px;padding:0px">Edit Future Financial Goals(if any)</p>', unsafe_allow_html=True)

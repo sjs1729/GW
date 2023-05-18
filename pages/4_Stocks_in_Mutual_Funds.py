@@ -20,8 +20,18 @@ np.set_printoptions(precision=3)
 
 tday = dt.datetime.today()
 
-col1, col2 = st.sidebar.columns(2)
-col1.image('gw_logo.png', width=300)
+st.markdown(
+    """
+    <style>
+    .css-k1vhr4 {
+        margin-top: -60px;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+c_1, c_2 = st.columns((8,4))
+c_2.image('growealth-logo_long.png', width=300)
 
 @st.cache_data()
 def get_mf_portfolio():

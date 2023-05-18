@@ -18,13 +18,23 @@ st.set_page_config(
     layout="wide",
 )
 
+st.markdown(
+    """
+    <style>
+    .css-k1vhr4 {
+        margin-top: -60px;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
 np.set_printoptions(precision=3)
 
 tday = dt.datetime.today()
 
-#col1, col2 = st.sidebar.columns(2)
-#col1.image('gw_logo.png', width=300)
+c_1, c_2 = st.columns((8,4))
+c_2.image('growealth-logo_long.png', width=300)
 
 @st.cache_data()
 def get_mf_perf():
@@ -150,8 +160,8 @@ def get_swp(df, ini_inv, swp_amt, swp_freq,inflation):
     return swp
 
 config = {'displayModeBar': False}
-html_text = '<p style="text-align:center">'
-html_text = html_text + '<strong><span style="font-family: Verdana, Geneva, sans-serif; font-size: 30px;">'
+html_text = '<p style="text-align:center"><BR>'
+html_text = html_text + '<strong><span style="font-family: Verdana, Geneva, sans-serif; font-size: 24px;">'
 html_text = html_text + '<span style="color: rgb(9, 0, 220);text-align:center;">Systematic Investment Calculators</span></strong>'
 
 st.markdown(html_text,unsafe_allow_html=True)
