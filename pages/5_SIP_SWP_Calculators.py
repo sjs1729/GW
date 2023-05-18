@@ -11,6 +11,7 @@ import json
 from shared_functions import *
 
 
+
 st.set_page_config(
     page_title="GroWealth Investments       ",
     page_icon="nirvana.ico",
@@ -106,9 +107,15 @@ def get_swp(df, ini_inv, swp_amt, swp_freq,inflation):
 
         if ndays % swp_freq == 0:
 
-
-            units_sold = swp_amt/curr_nav
-            swp_a = swp_amt
+            if swp_amt > net_value:
+                units_sold = bal_units
+                swp_a = round(bal_units * curr_nav,0)
+            elif bal_units == 0.0:
+                units_sold = 0.0
+                swp_a = 0.0
+            else:
+                units_sold = swp_amt/curr_nav
+                swp_a = swp_amt
 
             bal_units = bal_units - units_sold
             cashflow  = swp_a
@@ -127,11 +134,12 @@ def get_swp(df, ini_inv, swp_amt, swp_freq,inflation):
                 swp_amt = swp_amt * (1+inflation)
 
 
-        net_value = round(bal_units * curr_nav,0)
+        if net_value > 0.0:
+            net_value = round(bal_units * curr_nav,0)
 
-        values = i,curr_nav, bal_units, units_sold,swp_a,net_value,cashflow,num_days,cap_gains,holding_period,fin_year,tax_amt
+            values = i,curr_nav, bal_units, units_sold,swp_a,net_value,cashflow,num_days,cap_gains,holding_period,fin_year,tax_amt
 
-        rec.append(values)
+            rec.append(values)
 
 
 
@@ -433,11 +441,11 @@ with swp:
     fig = px.line(df_swp[['Net_Value']])
 
 
-    fig.update_layout(title_text="SWP XIRR  ( {}% )".format(str(swp_xirr)),
+    fig.update_layout(title_text="SWP Balance ( XIRR - {}% )".format(str(swp_xirr)),
                               title_x=0.35,
                               title_font_size=16,
-                              xaxis_title="Months",
-                              yaxis_title="Fund")
+                              xaxis_title="",
+                              yaxis_title="Net Fund")
 
     fig.update_layout(margin=dict(l=1,r=1,b=1,t=30))
 
@@ -455,4 +463,6 @@ with swp:
 
     #col2.markdown('<BR>',unsafe_allow_html=True)
     col2.plotly_chart(fig,config=config)
+
+    col1.markdown('<p style="text-align:left"><span style="font-size:11px;color:rgb(255,0,20)">**FY2024: Apr 2023 - Mar 2024</span>',unsafe_allow_html=True)
     #st.markdown(html_text,unsafe_allow_html=True)
