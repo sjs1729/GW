@@ -381,7 +381,7 @@ with swp:
     swp_def_value = max(100 * int(swp_def_value/100),1000)
     swp_withdrawal_amount = col2.number_input("SWP ", min_value=1000, step=1000, value=swp_def_value, help="Monthly Withdraw amount is recommended to be roughly 0.5% (i.e 6% annually)")
 
-    swp_st_date = col1.date_input("SWP Start Date", dt.date(2018, 1, 1))
+    swp_st_date = col1.date_input("SWP Start Date", dt.date(2017, 1, 1))
     swp_st_date = dt.datetime(swp_st_date.year, swp_st_date.month, swp_st_date.day)
     swp_st_date = swp_st_date - dt.timedelta(days=1)
     #start_date = start_date.date()
@@ -441,7 +441,9 @@ with swp:
     fig = px.line(df_swp[['Net_Value']])
 
 
-    fig.update_layout(title_text="SWP Balance ( XIRR - {}% )".format(str(swp_xirr)),
+    #fig.update_layout(title_text="SWP Balance ( XIRR - {}% )".format(str(swp_xirr)),
+    fig.update_layout(title_text="",
+
                               title_x=0.35,
                               title_font_size=16,
                               xaxis_title="",
@@ -458,10 +460,15 @@ with swp:
                         font=dict(size=12,)
                      ))
 
-    fig.update_layout(height=450)
+    fig.update_layout(height=350)
     fig.update_layout(width=400)
 
     #col2.markdown('<BR>',unsafe_allow_html=True)
+    col2.markdown('<p style="text-align:center"><BR><strong><span style="font-size:20px;color:rgb(0,50,255)">&nbsp; \
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SWP Balance</span><span   \
+                        style="font-size:16px;color:rgb(0,200,255)"> (XIRR - {}%)</span>'.format(str(swp_xirr)),    \
+                        unsafe_allow_html=True)
+
     col2.plotly_chart(fig,config=config)
 
     col1.markdown('<p style="text-align:left"><span style="font-size:11px;color:rgb(255,0,20)">**FY2024: Apr 2023 - Mar 2024</span>',unsafe_allow_html=True)
