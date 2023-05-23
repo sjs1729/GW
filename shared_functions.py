@@ -77,11 +77,11 @@ def get_markdown_table(data, header='Y', footer='Y'):
     html_script = html_script + "</tr></thead><tbody>"
     for j in data.index:
         if ncols < 5:
-            html_script = html_script + "<tr style='border:none;font-family:Courier; color:Blue; font-size:13px;padding:1px;';>"
-        elif ncols < 7:
             html_script = html_script + "<tr style='border:none;font-family:Courier; color:Blue; font-size:12px;padding:1px;';>"
+        elif ncols < 7:
+            html_script = html_script + "<tr style='border:none;font-family:Courier; color:Blue; font-size:11px;padding:1px;';>"
         else:
-            html_script = html_script + "<tr style='border:none;font-family:Courier; color:Blue; font-size:10px;padding:1px;';>"
+            html_script = html_script + "<tr style='border:none;font-family:Courier; color:Blue; font-size:9px;padding:1px;';>"
 
         a = data.loc[j]
         for k in cols:
