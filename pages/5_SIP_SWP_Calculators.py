@@ -445,15 +445,15 @@ with swp:
     #col1.write(mkt_value)
     swp_xirr = round(optimize.newton(xirr, 3, args=(df_cash_flow, mkt_value,)),2)
     html_table = get_markdown_table(df_fy_data)
+    col1.markdown('<BR>',unsafe_allow_html=True)
     col1.markdown(html_table,unsafe_allow_html=True)
     #col1.write(df_fy_data)
-
-    fig = px.line(df_swp[['Net_Value']])
+    #col2.write(df_swp['Net_Value'])
+    fig = px.line(df_swp['Net_Value'])
 
 
     #fig.update_layout(title_text="SWP Balance ( XIRR - {}% )".format(str(swp_xirr)),
     fig.update_layout(title_text="",
-
                               title_x=0.35,
                               title_font_size=16,
                               xaxis_title="",
@@ -470,11 +470,11 @@ with swp:
                         font=dict(size=12,)
                      ))
 
-    fig.update_layout(height=350)
+    fig.update_layout(height=300)
     fig.update_layout(width=400)
 
     #col2.markdown('<BR>',unsafe_allow_html=True)
-    col2.markdown('<p style="text-align:center"><BR><strong><span style="font-size:20px;color:rgb(0,50,255)">&nbsp; \
+    col2.markdown('<p style="text-align:center"><BR><strong><span style="font-size:18px;color:rgb(0,50,255)">&nbsp; \
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SWP Balance</span><span   \
                         style="font-size:16px;color:rgb(0,200,255)"> (XIRR - {}%)</span>'.format(str(swp_xirr)),    \
                         unsafe_allow_html=True)
