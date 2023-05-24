@@ -46,9 +46,13 @@ def get_mf_perf():
     df_perf = pd.read_csv('revised_mf_perf.csv')
     df_perf.set_index('Scheme_Code', inplace=True)
 
+    df_stp_src = pd.read_csv('stp_src_funds.csv')
+    df_stp_src.set_index('Scheme_Code', inplace=True)
+
+
     df_port_dtl = pd.read_csv('mf_port_detail.csv')
 
-    return df, df_perf, df_port_dtl
+    return df, df_perf, df_port_dtl, df_stp_src
 
 @st.cache_data()
 def get_historical_nav(amfi_code,tday):
@@ -84,8 +88,94 @@ def xirr(rate,cash_flow,terminal_value=0):
 
     return  npv+terminal_value
 
+def get_stp(df, ini_inv, stp_amount, stp_freq, dynamic_model):
+    ndays = 0
+    rec = []
+    tday = dt.date.today()
+    num_stp = 0
+    stp_in_bal_units = 0
+    for i in df.index:
+        num_days = 0
+        units_sold = 0.0
+        units_pur = 0.0
+        stp_out = 0
+        curr_nav_stp_out = df.loc[i]['Source_NAV']
+        curr_nav_stp_in  = df.loc[i]['Dest_NAV']
+        cashflow =0
+        cap_gains = 0.0
+        holding_period = 0
+        tax_year=""
+        tax_amt = 0
+        if ndays == 0:
+            pur_units = ini_inv/curr_nav_stp_out
+            bal_units = pur_units
+            net_value = ini_inv
+            cashflow  = -1*ini_inv
+            num_days = (tday - i).days
+            pur_date = i
+            pur_nav = curr_nav_stp_out
+
+        if i.month < 4:
+            fin_year = i.year
+        else:
+            fin_year = i.year+1
+
+        if ndays > 0 and ndays % stp_freq == 0:
+
+            if stp_amount > stp_src_value :
+                units_sold = bal_units
+                stp_out = round(bal_units * curr_nav_stp_out,0)
+
+                units_pur = stp_out/curr_nav_stp_in
+
+
+            elif bal_units == 0.0:
+                units_sold = 0.0
+                stp_out = 0.0
+
+            else:
+                units_sold = stp_amount/curr_nav_stp_out
+                stp_out = stp_amount
+                units_pur = stp_out/curr_nav_stp_in
+
+
+            bal_units = bal_units - units_sold
+            cashflow  = stp_out
+            num_days = (tday - i).days
+            cap_gains = units_sold * (curr_nav_stp_out - pur_nav)
+            holding_period = (i - pur_date).days
+
+            stp_in_bal_units  += units_pur
+
+
+
+
+            num_stp = num_stp + 1
+
+
+
+        stp_src_value  = round(bal_units * curr_nav_stp_out, 0 )
+        stp_dest_value = round(stp_in_bal_units * curr_nav_stp_in, 0 )
+        net_value =  stp_src_value + stp_dest_value
+
+        values = i,units_sold, bal_units, curr_nav_stp_out ,stp_out, units_pur, stp_in_bal_units, curr_nav_stp_in, stp_src_value, stp_dest_value, net_value,cashflow,num_days,cap_gains,holding_period,fin_year
+
+        rec.append(values)
+
+        ndays = ndays + 1
+
+
+
+    stp  = pd.DataFrame(rec, columns=['Date','STP_OUT_Units','Bal_Units_STP_Out','STP_OUT_NAV','STP_AMOUNT', \
+                                      'STP_IN_Units','Bal_Units_STP_In','STP_IN_NAV','STP_SOURCE_FUND_VAL','STP_DEST_FUND_VAL','Net_Value', \
+                                      'Tran_Value','Num_Days','Cap Gains','Holding Period','FY'])
+
+    stp.set_index('Date',inplace=True)
+
+    return stp
 
 def get_swp(df, ini_inv, swp_amt, swp_freq,inflation):
+    #st.write(df)
     ndays = 0
     rec = []
     tday = dt.date.today()
@@ -166,9 +256,9 @@ html_text = html_text + '<span style="color: rgb(9, 0, 220);text-align:center;">
 
 st.markdown(html_text,unsafe_allow_html=True)
 
-df, df_mf_perf, df_port_dtl = get_mf_perf()
+df, df_mf_perf, df_port_dtl, df_stp_src = get_mf_perf()
 
-sip, swp = st.tabs(["SIP - Calculator", "SWP - Calculator"])
+sip,stp, swp = st.tabs(["SIP - Calculator","STP Calculator", "SWP - Calculator"])
 
 
 with sip:
@@ -483,3 +573,157 @@ with swp:
 
     col1.markdown('<p style="text-align:left"><span style="font-size:11px;color:rgb(255,0,20)">**FY2024: Apr 2023 - Mar 2024</span>',unsafe_allow_html=True)
     #st.markdown(html_text,unsafe_allow_html=True)
+
+
+with stp:
+
+
+    col1,col,col2 = st.columns((10,1,12))
+
+   #st.image("https://static.streamlit.io/examples/cat.jpg", width=200)
+    corpus = col1.number_input("STP Investment", min_value=0, step=100000, value=10000000)
+    col2.markdown("   ")
+    html_text = '<p style="text-align:left">'
+    html_text = html_text + '<BR><strong><span style="font-family: Verdana, Geneva, sans-serif; font-size: 15px;">'
+    html_text = html_text + '<span style="color: rgb(65, 168, 95);text-align:center;">{}</span></strong><BR>'.format(display_amount(corpus))
+    col2.markdown(html_text, unsafe_allow_html=True)
+    stp_freq   = col1.selectbox("STP Frequency",['Monthly','Fortnightly','Weekly','Daily'],0)
+
+    if stp_freq == 'Monthly':
+        stp_freq = 21
+    elif stp_freq == 'Fortnightly':
+        stp_freq = 10
+    elif stp_freq == 'Weekly':
+        stp_freq = 5
+    elif stp_freq == 'Daily':
+        stp_freq = 1
+
+    stp_amount = col2.number_input("STP Investment ", min_value=1000, step=1000, value=swp_def_value, help="Amount to be Transferred from Debt to Equity_Holding")
+
+    stp_st_date = col1.date_input("STP Start Date", dt.date(2017, 1, 1))
+    stp_st_date = dt.datetime(stp_st_date.year, stp_st_date.month, stp_st_date.day)
+    stp_st_date = stp_st_date - dt.timedelta(days=1)
+    #start_date = start_date.date()
+
+    stp_end_date = col2.date_input("STP End Date", dt.date.today(), min_value=stp_st_date)
+    stp_end_date = dt.datetime(stp_end_date.year, stp_end_date.month, stp_end_date.day)
+    stp_end_date = stp_end_date + dt.timedelta(days=1)
+
+    #swp_inflation = col1.number_input("Annual % Increase in Withdrawal", min_value=0.0, max_value=50.0, value=0.0, step=0.5,help="Annual % Increase in Withdrawal Amount due to Inflation")
+    df_mf_perf['Inception_Date']= pd.to_datetime(df_mf_perf['Inception_Date'])
+    df_stp_src['Inception_Date']= pd.to_datetime(df_stp_src['Inception_Date'])
+
+    df_stp_src_sel = df_stp_src[df_stp_src['Inception_Date'] < stp_st_date]
+
+    schm_list_source = [ "{}-{}".format(j, df_stp_src_sel.loc[j]['Scheme_Name']) for j in df_stp_src_sel.index ]
+
+
+
+    schm_select_source = col1.selectbox("Select STP Source Scheme",schm_list_source,0)
+    amfi_code_source = int(schm_select_source.split("-")[0])
+    schm_select_source = schm_select_source.split("-")[1]
+    fund_house_source = df_stp_src_sel[df_stp_src_sel.index == amfi_code_source]['Fund_House'].iloc[0]
+    #col1.write(swp_st_date)
+    #col1.write(swp_end_date)
+
+    df_mf_perf_sel = df_mf_perf[(df_mf_perf['Inception_Date'] < stp_st_date) & (df_mf_perf['Fund_House'] == fund_house_source)]
+
+    schm_list_dest = [ "{}-{}".format(j, df_mf_perf_sel.loc[j]['Scheme_Name']) for j in df_mf_perf_sel.index if j != amfi_code_source ]
+
+
+    schm_select_dest = col2.selectbox("Select SWP Scheme",schm_list_dest,0)
+    amfi_code_dest = int(schm_select_dest.split("-")[0])
+    schm_select_dest = schm_select_dest.split("-")[1]
+
+    df_mf_source = get_historical_nav(amfi_code_source,tday.day)
+    df_mf_source.columns = ['Source_NAV']
+    df_mf_source = df_mf_source[(df_mf_source.index > stp_st_date.date()) & (df_mf_source.index < stp_end_date.date())]
+    df_mf_dest = get_historical_nav(amfi_code_dest,tday.day)
+    df_mf_dest.columns = ['Dest_NAV']
+
+    df_mf_dest = df_mf_dest[(df_mf_dest.index > stp_st_date.date()) & (df_mf_dest.index < stp_end_date.date())]
+
+    df_mf = pd.concat([df_mf_source,df_mf_dest],join="inner", axis=1)
+
+    #st.write(df_mf)
+
+    df_stp = get_stp(df_mf,corpus, stp_amount, stp_freq,dynamic_model='N')
+
+    #st.write(df_stp)
+
+    df_cashflow_stp_out = df_stp[df_stp['Tran_Value'] != 0][['Tran_Value','Num_Days','STP_OUT_NAV','STP_OUT_Units','Bal_Units_STP_Out']]
+    mkt_val_stp_out = df_stp['STP_SOURCE_FUND_VAL'].iloc[-1]
+    #st.write(df_cashflow_stp_out)
+    #st.write(mkt_val_stp_out)
+    stp_out_xirr = round(optimize.newton(xirr, 3, args=(df_cashflow_stp_out, mkt_val_stp_out,)),2)
+    #st.write("STP OUT XIRR - {}".format(stp_out_xirr))
+
+    df_cashflow_stp_in = df_stp[df_stp['Tran_Value'] > 0][['Tran_Value','Num_Days']]
+    mkt_val_stp_in = df_stp['STP_DEST_FUND_VAL'].iloc[-1] * -1
+    #st.write(df_cashflow_stp_in)
+    #st.write(mkt_val_stp_in)
+    stp_in_xirr = round(optimize.newton(xirr, 3, args=(df_cashflow_stp_in, mkt_val_stp_in,)),2)
+    #st.write("STP OUT XIRR - {}".format(stp_in_xirr))
+
+    stp_ini_val = df_stp['Net_Value'].iloc[0]
+    stp_fin_val = df_stp['Net_Value'].iloc[-1]
+    tot_years = df_stp['Num_Days'].iloc[0]/365.0
+
+    #st.write("{} - {} - {}".format(stp_ini_val,stp_fin_val,tot_years))
+
+    stp_xirr = round(100*(np.power(stp_fin_val/stp_ini_val, 1.0/tot_years) - 1),2)
+
+    #st.write("STP  XIRR - {}".format(stp_xirr))
+    # sqrt(252) = 15.87, factor for Daily Volatility to Annualised Volatility
+    ann_volatility = round(df_stp['Net_Value'].pct_change().dropna().std() * 15.87 * 100,2)
+
+    df_stp.rename(columns = {'STP_SOURCE_FUND_VAL':"STP OUT - {} ({} %)".format(schm_select_source,stp_out_xirr), \
+                             'STP_DEST_FUND_VAL':"STP IN - {} - ({} %)".format(schm_select_dest,stp_in_xirr), \
+                             'Net_Value':"STP Overall - ({} %)".format(stp_xirr)}, inplace=True)
+    fig = px.line(df_stp[["STP OUT - {} ({} %)".format(schm_select_source,stp_out_xirr), \
+                          "STP IN - {} - ({} %)".format(schm_select_dest,stp_in_xirr),    \
+                          "STP Overall - ({} %)".format(stp_xirr)]])
+
+    #st.markdown(html_text,unsafe_allow_html=True)
+    #fig.update_layout(title_text="SWP Balance ( XIRR - {}% )".format(str(swp_xirr)),
+    fig.update_layout(title_text="Fund Growth - STP ",
+                              title_x=0.40,
+                              title_font_size=22,
+                              xaxis_title="",
+                              yaxis_title="Net Fund Value")
+
+    fig.update_layout(margin=dict(l=1,r=1,b=1,t=30))
+
+    fig.update_layout(showlegend=True)
+    fig.update_layout(legend_title='')
+    fig.update_layout(legend=dict(
+                        x=0.20,
+                        y=-0.35,
+                        traceorder='normal',
+                        font=dict(size=14,)
+                     ))
+
+    fig.update_layout(height=550)
+    fig.update_layout(width=600)
+
+    col1, col2, col3 = st.columns((8,1,4))
+
+
+    col1.markdown('<BR>', unsafe_allow_html = True)
+
+    col1.plotly_chart(fig, config = config)
+
+    realized_cap_gains = df_stp['Cap Gains'].sum(0)
+    dict_basic_info = {'Amount Invested': display_amount(stp_ini_val + realized_cap_gains),
+             'Current Market Value': display_amount(stp_fin_val),
+             'Realized Cap Gains': display_amount(realized_cap_gains),
+             'Unrealized Cap Gains':display_amount(stp_fin_val - stp_ini_val - realized_cap_gains),
+             'XIRR': "{}%".format(stp_xirr),
+             'Annualised Volatility': "{}%".format(ann_volatility)
+            }
+
+    html_text = get_markdown_dict(dict_basic_info,12)
+    #html_text = '<b>Basic Info</b>' + html_text
+    col3.markdown('<BR><BR><BR><BR><BR><P style="text-align:center;color:Magenta"><u><b>STP Summary</b></u></P>',unsafe_allow_html=True)
+
+    col3.markdown(html_text,unsafe_allow_html=True)
