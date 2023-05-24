@@ -581,7 +581,7 @@ with stp:
     col1,col,col2 = st.columns((10,1,12))
 
    #st.image("https://static.streamlit.io/examples/cat.jpg", width=200)
-    corpus = col1.number_input("STP Investment", min_value=0, step=100000, value=10000000)
+    corpus = col1.number_input("STP Investment", min_value=0, step=100000, value=1000000)
     col2.markdown("   ")
     html_text = '<p style="text-align:left">'
     html_text = html_text + '<BR><strong><span style="font-family: Verdana, Geneva, sans-serif; font-size: 15px;">'
@@ -598,7 +598,10 @@ with stp:
     elif stp_freq == 'Daily':
         stp_freq = 1
 
-    stp_amount = col2.number_input("STP Investment ", min_value=1000, step=1000, value=swp_def_value, help="Amount to be Transferred from Debt to Equity_Holding")
+    stp_opt_amt = (corpus/12.0)/int(21/stp_freq )
+    stp_opt_amt = int(stp_opt_amt/1000) * 1000
+
+    stp_amount = col2.number_input("STP Investment ", min_value=1000, step=1000, value=stp_opt_amt, help="Amount to be Transferred from Debt to Equity_Holding")
 
     stp_st_date = col1.date_input("STP Start Date", dt.date(2017, 1, 1))
     stp_st_date = dt.datetime(stp_st_date.year, stp_st_date.month, stp_st_date.day)
