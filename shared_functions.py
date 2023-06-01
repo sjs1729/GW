@@ -1,7 +1,7 @@
 import pandas as pd
 
 
-def display_amount(amount):
+def display_amount(amount, paisa='N'):
 
     if amount != amount:
         amount = 0
@@ -50,6 +50,8 @@ def display_amount(amount):
     else:
         amt_str = amt_str + str(th_bal) + "." + decimal_part
 
+    if paisa == 'N':
+        amt_str = amt_str.split(".")[0]
 
     return amt_str
 
