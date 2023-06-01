@@ -158,13 +158,15 @@ def xirr(rate,cash_flow,terminal_value=0):
 
 
 
-st.markdown('<p style="font-size:36px;font-weight: bold;text-align:center;vertical-align:middle;color:blue;margin:0px;padding:0px">Retirement Planning</p>', unsafe_allow_html=True)
+st.markdown('<p style="font-size:36px;font-weight: bold;text-align:center;vertical-align:middle;color:blue;margin:0px;padding:0px">Retirement Readiness Score</p>', unsafe_allow_html=True)
 st.markdown('<p style="font-size:36px;font-weight: bold;text-align:center;vertical-align:middle;color:blue;margin:0px;padding:0px"></p>', unsafe_allow_html=True)
 st.markdown('<p style="font-size:36px;font-weight: bold;text-align:center;vertical-align:middle;color:blue;margin:0px;padding:0px"></p>', unsafe_allow_html=True)
 st.markdown('<p style="font-size:36px;font-weight: bold;text-align:center;vertical-align:middle;color:blue;margin:0px;padding:0px"></p>', unsafe_allow_html=True)
 
 user_inputs = st.columns((4,4,1,12))
 
+user_inputs[0].markdown('<p><BR></p>', unsafe_allow_html=True)
+user_inputs[1].markdown('<p><BR></p>', unsafe_allow_html=True)
 
 name = user_inputs[0].text_input(":blue[Name]",value="John Doe")
 curr_age = user_inputs[1].number_input(":blue[Your Current Age?]", min_value=18, max_value=100, step=1, value=40)
@@ -194,11 +196,12 @@ inflation = user_inputs[1].number_input(":blue[Inflation]", value=4.0,step =0.1,
 #user_inputs[2].markdown('<p style="font-size:12px;font-weight: bold;text-align:center;vertical-align:middle;color:red;margin:0px;padding:0px">****</p>', unsafe_allow_html=True)
 placeholder_header_1 = user_inputs[3].empty()
 placeholder_score = user_inputs[3].empty()
+placeholder_score_txt = user_inputs[3].empty()
 placeholder_header_2 = user_inputs[3].empty()
 placeholder_chart = user_inputs[3].empty()
 placeholder_fund = user_inputs[3].empty()
 
-placeholder_header_1.markdown('<p style="font-size:20px;font-weight:bold;text-align:center;vertical-align:middle;color:brown;margin:0px;padding:0px"><u>Retirement Score</u></p>', unsafe_allow_html=True)
+#placeholder_header_1.markdown('<p style="font-size:20px;font-weight:bold;text-align:center;vertical-align:middle;color:brown;margin:0px;padding:0px"><u>Retirement Score</u></p>', unsafe_allow_html=True)
 
 n_Retire_1 = st.button('Retirement  Score')
 
@@ -370,6 +373,14 @@ if n_Retire_1 or n_Retire_2:
             root=round(optimize.newton(get_optimised_rate, 25, tol=0.0000001, args=(curr_age, c_annual_income, age_at_retirement, c_corpus, df_expense,terminal_corpus, fut_income)),2)
             #st.write(root)
             opt_corpus = round(optimize.newton(get_optimised_corpus, c_corpus,tol=0.0001,args=(cagr,curr_age, c_annual_income, age_at_retirement, df_expense,terminal_corpus, fut_income)),0)
+            opt_corpus = opt_corpus - c_corpus
+            mth_sip = -1
+            if opt_corpus > 0:
+                if yrs_to_retire > 0:
+                    mthly_r = cagr / 1200.0
+                    tot_mths = 12 * yrs_to_retire
+                    mth_sip = opt_corpus * mthly_r * np.power(1+mthly_r,tot_mths) / (np.power(1+mthly_r,tot_mths) -1)
+
             #st.write(opt_corpus)
 
         #st.write(opt_corpus)
@@ -443,19 +454,33 @@ if n_Retire_1 or n_Retire_2:
                     {'range': [75, 95], 'color': "orange"},
                     {'range': [95, 100], 'color': "green"}]
                 }))
-        fig_1.update_layout(margin=dict(l=130,r=10,b=30,t=1))
+        fig_1.update_layout(margin=dict(l=90,r=10,b=0,t=1))
         fig_1.update_layout(height=200)
-        fig_1.update_layout(width=400)
+        fig_1.update_layout(width=475)
+
+        if opt_corpus > 0:
+            if mth_sip > 0:
+                html_t_text = '<p style="text-align:center"><strong><span style="font-size:16px;color:rgb(130, 30, 100);">Fund Shortfall:</span></em></strong>'
+                html_t_text = html_t_text + '<span style="font-size:14px;color: rgb(0, 0, 255);"> One Time: {}  | Monthly SIP till Retirement: {}</span><BR><BR></em>'.format(display_amount(opt_corpus),display_amount(mth_sip))
+            else:
+                html_t_text = '<p style="text-align:center><strong><span style="font-size:16px;color:rgb(130, 30, 10);">Fund Shortfall: {}</span></em></strong>'
+                html_t_text = html_t_text + '<span style="font-size:14px;color: rgb(0, 0, 255);"> {}</span><BR><BR></em>'.format(display_amount(opt_corpus))
+        else:
+            html_t_text = ""
+
+
+        placeholder_score_txt.markdown(html_t_text, unsafe_allow_html=True)
+
         #fig_1.update_layout(paper_bgcolor = "lavender", font = {'color': "darkblue", 'family': "Arial"})
-        fig_1.update_layout(title_text="Min Fund Needed - {}".format(display_amount(opt_corpus)),
+        fig_1.update_layout(title_text= "",
                   title_x=0.32,
                   title_y=0.1,
-                  titlefont=dict(size=15, color='blue', family='Arial, sans-serif'),
+                  titlefont=dict(size=1, color='blue', family='Arial, sans-serif'),
                   xaxis_title="Optimised Corpus Required is {}".format(display_amount(opt_corpus)),
                   yaxis_title="")
 
         with user_inputs[3].container():
-            placeholder_header_1.markdown('<p style="font-size:20px;font-weight:bold;text-align:center;vertical-align:middle;color:brown;margin:0px;padding:0px"><u>Retirement Score</u></p>', unsafe_allow_html=True)
+            #placeholder_header_1.markdown('<p style="font-size:20px;font-weight:bold;text-align:center;vertical-align:middle;color:brown;margin:0px;padding:0px"><u>Retirement Score</u></p><BR>', unsafe_allow_html=True)
             placeholder_score.plotly_chart(fig_1,config=config)
         #placeholder_score.markdown(":blue[ Retirement Score : {} %]".format(retirement_score))
         #placeholder_fund.markdown('<p style="font-size:16px;font-weight: normal;text-align:center;vertical-align:middle;color:blue;margin:0px;padding:0px">Optimised Fund : {}</p>'.format(display_amount(opt_corpus)), unsafe_allow_html=True)
