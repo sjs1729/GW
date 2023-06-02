@@ -460,10 +460,10 @@ if n_Retire_1 or n_Retire_2:
 
         if opt_corpus > 0:
             if mth_sip > 0:
-                html_t_text = '<p style="text-align:center"><strong><span style="font-size:16px;color:rgb(130, 30, 100);">Fund Shortfall:</span></em></strong>'
+                html_t_text = '<p style="text-align:center"><strong><span style="font-size:16px;color:rgb(10, 100, 40);">Fund Shortfall:</span></em></strong>'
                 html_t_text = html_t_text + '<span style="font-size:14px;color: rgb(0, 0, 255);"> One Time: {}  | Monthly SIP till Retirement: {}</span><BR><BR></em>'.format(display_amount(opt_corpus),display_amount(mth_sip))
             else:
-                html_t_text = '<p style="text-align:center><strong><span style="font-size:16px;color:rgb(130, 30, 10);">Fund Shortfall: {}</span></em></strong>'
+                html_t_text = '<p style="text-align:center"><strong><span style="font-size:16px;color:rgb(10, 100, 40);">Fund Shortfall:</span></em></strong>'
                 html_t_text = html_t_text + '<span style="font-size:14px;color: rgb(0, 0, 255);"> {}</span><BR><BR></em>'.format(display_amount(opt_corpus))
         else:
             html_t_text = ""
