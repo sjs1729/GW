@@ -521,7 +521,7 @@ with swp:
                     display_amount(cap_gains_fy)
         fy_rec.append(values)
 
-    values = "",display_amount(df_swp['Net_Value'].iloc[0]),display_amount(df_swp['SWP_AMOUNT'].sum()),  \
+    values = "","",display_amount(df_swp['SWP_AMOUNT'].sum()),  \
                 display_amount(df_swp['Net_Value'].iloc[-1]), display_amount(df_swp['Cap Gains'].sum())
     fy_rec.append(values)
 
