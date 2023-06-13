@@ -35,7 +35,7 @@ c_2.image('growealth-logo_long.png', width=300)
 @st.cache_data()
 def get_mf_perf():
     df = pd.read_csv('mf_data.csv')
-    df['Date'] = df['Date'].apply(lambda x: dt.datetime.strptime(x,'%Y-%m-%d'))
+    df['Date'] = df['Date'].apply(lambda x: dt.datetime.strptime(x,'%Y-%m-%d').date())
 
     df.set_index('Date',inplace=True)
 
@@ -65,7 +65,7 @@ amfi_code = int(schm_select.split("-")[0])
 schm_select = schm_select.split("-")[1]
 
 comp_date   = s_layout[1].date_input("Select Date", dt.date(2022, 1, 1))
-comp_date = dt.datetime(comp_date.year, comp_date.month, comp_date.day)
+comp_date = dt.date(comp_date.year, comp_date.month, comp_date.day)
 
 
 
@@ -261,3 +261,7 @@ if len(rec) > 0:
 #s_layout[2].write(df_top10_sector.index)
 #except:
 #st.markdown('<BR><BR>*** Data Not Available for {}'.format(schm_select),unsafe_allow_html=True)
+
+notice_txt = '<p><BR><BR><strong><span style="font-family: Verdana, Geneva, sans-serif; font-size: 10px;">'
+notice_txt = notice_txt + '<span style="color: rgb(255, 55, 55);">Note:Market Data as on 12th June 2023</span>'
+st.markdown(notice_txt,unsafe_allow_html=True)
