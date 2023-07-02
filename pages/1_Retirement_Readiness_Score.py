@@ -255,7 +255,6 @@ df_ret_income = pd.DataFrame(income_rec,columns=['Start_Age','End_Age','Desc','A
 
 
 
-
 #st.markdown('<BR><BR>',unsafe_allow_html=True)
 st.markdown("""---""")
 left, mid, mid_right, right = st.columns((2,4,1.5,2))
@@ -282,14 +281,14 @@ g_infl_pct = [g_inputs[5].number_input("",key=f"gInflation_pct_{col}",min_value=
 
 n_Retire_2 = st.button('Retirement Score')
 
+
 goal_rec = []
 for g_i in range(n_goals):
-
     if g_amt[g_i] > 0:
-        values = g_start_age[g_i],g_end_age[g_i],g_desc[g_i],i_income_amt[g_i],int(g_freq[g_i].split("-")[0]),g_infl_pct[g_i]
+        values = g_start_age[g_i],g_end_age[g_i],g_desc[g_i],g_amt[g_i],int(g_freq[g_i].split("-")[0]),g_infl_pct[g_i]
         goal_rec.append(values)
 
-df_goals = pd.DataFrame(income_rec,columns=['Start_Age','End_Age','Desc','Amount','Frequency','Inflation_Pct'])
+df_goals = pd.DataFrame(goal_rec,columns=['Start_Age','End_Age','Desc','Amount','Frequency','Inflation_Pct'])
 
 if n_Retire_1 or n_Retire_2:
 
@@ -297,7 +296,7 @@ if n_Retire_1 or n_Retire_2:
     #df_ret_income = edited_df_post_ret_income[edited_df_post_ret_income['Amount'] > 0]
     #df_goals = edited_df_goals[edited_df_goals['Amount'] > 0 ]
     #st.write(df_goals)
-
+    #st.write(df_ret_income)
 
     exp_data = []
     tot_assets = c_corpus
@@ -357,14 +356,14 @@ if n_Retire_1 or n_Retire_2:
     fut_income = []
     if len(df_ret_income) > 0:
         for i in df_ret_income.index:
-            gc_st_age = df_ret_income.loc[i][0]
-            gc_end_age = df_ret_income.loc[i][1]
-            gc_amt = df_ret_income.loc[i]['Amount']
-            gc_freq =df_ret_income.loc[i][4]
-            gc_incr = df_ret_income.loc[i][5]
+            fi_st_age = df_ret_income.loc[i][0]
+            fi_end_age = df_ret_income.loc[i][1]
+            fi_amt = df_ret_income.loc[i]['Amount']
+            fi_freq =df_ret_income.loc[i][4]
+            fi_incr = df_ret_income.loc[i][5]
 
-            if gc_amt > 0:
-                fut_income = fut_income + get_fut_income(st_age,end_age,gc_amt,gc_freq,gc_incr)
+            if fi_amt > 0:
+                fut_income = fut_income + get_fut_income(fi_st_age,fi_end_age,fi_amt,fi_freq,fi_incr)
 
     #st.write(fut_income)
 
