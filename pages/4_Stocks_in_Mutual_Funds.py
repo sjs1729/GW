@@ -110,7 +110,7 @@ with Reverse_Search:
     st.markdown(html_text,unsafe_allow_html=True)
 
     notice_txt = '<p><BR><BR><span style="font-family: Verdana, Geneva, sans-serif; font-size: 10px;">'
-    notice_txt = notice_txt + '<span style="color: rgb(255,0,20);">Note:Market Data as on 12th June 2023</span>'
+    notice_txt = notice_txt + '<span style="color: rgb(255,0,20);">Note:Market Data as on 5th July 2023</span>'
     st.markdown(notice_txt,unsafe_allow_html=True)
 
 
