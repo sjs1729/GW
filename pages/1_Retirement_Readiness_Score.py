@@ -207,7 +207,7 @@ placeholder_fund = user_inputs[3].empty()
 
 #placeholder_header_1.markdown('<p style="font-size:20px;font-weight:bold;text-align:center;vertical-align:middle;color:brown;margin:0px;padding:0px"><u>Retirement Score</u></p>', unsafe_allow_html=True)
 
-n_Retire_1 = st.button('Retirement  Score')
+n_Retire_1 = st.button('Retirement  Score', key="Button 1")
 
 freq_options = ['0-One Time','1-Once Every Year','2-Once in 2 Years','3-Once in 3 Years','4-Once in 4 Years','5-Once in 5 Years', \
                 '6-Once in 6 Years', '7-Once in 7 Years','8-Once in 8 Years','9-Once in 9 Years','10-Once in 10 Years']
@@ -220,7 +220,7 @@ end_age = plan_till
 st.markdown("""---""")
 
 left, mid, mid_right, right = st.columns((2,4,1.5,2))
-left.markdown("****:red[FUTURE INCOMES]****")
+left.markdown("****:red[FUTURE INCOMES (optional)]****")
 mid_right.markdown(":red[No of Income Rows]")
 n_pr_incomes = right.slider("", min_value=1, max_value=6, step=1, value=4, label_visibility="collapsed")
 
@@ -234,12 +234,14 @@ p_inputs[4].markdown("**:blue[Frequency]**")
 p_inputs[5].markdown("**:blue[Increment %]**")
 
 
-i_start_age = [p_inputs[0].number_input("", key=f"Start_Age_{col}",min_value=st_age, max_value=end_age, step=1, value=st_age,label_visibility="collapsed") for col in range(n_pr_incomes)]
-i_end_age = [p_inputs[1].number_input("", key=f"End_Age_{col}",min_value=i_start_age[col], max_value=end_age, step=1, value=end_age, label_visibility="collapsed") for col in range(n_pr_incomes)]
-i_income_desc = [p_inputs[2].text_input("",value="",key=f"Desc_{col}", label_visibility="collapsed")  for col in range(n_pr_incomes)]
-i_income_amt = [p_inputs[3].number_input("", key=f"Income_amt_{col}", min_value=0, step=10000, value=0, help="Income Annual Value", label_visibility="collapsed")  for col in range(n_pr_incomes)]
-i_income_freq = [p_inputs[4].selectbox("",freq_options,0,key=f"Income_Frequency_{col}", label_visibility="collapsed")  for col in range(n_pr_incomes)]
-i_income_incr_pct = [p_inputs[5].number_input("",key=f"Income_incr_{col}",min_value=0.00, step=0.05, value=0.00, help="Income Increment %",label_visibility="collapsed")  for col in range(n_pr_incomes)]
+i_start_age = [p_inputs[0].number_input("i_Start_Age", key=f"Start_Age_{col}",min_value=st_age, max_value=end_age, step=1, value=st_age,label_visibility="collapsed") for col in range(n_pr_incomes)]
+i_end_age = [p_inputs[1].number_input("i_End_Age", key=f"End_Age_{col}",min_value=i_start_age[col], max_value=end_age, step=1, value=end_age, label_visibility="collapsed") for col in range(n_pr_incomes)]
+i_income_desc = [p_inputs[2].text_input("i_Income",value="",key=f"Desc_{col}", label_visibility="collapsed")  for col in range(n_pr_incomes)]
+i_income_amt = [p_inputs[3].number_input("i_Amount", key=f"Income_amt_{col}", min_value=0, step=10000, value=0, help="Income Annual Value", label_visibility="collapsed")  for col in range(n_pr_incomes)]
+i_income_freq = [p_inputs[4].selectbox("i_Frequency",freq_options,0,key=f"Income_Frequency_{col}", label_visibility="collapsed")  for col in range(n_pr_incomes)]
+i_income_incr_pct = [p_inputs[5].number_input("i_income_incr_pct",key=f"Income_incr_{col}",min_value=0.00, step=0.05, value=0.00, help="Income Increment %",label_visibility="collapsed")  for col in range(n_pr_incomes)]
+
+n_Retire_2 = st.button('Retirement  Score', key="Button 2")
 
 income_rec = []
 for p_i in range(n_pr_incomes):
@@ -258,7 +260,7 @@ df_ret_income = pd.DataFrame(income_rec,columns=['Start_Age','End_Age','Desc','A
 #st.markdown('<BR><BR>',unsafe_allow_html=True)
 st.markdown("""---""")
 left, mid, mid_right, right = st.columns((2,4,1.5,2))
-left.markdown("****:red[FUTURE GOALS]****")
+left.markdown("****:red[FUTURE GOALS (Optional)]****")
 mid_right.markdown(":red[No of Goal Rows]")
 n_goals = right.slider("", min_value=1, max_value=10, step=1, value=4, label_visibility="collapsed")
 
@@ -272,14 +274,14 @@ g_inputs[4].markdown("**:blue[Frequency]**")
 g_inputs[5].markdown("**:blue[Inflation %]**")
 
 
-g_start_age = [g_inputs[0].number_input("", key=f"gStart_Age_{col}",min_value=st_age, max_value=end_age, step=1, value=st_age,label_visibility="collapsed") for col in range(n_goals)]
-g_end_age = [g_inputs[1].number_input("", key=f"gEnd_Age_{col}",min_value=g_start_age[col], max_value=end_age, step=1, value=end_age, label_visibility="collapsed") for col in range(n_goals)]
-g_desc = [g_inputs[2].text_input("",value="",key=f"gDesc_{col}", label_visibility="collapsed")  for col in range(n_goals)]
-g_amt = [g_inputs[3].number_input("", key=f"gAmt_{col}", min_value=0, step=10000, value=0, help="Income Annual Value", label_visibility="collapsed")  for col in range(n_goals)]
-g_freq = [g_inputs[4].selectbox("",freq_options,0,key=f"gFrequency_{col}", label_visibility="collapsed")  for col in range(n_goals)]
-g_infl_pct = [g_inputs[5].number_input("",key=f"gInflation_pct_{col}",min_value=0.00, step=0.05, value=0.00,label_visibility="collapsed")  for col in range(n_goals)]
+g_start_age = [g_inputs[0].number_input("Start Age", key=f"gStart_Age_{col}",min_value=st_age, max_value=end_age, step=1, value=st_age,label_visibility="collapsed") for col in range(n_goals)]
+g_end_age = [g_inputs[1].number_input("End Age", key=f"gEnd_Age_{col}",min_value=g_start_age[col], max_value=end_age, step=1, value=end_age, label_visibility="collapsed") for col in range(n_goals)]
+g_desc = [g_inputs[2].text_input("Desc",value="",key=f"gDesc_{col}", label_visibility="collapsed")  for col in range(n_goals)]
+g_amt = [g_inputs[3].number_input("Amount", key=f"gAmt_{col}", min_value=0, step=10000, value=0, help="Income Annual Value", label_visibility="collapsed")  for col in range(n_goals)]
+g_freq = [g_inputs[4].selectbox("Frequency",freq_options,0,key=f"gFrequency_{col}", label_visibility="collapsed")  for col in range(n_goals)]
+g_infl_pct = [g_inputs[5].number_input("Inflation_pct",key=f"gInflation_pct_{col}",min_value=0.00, step=0.05, value=0.00,label_visibility="collapsed")  for col in range(n_goals)]
 
-n_Retire_2 = st.button('Retirement Score')
+n_Retire_3 = st.button('Retirement Score', key="Button 3")
 
 
 goal_rec = []
@@ -290,7 +292,7 @@ for g_i in range(n_goals):
 
 df_goals = pd.DataFrame(goal_rec,columns=['Start_Age','End_Age','Desc','Amount','Frequency','Inflation_Pct'])
 
-if n_Retire_1 or n_Retire_2:
+if n_Retire_1 or n_Retire_2 or n_Retire_3:
 
     #validation_flag = 'Y'
     #df_ret_income = edited_df_post_ret_income[edited_df_post_ret_income['Amount'] > 0]
@@ -432,7 +434,9 @@ if n_Retire_1 or n_Retire_2:
     fig.update_layout(legend_title='')
     #fig.update_yaxes(automargin=True)
     #fig.update_xaxes(automargin=True)
-    fig.update_layout(autosize=True)
+    #fig.update_layout(autosize=True)
+    fig.update_layout(height=350)
+    fig.update_layout(width=550)
 
     #fig.update_layout(
     #    width=550,
@@ -472,8 +476,8 @@ if n_Retire_1 or n_Retire_2:
                 {'range': [95, 100], 'color': "green"}]
             }))
     fig_1.update_layout(margin=dict(l=90,r=10,b=0,t=1))
-    #fig_1.update_layout(height=200)
-    #fig_1.update_layout(width=475)
+    fig_1.update_layout(height=200)
+    fig_1.update_layout(width=475)
 
     if opt_corpus > 0:
         if mth_sip > 0:

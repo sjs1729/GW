@@ -260,10 +260,15 @@ else:
 
     if len(filter_2_value) == 0:
         filter_2_value = crisil_option
+
+#st.write(df_filter_1)
 if len(df_filter_1) > 0:
     df_filter_2 = get_filtered_df(df_filter_1,df_filter,filter_2,operator_2,filter_2_value)
 else:
     df_filter_2 = df_filter_1
+
+#st.write(df_filter_2)
+
 
 st.markdown('<BR>',unsafe_allow_html=True)
 st.markdown('<BR>',unsafe_allow_html=True)
