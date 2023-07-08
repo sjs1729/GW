@@ -432,9 +432,12 @@ if n_Retire_1 or n_Retire_2:
     fig.update_layout(legend_title='')
     #fig.update_yaxes(automargin=True)
     #fig.update_xaxes(automargin=True)
+    fig.update_layout(autosize=True)
 
-    fig.update_layout(height=350)
-    fig.update_layout(width=550)
+    #fig.update_layout(
+    #    width=550,
+    #    height=350)
+    #fig.update_layout(width=80%)
     fig.update_layout(legend=dict(
         yanchor="bottom",
         y=-0.25,
@@ -449,10 +452,10 @@ if n_Retire_1 or n_Retire_2:
 
     placeholder_header_2.markdown('<p style="font-size:18px;font-weight: bold;text-align:center;vertical-align:middle;color:brown;margin:0px;padding:0px"><u>Lifetime - Expense vs Savings Chart</u></p>', unsafe_allow_html=True)
     user_inputs[3].markdown('<BR>',unsafe_allow_html=True)
-    user_inputs[3].markdown('<BR>',unsafe_allow_html=True)
+    #user_inputs[3].markdown('<BR>',unsafe_allow_html=True)
 
 
-    placeholder_chart.plotly_chart(fig,config=config)
+    placeholder_chart.plotly_chart(fig,config=config,use_container_width=True)
 
 
     fig_1 = go.Figure(go.Indicator(
@@ -469,8 +472,8 @@ if n_Retire_1 or n_Retire_2:
                 {'range': [95, 100], 'color': "green"}]
             }))
     fig_1.update_layout(margin=dict(l=90,r=10,b=0,t=1))
-    fig_1.update_layout(height=200)
-    fig_1.update_layout(width=475)
+    #fig_1.update_layout(height=200)
+    #fig_1.update_layout(width=475)
 
     if opt_corpus > 0:
         if mth_sip > 0:
@@ -495,6 +498,6 @@ if n_Retire_1 or n_Retire_2:
 
     with user_inputs[3].container():
         #placeholder_header_1.markdown('<p style="font-size:20px;font-weight:bold;text-align:center;vertical-align:middle;color:brown;margin:0px;padding:0px"><u>Retirement Score</u></p><BR>', unsafe_allow_html=True)
-        placeholder_score.plotly_chart(fig_1,config=config)
+        placeholder_score.plotly_chart(fig_1,config=config,use_container_width=True)
     #placeholder_score.markdown(":blue[ Retirement Score : {} %]".format(retirement_score))
     #placeholder_fund.markdown('<p style="font-size:16px;font-weight: normal;text-align:center;vertical-align:middle;color:blue;margin:0px;padding:0px">Optimised Fund : {}</p>'.format(display_amount(opt_corpus)), unsafe_allow_html=True)
