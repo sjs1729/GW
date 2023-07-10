@@ -61,11 +61,22 @@ st.title('Fund Details')
 
 df, df_mf_perf, df_port_dtl = get_mf_perf()
 
+params=st.experimental_get_query_params()
+
+def_value = 0
+if len(params) > 0:
+    try:
+        def_schm_id = int(params['id'][0])
+        def_value = df_mf_perf.index.get_loc(def_schm_id)
+    except:
+        def_value = 0
+
+
 schm_list = [ "{}-{}".format(j, df_mf_perf.loc[j]['Scheme_Name']) for j in df_mf_perf.index ]
 
 s_layout = st.columns((13,8))
 
-schm_select = s_layout[0].selectbox("Select Scheme",schm_list,0)
+schm_select = s_layout[0].selectbox("Select Scheme",schm_list,def_value)
 amfi_code = int(schm_select.split("-")[0])
 schm_select = schm_select.split("-")[1]
 

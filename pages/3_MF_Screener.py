@@ -54,8 +54,6 @@ def get_perf_data():
 
 
 def get_html_table_scroll(data, header='Y'):
-
-
     if header == 'Y':
 
         cols = data.columns
@@ -77,15 +75,20 @@ def get_html_table_scroll(data, header='Y'):
 
     html_script = html_script + "</tr></thead><tbody>"
     for j in data.index:
+        url_link = "http://localhost:8501/MutualFund_Ready_Reckoner?id={}".format(j)
+
         html_script = html_script + "<tr style='border:none;font-family:Courier; color:Blue; font-size:10px;'>"
         a = data.loc[j]
         for k in cols:
             if k in ['Rel_MaxDD','Prob_10Pct','NIFTY_CORR']:
                 html_script = html_script + "<td style='padding:2px;text-align:center' rowspan='1'>{}</td>".format(round(a[k],2))
-            elif k in ['Scheme_Name','Scheme_Category','Fund_House']:
+            elif k in ['Scheme_Category','Fund_House']:
                 html_script = html_script + "<td style='padding:2px;text-align:left' rowspan='1'>{}</td>".format(a[k])
+            elif k == 'Scheme_Name':
+                html_script = html_script + "<td style='padding:2px;text-align:left' rowspan='1'><a href={}>{}</a></td>".format(url_link,a[k])
             else:
                 html_script = html_script + "<td style='padding:2px;text-align:center' rowspan='1'>{}</td>".format(a[k])
+
 
 
 
