@@ -76,7 +76,7 @@ def get_html_table_scroll(data, header='Y'):
     html_script = html_script + "</tr></thead><tbody>"
     for j in data.index:
         #url_link = "http://localhost:8501/MutualFund_Ready_Reckoner?id={}".format(j)
-        url_link = "http://sjs1729-gw-growealth-h3l7ei.streamlit.app/MutualFund_Ready_Reckoner/MutualFund_Ready_Reckoner?id={}".format(j)
+        url_link = "http://sjs1729-gw-growealth-h3l7ei.streamlit.app/MutualFund_Ready_Reckoner?id={}".format(j)
 
 
         html_script = html_script + "<tr style='border:none;font-family:Courier; color:Blue; font-size:10px;'>"
