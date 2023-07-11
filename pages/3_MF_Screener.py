@@ -87,7 +87,7 @@ def get_html_table_scroll(data, header='Y'):
             elif k in ['Scheme_Category','Fund_House']:
                 html_script = html_script + "<td style='padding:2px;text-align:left' rowspan='1'>{}</td>".format(a[k])
             elif k == 'Scheme_Name':
-                html_script = html_script + "<td style='padding:2px;text-align:left' rowspan='1'><a href={} target='_self'>{}</a></td>".format(url_link,a[k])
+                html_script = html_script + "<td style='padding:2px;text-align:left' rowspan='1'><a href={} >{}</a></td>".format(url_link,a[k])
             else:
                 html_script = html_script + "<td style='padding:2px;text-align:center' rowspan='1'>{}</td>".format(a[k])
 
