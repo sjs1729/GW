@@ -338,7 +338,7 @@ else:
 df_filter_2 = df_filter_2.sort_values([filter_1_col,filter_2_col])
 
 basic_columns = [ 'Scheme_Name','Scheme_Category','Fund_House', filter_1_col, filter_2_col,chart_x_axis,chart_y_axis,chart_color, chart_size]
-
+st.write(basic_columns)
 #if len(report_columns) == 0:
 #    report_columns = config_columns
 
@@ -355,6 +355,8 @@ report_columns = st.multiselect("Report_Columns",config_columns, label_visibilit
 
 
 final_report_columns = basic_columns + report_columns
+
+final_report_columns = list(dict.fromkeys(final_report_columns))
 
 #final_report_columns = np.unique(final_report_columns)
 
