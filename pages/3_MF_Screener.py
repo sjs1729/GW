@@ -46,6 +46,14 @@ def get_perf_data():
     df_mf_perf.set_index('Scheme_Code', inplace=True)
 
     df_mf_perf['Expense'] = df_mf_perf['Expense'].apply(lambda x: float(x.replace('%','')))
+    df_mf_perf['Pos_Year%']=df_mf_perf['Pos_Year%'].apply(lambda x: float(x))
+    df_mf_perf['NumStocks']=df_mf_perf['NumStocks'].apply(lambda x: float(x))
+    df_mf_perf['Top5_Pct']=df_mf_perf['Top5_Pct'].apply(lambda x: float(x.replace('%','')) if isinstance(x, str) else np.nan)
+    df_mf_perf['Top10_Pct']=df_mf_perf['Top10_Pct'].apply(lambda x: float(x.replace('%','')) if isinstance(x, str) else np.nan )
+    df_mf_perf['Top3_Sector']=df_mf_perf['Top3_Sector'].apply(lambda x: float(x.replace('%','')) if isinstance(x, str) else np.nan )
+    df_mf_perf['Equity_Holding']=df_mf_perf['Equity_Holding'].apply(lambda x: float(x))
+    df_mf_perf['F&O_Holding']=df_mf_perf['F&O_Holding'].apply(lambda x: float(x))
+    df_mf_perf['Foreign_Holding']=df_mf_perf['Foreign_Holding'].apply(lambda x: float(x))
 
     df_filter = pd.read_csv('filter.csv')
     df_filter.set_index('Filter_Label', inplace=True)
@@ -75,8 +83,8 @@ def get_html_table_scroll(data, header='Y'):
 
     html_script = html_script + "</tr></thead><tbody>"
     for j in data.index:
-        #url_link = "http://localhost:8501/MutualFund_Ready_Reckoner?id={}".format(j)
-        url_link = "http://sjs1729-gw-growealth-h3l7ei.streamlit.app/MutualFund_Ready_Reckoner?id={}".format(j)
+        url_link = "http://localhost:8501/MutualFund_Ready_Reckoner?id={}".format(j)
+        #url_link = "http://sjs1729-gw-growealth-h3l7ei.streamlit.app/MutualFund_Ready_Reckoner?id={}".format(j)
 
 
         html_script = html_script + "<tr style='border:none;font-family:Courier; color:Blue; font-size:10px;'>"
@@ -87,7 +95,7 @@ def get_html_table_scroll(data, header='Y'):
             elif k in ['Scheme_Category','Fund_House']:
                 html_script = html_script + "<td style='padding:2px;text-align:left' rowspan='1'>{}</td>".format(a[k])
             elif k == 'Scheme_Name':
-                html_script = html_script + "<td style='padding:2px;text-align:left' rowspan='1'><a href={} >{}</a></td>".format(url_link,a[k])
+                html_script = html_script + "<td style='padding:2px;text-align:left' rowspan='1'><a href={} target='_self'>{}</a></td>".format(url_link,a[k])
             else:
                 html_script = html_script + "<td style='padding:2px;text-align:center' rowspan='1'>{}</td>".format(a[k])
 
@@ -98,25 +106,26 @@ def get_html_table_scroll(data, header='Y'):
 
     return html_script
 
-def plot_chart(df_chart):
+def plot_chart(df_chart,chart_x_axis,chart_y_axis,chart_color,chart_size):
     if len(df_chart) > 0:
-        fig = px.scatter(df_chart, x=df_chart['Volatility'], y=df_chart['3Y Ret'], color=df_chart['Sharpe Ratio'],
-                         size=df_chart['AUM'], size_max=25, hover_name=df_chart['Scheme_Name'], color_continuous_scale='plasma')
+        fig = px.scatter(df_chart, x=df_chart[chart_x_axis], y=df_chart[chart_y_axis], color=df_chart[chart_color],
+                         size=df_chart[chart_size], size_max=25, hover_name=df_chart['Scheme_Name'], color_continuous_scale='plasma')
 
-        yrange = [-5, df_chart['3Y Ret'].max()+5]
+        y_spread = df_chart[chart_y_axis].max() - df_chart[chart_y_axis].min()
+        yrange = [df_chart[chart_y_axis].min() - 0.1 * y_spread, df_chart[chart_y_axis].max() + 0.1 * y_spread]
         # fig.update_xaxes(type=[])
         fig.update_yaxes(range=yrange)
-        fig.update_layout(title_text="Fund Performance",
-                      title_x=0.4,
+        fig.update_layout(title_text="Fund Performance Snapshot",
+                      title_x=0.3,
                       title_font_size=30,
                       titlefont=dict(size=20, color='blue', family='Arial, sans-serif'),
-                      xaxis_title=dict(text='Volatility %', font=dict(size=16, color='#C7004E')),
-                      yaxis_title=dict(text='3 Year Returns %', font=dict(size=16, color='#C7004E'))
+                      xaxis_title=dict(text=chart_x_axis, font=dict(size=16, color='#C7004E')),
+                      yaxis_title=dict(text=chart_y_axis, font=dict(size=16, color='#C7004E'))
                       )
 
         fig.update_layout(margin=dict(l=1,r=1,b=1,t=45))
-        fig.update_layout(height=600)
-        fig.update_layout(width=600)
+        fig.update_layout(height=500)
+        fig.update_layout(width=650)
         fig.update_layout(legend=dict(
                         yanchor="top",
                         y=0.99,
@@ -154,7 +163,6 @@ def get_filtered_df(df_chart, df_filter, filter_attr, filter_condition, filter_v
             df_filtered = df_chart[df_chart[filter_df_col_name] >= filter_value]
         elif filter_condition == 'Greater Than':
             df_filtered = df_chart[df_chart[filter_df_col_name] > filter_value]
-
 
     return df_filtered
 
@@ -196,15 +204,24 @@ else:
 
 
 
-chart_cols = ['Scheme_Name','AUM','Age','Sharpe Ratio','Volatility','1Y Ret','3Y Ret']
+chart_cols = ['Scheme_Name','AUM','Age','Sharpe Ratio','Volatility','1Y Ret','3Y Ret','Expense']
 display_columns = ['Scheme_Name','Scheme_Category','Fund_House','Expense', 'AUM', 'CrisilRank', 'Age', '3M Ret', \
                    '1Y Ret','3Y Ret', '5Y Ret', 'Ret Inception', 'Sharpe Ratio', 'Sortino Ratio', 'Pos_Year%',   \
                    'Volatility', 'Rel_MaxDD','Roll_Ret_1Y', 'Roll_Ret_3Y', 'Roll_Ret_Inception', 'Prob_10Pct',   \
                    'NumStocks', 'Top5_Pct', 'Top10_Pct', 'Top3_Sector','Equity_Holding', 'F&O_Holding', \
                    'Foreign_Holding', 'GT_1PCT','GT_3PCT', 'GT_5PCT', 'LT_NEG_1PCT', 'LT_NEG_3PCT', 'LT_NEG_5PCT',  \
                    'POS_PCT', 'NIFTY_CORR', 'PCT_GT_NIFTY']
-df_chart = df_2[chart_cols]
+basic_columns = ['Scheme_Name','Scheme_Category','Fund_House']
+config_columns = ['Expense', 'AUM', 'CrisilRank', 'Age', '3M Ret', \
+                   '1Y Ret','3Y Ret', '5Y Ret', 'Ret Inception', 'Sharpe Ratio', 'Sortino Ratio', 'Pos_Year%',   \
+                   'Volatility', 'Rel_MaxDD','Roll_Ret_1Y', 'Roll_Ret_3Y', 'Roll_Ret_Inception', 'Prob_10Pct',   \
+                   'NumStocks', 'Top5_Pct', 'Top10_Pct', 'Top3_Sector','Equity_Holding', 'F&O_Holding', \
+                   'Foreign_Holding', 'GT_1PCT','GT_3PCT', 'GT_5PCT', 'LT_NEG_1PCT', 'LT_NEG_3PCT', 'LT_NEG_5PCT',  \
+                   'POS_PCT', 'NIFTY_CORR', 'PCT_GT_NIFTY']
 
+#df_chart = df_2[chart_cols]
+
+df_chart = df_2
 
 
 
@@ -231,6 +248,8 @@ right.markdown("**:blue[Value]**")
 filter_list1 = [x for x in df_filter.index]
 
 filter_1 = left.selectbox("Filter 1", filter_list1, 0, label_visibility="collapsed")
+filter_1_col = df_filter[df_filter.index == filter_1]['Column_Name'].iloc[0]
+
 
 if filter_1 != 'Crisil Rating':
     filter_min_value_1 = df_filter[df_filter.index == filter_1]['Min_Value'].iloc[0]
@@ -250,6 +269,7 @@ else:
 df_filter_1 = get_filtered_df(df_2,df_filter,filter_1,operator_1,filter_1_value)
 
 filter_2 = left.selectbox("Filter 2", filter_list1, 1, label_visibility="collapsed")
+filter_2_col = df_filter[df_filter.index == filter_2]['Column_Name'].iloc[0]
 
 if filter_2 != 'Crisil Rating':
     filter_min_value_2 = df_filter[df_filter.index == filter_2]['Min_Value'].iloc[0]
@@ -275,22 +295,69 @@ else:
 #st.write(df_filter_2)
 
 
+
 st.markdown('<BR>',unsafe_allow_html=True)
 st.markdown('<BR>',unsafe_allow_html=True)
 
-fig = plot_chart(df_filter_2[chart_cols])
 
-placeholder_chart = st.empty()
+
+
+ch_1, ch_2 = st.columns((4,16))
+
+ch_1.markdown('<BR><BR>',unsafe_allow_html=True)
+ch_1.markdown("**:blue[Configure X-Axis]**")
+chart_x_axis = ch_1.selectbox('chart_x_axis',['Volatility','NumStocks'],0,label_visibility="collapsed")
+ch_1.markdown('<BR>',unsafe_allow_html=True)
+
+ch_1.markdown("**:blue[Configure Y-Axis]**")
+chart_y_axis = ch_1.selectbox('chart_y_axis',['3M Ret','1Y Ret','3Y Ret', '5Y Ret', 'Ret Inception','Roll_Ret_1Y', 'Roll_Ret_3Y', 'Roll_Ret_Inception'],0,label_visibility="collapsed")
+ch_1.markdown('<BR>',unsafe_allow_html=True)
+
+ch_1.markdown("**:blue[Configure Colour]**")
+chart_color = ch_1.selectbox('chart_color',['Sharpe Ratio', 'Sortino Ratio','Expense'],0,label_visibility="collapsed")
+ch_1.markdown('<BR>',unsafe_allow_html=True)
+
+ch_1.markdown("**:blue[Configure Size]**")
+chart_size = ch_1.selectbox('chart_size',['AUM', 'Age'],0,label_visibility="collapsed")
+
+
+ch_2.markdown('<BR>',unsafe_allow_html=True)
+
+
+fig = plot_chart(df_filter_2,chart_x_axis,chart_y_axis,chart_color,chart_size)
+placeholder_chart = ch_2.empty()
 
 if fig:
     placeholder_chart.plotly_chart(fig, use_container_width=True)
 else:
     placeholder_chart.empty()
 
+
+
+df_filter_2 = df_filter_2.sort_values([filter_1_col,filter_2_col])
+
+basic_columns = [ 'Scheme_Name','Scheme_Category','Fund_House', filter_1_col, filter_2_col,chart_x_axis,chart_y_axis,chart_color, chart_size]
+
+#if len(report_columns) == 0:
+#    report_columns = config_columns
+
+config_columns = [x for x in config_columns if x not in basic_columns]
+
+
 st.markdown("""---""")
 st.markdown('<BR>',unsafe_allow_html=True)
 
-html_text = get_html_table_scroll(df_filter_1[display_columns])
+st.markdown("**:blue[Configure Report Columns]**")
+report_columns = st.multiselect("Report_Columns",config_columns, label_visibility="collapsed")
+
+
+
+
+final_report_columns = basic_columns + report_columns
+
+#final_report_columns = np.unique(final_report_columns)
+
+html_text = get_html_table_scroll(df_filter_2[final_report_columns])
 
 st.markdown(html_text, unsafe_allow_html=True)
 
