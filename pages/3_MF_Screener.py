@@ -96,7 +96,7 @@ def get_html_table_scroll(data, header='Y'):
                 html_script = html_script + "<td style='padding:2px;text-align:left' rowspan='1'>{}</td>".format(a[k])
             elif k == 'Scheme_Name':
                 #html_script = html_script + "<td style='padding:2px;text-align:left' rowspan='1'><a href={} target='_self'>{}</a></td>".format(url_link,a[k])
-                html_script = html_script + "<td style='padding:2px;text-align:left' rowspan='1'><a href={}'_self'>{}</a></td>".format(url_link,a[k])
+                html_script = html_script + "<td style='padding:2px;text-align:left' rowspan='1'><a href={}>{}</a></td>".format(url_link,a[k])
             else:
                 html_script = html_script + "<td style='padding:2px;text-align:center' rowspan='1'>{}</td>".format(a[k])
 
@@ -364,3 +364,8 @@ html_text = get_html_table_scroll(df_filter_2[final_report_columns])
 st.markdown(html_text, unsafe_allow_html=True)
 
 #st.write(df_filter_1[display_columns])
+
+
+notice_txt = '<p><BR><BR><span style="font-family: Verdana, Geneva, sans-serif; font-size: 10px;">'
+notice_txt = notice_txt + '<span style="color: rgb(255,0,20);">Note:Market Data as on 5th July 2023</span>'
+st.markdown(notice_txt,unsafe_allow_html=True)
