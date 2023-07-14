@@ -16,7 +16,7 @@ Max Drawdown Ratio wrt Nifty,Rel_MaxDD,Numeric,0.240680697389492,2.7483321046537
 Rolling 1 Year Return,Roll_Ret_1Y,Numeric,-15.49,21.76,0.37
 Rolling 3 Year Return,Roll_Ret_3Y,Numeric,8.6,57.02,0.48
 Rolling Return since Inception,Roll_Ret_Inception,Numeric,7.02,37.39,0.3
-Probability of >10% Return,Prob_10Pct,Numeric,0.378611840459098,0.853503770313797,0.0
+Probability of >10% Return,Prob_10Pct,Numeric,0.00,1.00,0.01
 Number of Stocks,NumStocks,Numeric,0.0,200.0,2.0
 Top5 Stocks Holding,Top5_Pct,Numeric,0.0,100.0,1.0
 Top10 Stocks Holding,Top10_Pct,Numeric,0.0,100.0,1.0
