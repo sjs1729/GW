@@ -178,7 +178,7 @@ st.markdown('<p style="font-size:36px;font-weight: bold;text-align:center;vertic
 st.markdown('<BR>',unsafe_allow_html=True)
 st.markdown('<BR>',unsafe_allow_html=True)
 
-left, right = st.columns((4,4))
+left, right = st.columns((13,16))
 
 fh_list = [x for x in df['Fund_House'].unique()]
 
