@@ -83,8 +83,8 @@ def get_html_table_scroll(data, header='Y'):
 
     html_script = html_script + "</tr></thead><tbody>"
     for j in data.index:
-        #url_link = "http://localhost:8501/MutualFund_Ready_Reckoner?id={}".format(j)
-        url_link = "http://sjs1729-gw-growealth-h3l7ei.streamlit.app/MutualFund_Ready_Reckoner?id={}".format(j)
+        url_link = "http://localhost:8501/MutualFund_Ready_Reckoner?id={}".format(j)
+        #url_link = "http://sjs1729-gw-growealth-h3l7ei.streamlit.app/MutualFund_Ready_Reckoner?id={}".format(j)
 
 
         html_script = html_script + "<tr style='border:none;font-family:Courier; color:Blue; font-size:10px;'>"
@@ -95,8 +95,8 @@ def get_html_table_scroll(data, header='Y'):
             elif k in ['Scheme_Category','Fund_House']:
                 html_script = html_script + "<td style='padding:2px;text-align:left' rowspan='1'>{}</td>".format(a[k])
             elif k == 'Scheme_Name':
-                #html_script = html_script + "<td style='padding:2px;text-align:left' rowspan='1'><a href={} target='_self'>{}</a></td>".format(url_link,a[k])
-                html_script = html_script + "<td style='padding:2px;text-align:left' rowspan='1'><a href={}>{}</a></td>".format(url_link,a[k])
+                html_script = html_script + "<td style='padding:2px;text-align:left' rowspan='1'><a href={} target='_self'>{}</a></td>".format(url_link,a[k])
+                #html_script = html_script + "<td style='padding:2px;text-align:left' rowspan='1'><a href={}>{}</a></td>".format(url_link,a[k])
             else:
                 html_script = html_script + "<td style='padding:2px;text-align:center' rowspan='1'>{}</td>".format(a[k])
 
@@ -178,7 +178,7 @@ st.markdown('<p style="font-size:36px;font-weight: bold;text-align:center;vertic
 st.markdown('<BR>',unsafe_allow_html=True)
 st.markdown('<BR>',unsafe_allow_html=True)
 
-left, right = st.columns((13,16))
+left,right = st.columns((13,16))
 
 fh_list = [x for x in df['Fund_House'].unique()]
 
@@ -367,5 +367,5 @@ st.markdown(html_text, unsafe_allow_html=True)
 
 
 notice_txt = '<p><BR><BR><span style="font-family: Verdana, Geneva, sans-serif; font-size: 10px;">'
-notice_txt = notice_txt + '<span style="color: rgb(255,0,20);">Note:Market Data as on 5th July 2023</span>'
+notice_txt = notice_txt + '<span style="color: rgb(255,0,20);">Note:Market Data as on 20th July 2023</span>'
 st.markdown(notice_txt,unsafe_allow_html=True)

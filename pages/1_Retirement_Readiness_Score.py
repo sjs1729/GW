@@ -475,13 +475,13 @@ if n_Retire_1 or n_Retire_2 or n_Retire_3:
                 {'range': [75, 95], 'color': "orange"},
                 {'range': [95, 100], 'color': "green"}]
             }))
-    fig_1.update_layout(margin=dict(l=90,r=10,b=0,t=1))
+    fig_1.update_layout(margin=dict(l=90,r=10,b=10,t=10))
     fig_1.update_layout(height=200)
     fig_1.update_layout(width=475)
 
     if opt_corpus > 0:
         if mth_sip > 0:
-            html_t_text = '<p style="text-align:center"><strong><span style="font-size:16px;color:rgb(10, 100, 40);">Fund Shortfall:</span></em></strong>'
+            html_t_text = '<p style="text-align:center"><strong><span style="font-size:16px;color:rgb(10, 100, 40);">&nbsp;&nbsp;Fund Shortfall:</span></em></strong>'
             html_t_text = html_t_text + '<span style="font-size:14px;color: rgb(0, 0, 255);"> One Time: {}  | Monthly SIP till Retirement: {}</span><BR><BR></em>'.format(display_amount(opt_corpus),display_amount(mth_sip))
         else:
             html_t_text = '<p style="text-align:center"><strong><span style="font-size:16px;color:rgb(10, 100, 40);">Fund Shortfall:</span></em></strong>'
