@@ -1,22 +1,25 @@
 Filter_Label,Column_Name,Type,Min_Value,Max_Value,Steps
 Expense Ratio,Expense,Numeric,0.0,4.0,0.04
-AUM,AUM,Numeric,56.69,57161.02,571.04
+AUM,AUM,Numeric,59.15,58312.36,582.53
 Crisil Rating,CrisilRank,Options,,,
-Fund Age,Age,Numeric,0.33,17.27,0.17
-3 Month Return,3M Ret,Numeric,-7.87,25.5,0.33
-1 Year Return,1Y Ret,Numeric,-7.63,57.78,0.65
-3 Year Return,3Y Ret,Numeric,6.31,56.88,0.51
-5 Year Return,5Y Ret,Numeric,6.67,26.14,0.19
-Return since Inception,Ret Inception,Numeric,5.55,27.06,0.22
-Sharpe Ratio,Sharpe Ratio,Numeric,0.15,2.15,0.02
-Sortino Ratio,Sortino Ratio,Numeric,0.21,3.07,0.03
+Fund Age,Age,Numeric,0.41,17.35,0.17
+3 Month Return,3M Ret,Numeric,2.16,30.92,0.29
+1 Year Return,1Y Ret,Numeric,-1.51,45.49,0.47
+3 Year Return,3Y Ret,Numeric,3.84,49.34,0.46
+5 Year Return,5Y Ret,Numeric,6.09,27.35,0.21
+Return since Inception,Ret Inception,Numeric,-13.85,39.29,0.53
+Sharpe Ratio 3Y,Sharpe Ratio,Numeric,0.03,2.09,0.02
+Sortino Ratio 3Y,Sortino Ratio,Numeric,0.04,2.97,0.03
+Sharpe Ratio 1Y,Sharpe_1Y,Numeric,-0.36,2.62,0.03
+Sortino Ratio 1Y,Sortino_1Y,Numeric,-0.49,4.24,0.05
 Positive Calendar Year %,Pos_Year%,Numeric,0.0,100.0,1.0
-Annual Volatility,Volatility,Numeric,3.75,25.43,0.22
-Max Drawdown Ratio wrt Nifty,Rel_MaxDD,Numeric,0.240680697389492,2.74833210465372,0.03
-Rolling 1 Year Return,Roll_Ret_1Y,Numeric,-15.49,21.76,0.37
-Rolling 3 Year Return,Roll_Ret_3Y,Numeric,8.6,57.02,0.48
-Rolling Return since Inception,Roll_Ret_Inception,Numeric,7.02,37.39,0.3
-Probability of >10% Return,Prob_10Pct,Numeric,0.00,1.00,0.01
+Annual Volatility 3Y,Volatility,Numeric,3.61,25.28,0.22
+Annual Volatility 1Y,Volatility_1Y,Numeric,2.22,28.12,0.26
+Max Drawdown Ratio wrt Nifty,Rel_MaxDD,Numeric,0.22038581980343624,2.74833210465372,0.03
+Rolling 1 Year Return,Roll_Ret_1Y,Numeric,-11.21,24.09,0.35
+Rolling 3 Year Return,Roll_Ret_3Y,Numeric,8.42,58.31,0.5
+Rolling Return since Inception,Roll_Ret_Inception,Numeric,7.1,37.17,0.3
+Probability of >10% Return,Prob_10Pct,Numeric,0.33203586790918194,0.854734605712726,0.01
 Number of Stocks,NumStocks,Numeric,0.0,200.0,2.0
 Top5 Stocks Holding,Top5_Pct,Numeric,0.0,100.0,1.0
 Top10 Stocks Holding,Top10_Pct,Numeric,0.0,100.0,1.0
@@ -24,12 +27,12 @@ Top3 Sector Holding,Top3_Sector,Numeric,0.0,100.0,1.0
 Total Equity Holding,Equity_Holding,Numeric,0.0,100.0,1.0
 Total F&O Holdings,F&O_Holding,Numeric,0.0,100.0,1.0
 Total Foreign Holdings,Foreign_Holding,Numeric,0.0,100.0,1.0
-Daily Returns > 1%,GT_1PCT,Numeric,0.67,29.09,0.28
-Daily Returns > 3%,GT_3PCT,Numeric,0.0,4.31,0.04
-Daily Returns > 5%,GT_5PCT,Numeric,0.0,1.17,0.01
-Daily Returns < 1%,LT_NEG_1PCT,Numeric,0.0,24.91,0.25
-Daily Returns < 3%,LT_NEG_3PCT,Numeric,0.0,7.2,0.07
-Daily Returns < 5%,LT_NEG_5PCT,Numeric,0.0,1.22,0.01
-Positive Daily Returns %,POS_PCT,Numeric,45.49,63.09,0.18
-Correlation with Nifty,NIFTY_CORR,Numeric,0.210832943145807,0.999883882727121,0.01
-Daily Returns > Nifty,PCT_GT_NIFTY,Numeric,28.46,56.38,0.28
+Daily Returns > 1%,GT_1PCT,Numeric,0.37,28.71,0.28
+Daily Returns > 3%,GT_3PCT,Numeric,0.0,4.32,0.04
+Daily Returns > 5%,GT_5PCT,Numeric,0.0,1.13,0.01
+Daily Returns < 1%,LT_NEG_1PCT,Numeric,0.0,24.87,0.25
+Daily Returns < 3%,LT_NEG_3PCT,Numeric,0.0,7.33,0.07
+Daily Returns < 5%,LT_NEG_5PCT,Numeric,0.0,1.2,0.01
+Positive Daily Returns %,POS_PCT,Numeric,45.74,62.94,0.17
+Correlation with Nifty,NIFTY_CORR,Numeric,0.20957501958315342,0.9998897850843763,0.01
+Daily Returns > Nifty,PCT_GT_NIFTY,Numeric,28.75,57.65,0.29
