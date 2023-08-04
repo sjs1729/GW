@@ -50,7 +50,7 @@ def get_perf_data():
     df_mf_perf['NumStocks']=df_mf_perf['NumStocks'].apply(lambda x: float(x))
     df_mf_perf['Top5_Pct']=df_mf_perf['Top5_Pct'].apply(lambda x: float(x.replace('%','')) if isinstance(x, str) else np.nan)
     df_mf_perf['Top10_Pct']=df_mf_perf['Top10_Pct'].apply(lambda x: float(x.replace('%','')) if isinstance(x, str) else np.nan )
-    df_mf_perf['Top3_Sector']=df_mf_perf['Top3_Sector'].apply(lambda x: float(x.replace('%','')) if isinstance(x, str) else np.nan )
+    df_mf_perf['Top3_Sector']=df_mf_perf['Top3_Sector'].apply(lambda x: float(x.replace('%','')) if isinstance(x, str) and x!='%' else np.nan )
     df_mf_perf['Equity_Holding']=df_mf_perf['Equity_Holding'].apply(lambda x: float(x))
     df_mf_perf['F&O_Holding']=df_mf_perf['F&O_Holding'].apply(lambda x: float(x))
     df_mf_perf['Foreign_Holding']=df_mf_perf['Foreign_Holding'].apply(lambda x: float(x))
@@ -169,6 +169,7 @@ def get_filtered_df(df_chart, df_filter, filter_attr, filter_condition, filter_v
 
 
 df, df_filter = get_perf_data()
+#data_refresh_date = df.index[-1]
 #st.write(df.columns)
 
 st.markdown('<p style="font-size:36px;font-weight: bold;text-align:center;vertical-align:middle;color:blue;margin:0px;padding:0px"></p>', unsafe_allow_html=True)
@@ -307,7 +308,7 @@ ch_1, ch_2 = st.columns((4,16))
 
 ch_1.markdown('<BR><BR>',unsafe_allow_html=True)
 ch_1.markdown("**:blue[Configure X-Axis]**")
-chart_x_axis = ch_1.selectbox('chart_x_axis',['Volatility','NumStocks'],0,label_visibility="collapsed")
+chart_x_axis = ch_1.selectbox('chart_x_axis',['Volatility','Volatility_1Y','NumStocks'],0,label_visibility="collapsed")
 ch_1.markdown('<BR>',unsafe_allow_html=True)
 
 ch_1.markdown("**:blue[Configure Y-Axis]**")
@@ -315,7 +316,7 @@ chart_y_axis = ch_1.selectbox('chart_y_axis',['3M Ret','1Y Ret','3Y Ret', '5Y Re
 ch_1.markdown('<BR>',unsafe_allow_html=True)
 
 ch_1.markdown("**:blue[Configure Colour]**")
-chart_color = ch_1.selectbox('chart_color',['Sharpe Ratio', 'Sortino Ratio','Expense'],0,label_visibility="collapsed")
+chart_color = ch_1.selectbox('chart_color',['Sharpe Ratio', 'Sortino Ratio','Sharpe_1Y','Sortino_1Y','Expense'],0,label_visibility="collapsed")
 ch_1.markdown('<BR>',unsafe_allow_html=True)
 
 ch_1.markdown("**:blue[Configure Size]**")
@@ -337,7 +338,7 @@ else:
 
 df_filter_2 = df_filter_2.sort_values([filter_1_col,filter_2_col])
 
-basic_columns = [ 'Scheme_Name','Scheme_Category','Fund_House', filter_1_col, filter_2_col,chart_x_axis,chart_y_axis,chart_color, chart_size]
+basic_columns = [ 'Scheme_Name','Scheme_Category','Fund_House','Age', filter_1_col, filter_2_col,chart_x_axis,chart_y_axis,chart_color, chart_size]
 #if len(report_columns) == 0:
 #    report_columns = config_columns
 
@@ -367,5 +368,5 @@ st.markdown(html_text, unsafe_allow_html=True)
 
 
 notice_txt = '<p><BR><BR><span style="font-family: Verdana, Geneva, sans-serif; font-size: 10px;">'
-notice_txt = notice_txt + '<span style="color: rgb(255,0,20);">Note:Market Data as on 20th July 2023</span>'
+notice_txt = notice_txt + '<span style="color: rgb(255,0,20);">Note:Market Data as on {}</span>'.format(get_data_refresh_date())
 st.markdown(notice_txt,unsafe_allow_html=True)
