@@ -1,4 +1,5 @@
 import pandas as pd
+import streamlit as st
 
 
 def display_amount(amount, paisa='N'):
@@ -118,3 +119,10 @@ def get_markdown_dict(dict, font_size = 10, format_amt = 'N'):
     html_script = html_script + '</tbody></table>'
 
     return html_script
+
+
+@st.cache_data()
+def get_data_refresh_date():
+    data = pd.read_csv('mf_data.csv')
+
+    return data['Date'].iloc[-1]
