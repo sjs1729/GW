@@ -33,7 +33,17 @@ st.markdown(
         font-size: 20px;
     }
 
+    .css-z5fcl4 {
+    padding-top: 2rem;
+    }
+
+    .css-k1ih3n {
+    padding-top: 6rem;
+    }
+}
+
     </style>
+
     """,
     unsafe_allow_html=True
 )
