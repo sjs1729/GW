@@ -379,6 +379,6 @@ disclaimer_text_1 = "This tax calculator provides an estimate based on the infor
 disclaimer_text_2 = " Please consult with a qualified tax advisor for accurate and personalized tax guidance. We do not guarantee the accuracy or completeness of the results."
 
 notice_txt = '<p><BR><BR><BR><BR><span style="font-family: Verdana, Geneva, sans-serif; font-size: 10px;">'
-notice_txt = notice_txt + '<span style="color: rgb(255,0,20);"><strong>Disclaimer: </strong></span><span style="color: rgb(255,0,20);">{}</span>'.format(disclaimer_text_1)
-notice_txt = notice_txt + '<span style="color: rgb(255,0,20);">{}</span>'.format(disclaimer_text_2)
+notice_txt = notice_txt + '<span style="color: rgb(255,0,20);"><strong>Disclaimer: </strong></span><span style="color: rgb(20,20,255);">{}</span>'.format(disclaimer_text_1)
+notice_txt = notice_txt + '<span style="color: rgb(20,20,255);">{}</span>'.format(disclaimer_text_2)
 st.markdown(notice_txt,unsafe_allow_html=True)
