@@ -156,7 +156,7 @@ st.markdown('<BR>', unsafe_allow_html=True)
 total_tax = 0.0
 total_deductions = 0.0
 
-left, right = st.columns((4,4))
+left, centre, right = st.columns((4,4,4))
 
 placeholder_header_1 = left.empty()
 placeholder_header_2 = right.empty()
