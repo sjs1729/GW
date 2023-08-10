@@ -128,7 +128,7 @@ def get_tax_new_regime(income, version='N'):
 
 
 c_1, c_2 = st.columns((8,4))
-c_2.image('growealth-logo_long.png', width=300)
+c_2.image('growealth-logo_long.png')
 
 
 
@@ -139,7 +139,7 @@ st.markdown('<p style="font-size:36px;font-weight: bold;text-align:center;vertic
 st.markdown('<p style="font-size:36px;font-weight: bold;text-align:center;vertical-align:middle;color:blue;margin:0px;padding:0px"></p>', unsafe_allow_html=True)
 
 st.markdown('<BR>',unsafe_allow_html=True)
-st.markdown('<BR>',unsafe_allow_html=True)
+st.markdown(' ',unsafe_allow_html=True)
 
 
 left, centre, right = st.columns((4,4,4))
@@ -374,4 +374,11 @@ else:
     placeholder_header_1.markdown("**:blue[Old Regime Tax Outstanding:]**  :blue[{}] ".format(display_amount(tot_old_regime_tax)))
     placeholder_header_2.markdown("**:blue[New Regime Tax Outstanding:]**  :blue[{}] :green[{}]".format(display_amount(tot_new_regime_tax),tick_emoji))
 
-#st.write("Old Regime Tax: {} - New Regime Tax: {}".format(tot_new_regime_tax,tot_old_regime_tax))
+
+disclaimer_text_1 = "This tax calculator provides an estimate based on the information provided and current tax laws. It is not a substitute for professional financial advice."
+disclaimer_text_2 = " Please consult with a qualified tax advisor for accurate and personalized tax guidance. We do not guarantee the accuracy or completeness of the results."
+
+notice_txt = '<p><BR><BR><BR><BR><span style="font-family: Verdana, Geneva, sans-serif; font-size: 10px;">'
+notice_txt = notice_txt + '<span style="color: rgb(255,0,20);"><strong>Disclaimer: </strong></span><span style="color: rgb(255,0,20);">{}</span>'.format(disclaimer_text_1)
+notice_txt = notice_txt + '<span style="color: rgb(255,0,20);">{}</span>'.format(disclaimer_text_2)
+st.markdown(notice_txt,unsafe_allow_html=True)

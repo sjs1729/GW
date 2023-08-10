@@ -37,7 +37,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 c_1, c_2 = st.columns((8,4))
-c_2.image('growealth-logo_long.png', width=300)
+c_2.image('growealth-logo_long.png')
 
 def get_emi(emi, rate, nperiods,target_amt,present_corpus):
     tot_val = present_corpus * pow((1+ rate/100),nperiods/12)
