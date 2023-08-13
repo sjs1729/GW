@@ -210,7 +210,7 @@ with Income_Other_Sources:
         total_turnover = col1.number_input("Business Turnover", value=0)
         col2.markdown('<BR>', unsafe_allow_html=True)
         col2.markdown(' ', unsafe_allow_html=True)
-        is_online = col2.checkbox("Presumptive Taxation on Business Income?", value=True)
+        is_online = col2.checkbox("Online Transactions?", value=True)
 
         if is_online:
             net_businiess_income = 0.06 * total_turnover
