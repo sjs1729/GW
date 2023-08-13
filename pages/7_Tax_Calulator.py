@@ -321,7 +321,7 @@ if tot_other_income < 0:
 std_deduction = 50000.0
 total_income = tot_other_income + gross_salary + long_debt + short_debt
 total_income = max(total_income - std_deduction,0)
-slab_0_new = 700000.0
+slab_0_new = 700000.0 + max_nps_ded
 slab_0_old = 500000.0 + total_deductions
 
 ltcg_taxrate = 0.1
@@ -329,7 +329,7 @@ stcg_taxrate = 0.15
 
 tick_emoji = "\u2705"
 
-new_regime_tax = get_tax_new_regime(total_income)
+new_regime_tax = get_tax_new_regime(total_income - max_nps_ded)
 old_regime_tax = get_tax_old_regime(total_income, total_deductions, curr_age )
 
 
@@ -376,7 +376,7 @@ else:
 
 
 disclaimer_text_1 = "This tax calculator provides an estimate based on the information provided and current tax laws. It is not a substitute for professional financial advice."
-disclaimer_text_2 = " Please consult with a qualified tax advisor for accurate and personalized tax guidance. We do not guarantee the accuracy or completeness of the results."
+disclaimer_text_2 = " Please consult with a qualified tax advisor for accurate and personalized tax guidance. This Tax Calculator is still work-in-progress, we do not guarantee the accuracy or completeness of the results."
 
 notice_txt = '<p><BR><BR><BR><BR><span style="font-family: Verdana, Geneva, sans-serif; font-size: 10px;">'
 notice_txt = notice_txt + '<span style="color: rgb(255,0,20);"><strong>Disclaimer: </strong></span><span style="color: rgb(20,20,255);">{}</span>'.format(disclaimer_text_1)
