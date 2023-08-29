@@ -67,6 +67,8 @@ def get_html_table_scroll(data, header='Y'):
         cols = data.columns
         ncols = len(cols)
 
+
+
         html_script = "<style> .tableFixHead {overflow-y: auto; height: 500px;}"
         html_script = html_script + ".tableFixHead thead th {position: sticky; top: 0px;}"
         html_script = html_script + "table {border-collapse: collapse; width: 100%;}"
@@ -109,11 +111,21 @@ def get_html_table_scroll(data, header='Y'):
 
 def plot_chart(df_chart,chart_x_axis,chart_y_axis,chart_color,chart_size):
     if len(df_chart) > 0:
-        fig = px.scatter(df_chart, x=df_chart[chart_x_axis], y=df_chart[chart_y_axis], color=df_chart[chart_color],
-                         size=df_chart[chart_size], size_max=25, hover_name=df_chart['Scheme_Name'], color_continuous_scale='plasma')
 
         y_spread = df_chart[chart_y_axis].max() - df_chart[chart_y_axis].min()
         yrange = [df_chart[chart_y_axis].min() - 0.1 * y_spread, df_chart[chart_y_axis].max() + 0.1 * y_spread]
+        x_spread = df_chart[chart_x_axis].max() - df_chart[chart_x_axis].min()
+        xrange = [df_chart[chart_x_axis].min() - 0.1 * y_spread, df_chart[chart_x_axis].max() + 0.1 * y_spread]
+        x_mid = (df_chart[chart_x_axis].max() + df_chart[chart_x_axis].min())/2
+        y_mid = (df_chart[chart_y_axis].max() + df_chart[chart_y_axis].min())/2
+
+        cols = [chart_x_axis,chart_y_axis,chart_color,chart_size]
+
+
+        fig = px.scatter(df_chart, x=df_chart[chart_x_axis], y=df_chart[chart_y_axis], color=df_chart[chart_color],
+                         size=df_chart[chart_size], size_max=25, hover_name=df_chart['Scheme_Name'], color_continuous_scale='plasma')
+
+
         # fig.update_xaxes(type=[])
         fig.update_yaxes(range=yrange)
         fig.update_layout(title_text="Fund Performance Snapshot",
@@ -133,6 +145,37 @@ def plot_chart(df_chart,chart_x_axis,chart_y_axis,chart_color,chart_size):
                         xanchor="left",
                         x=0.01)
                         )
+
+
+        fig.add_vline(x = x_mid, line_width=1.5, line_dash="dash", line_color="blue")
+        fig.add_hline(y = y_mid, line_width=1.5, line_dash="dash", line_color="blue")
+        #fig.add_hline(y = yrange[0], line_width=4, line_color="blue")
+        #fig.add_vline(x = xrange[0], line_width=1.5, line_color="blue")
+        #fig.add_hline(y = yrange[1], line_width=4, line_color="blue")
+        #fig.add_vline(x = xrange[1], line_width=1.5, line_color="blue")
+
+        fig.add_annotation(x=xrange[0]+ 0.3 * x_spread,y=yrange[0]+ 0.1 *y_spread,text="Q1 - Low Risk, Low Return",
+          showarrow=False,  font=dict(family="Arial", size=10,color="red"),
+          bgcolor="LightSkyBlue"
+          )
+
+        fig.add_annotation(x=xrange[1] - 0.3 * x_spread,y=yrange[0]+ 0.1 *y_spread,text="Q2 - High Risk, Low Return",
+          showarrow=False,  font=dict(family="Arial", size=10,color="red"),
+          bgcolor="palegoldenrod"
+          )
+
+        fig.add_annotation(x=xrange[0] + 0.3 * x_spread,y=yrange[1] - 0.1 *y_spread,text="Q3 - Low Risk, High Return",
+          showarrow=False,  font=dict(family="Arial", size=10,color="red"),
+          bgcolor="lightgreen"
+          )
+
+        fig.add_annotation(x=xrange[1] - 0.3 * x_spread,y=yrange[1] - 0.1 *y_spread,text="Q4 - High Risk, High Return",
+           showarrow=False,  font=dict(family="Arial", size=10,color="red"),
+           bgcolor="Yellow"
+           )
+
+
+
 
 
         return fig
@@ -324,7 +367,7 @@ chart_size = ch_1.selectbox('chart_size',['AUM', 'Age'],0,label_visibility="coll
 
 
 ch_2.markdown('<BR>',unsafe_allow_html=True)
-
+#show_quadrants = ch_1.checkbox("Show Quadrant Results?", value=False)
 
 fig = plot_chart(df_filter_2,chart_x_axis,chart_y_axis,chart_color,chart_size)
 placeholder_chart = ch_2.empty()
