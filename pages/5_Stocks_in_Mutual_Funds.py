@@ -71,9 +71,9 @@ with Reverse_Search:
 
     df_search['AUM'] = 0.0
 
-    for i in df_search.index:
-        sch_name = df_search.loc[i]['Scheme_Name']
-        df_search.at[i,'AUM'] = df_perf.loc[sch_name]['AUM']
+    #for i in df_search.index:
+    #    sch_name = df_search.loc[i]['Scheme_Name']
+    #    df_search.at[i,'AUM'] = df_perf.loc[sch_name]['AUM']
 
     tot_increase = df_search[df_search['Status'] == 'Increased']['Scheme_Name'].count()
     tot_decrease = df_search[df_search['Status'] == 'Decreased']['Scheme_Name'].count()

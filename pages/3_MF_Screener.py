@@ -44,7 +44,6 @@ def get_perf_data():
 
     df_mf_perf = pd.read_csv('revised_mf_perf.csv')
     df_mf_perf.set_index('Scheme_Code', inplace=True)
-
     df_mf_perf['Expense'] = df_mf_perf['Expense'].apply(lambda x: float(x.replace('%','')))
     df_mf_perf['Pos_Year%']=df_mf_perf['Pos_Year%'].apply(lambda x: float(x))
     df_mf_perf['NumStocks']=df_mf_perf['NumStocks'].apply(lambda x: float(x))
@@ -154,26 +153,27 @@ def plot_chart(df_chart,chart_x_axis,chart_y_axis,chart_color,chart_size):
         #fig.add_hline(y = yrange[1], line_width=4, line_color="blue")
         #fig.add_vline(x = xrange[1], line_width=1.5, line_color="blue")
 
-        fig.add_annotation(x=xrange[0]+ 0.3 * x_spread,y=yrange[0]+ 0.1 *y_spread,text="Q1 - Low Risk, Low Return",
-          showarrow=False,  font=dict(family="Arial", size=10,color="red"),
-          bgcolor="LightSkyBlue"
-          )
 
-        fig.add_annotation(x=xrange[1] - 0.3 * x_spread,y=yrange[0]+ 0.1 *y_spread,text="Q2 - High Risk, Low Return",
-          showarrow=False,  font=dict(family="Arial", size=10,color="red"),
-          bgcolor="palegoldenrod"
-          )
+        #fig.add_annotation(x=xrange[0]+ 0.3 * x_spread,y=yrange[0]+ 0.1 *y_spread,text="Q1 - Low Risk, Low Return",
+        #  showarrow=False,  font=dict(family="Arial", size=10,color="red"),
+        #  bgcolor="LightSkyBlue"
+        #  )
 
-        fig.add_annotation(x=xrange[0] + 0.3 * x_spread,y=yrange[1] - 0.1 *y_spread,text="Q3 - Low Risk, High Return",
-          showarrow=False,  font=dict(family="Arial", size=10,color="red"),
-          bgcolor="lightgreen"
-          )
+        #fig.add_annotation(x=xrange[1] - 0.3 * x_spread,y=yrange[0]+ 0.1 *y_spread,text="Q2 - High Risk, Low Return",
+        #  showarrow=False,  font=dict(family="Arial", size=10,color="red"),
+        #  bgcolor="palegoldenrod"
+        #  )
 
-        fig.add_annotation(x=xrange[1] - 0.3 * x_spread,y=yrange[1] - 0.1 *y_spread,text="Q4 - High Risk, High Return",
-           showarrow=False,  font=dict(family="Arial", size=10,color="red"),
-           bgcolor="Yellow"
-           )
+        #fig.add_annotation(x=xrange[0] + 0.3 * x_spread,y=yrange[1] - 0.1 *y_spread,text="Q3 - Low Risk, High Return",
+        #  showarrow=False,  font=dict(family="Arial", size=10,color="red"),
+        #  bgcolor="lightgreen"
+        #  )
 
+        #fig.add_annotation(x=xrange[1] - 0.3 * x_spread,y=yrange[1] - 0.1 *y_spread,text="Q4 - High Risk, High Return",
+        #   showarrow=False,  font=dict(family="Arial", size=10,color="red"),
+        #   bgcolor="Yellow"
+        #   )
+        
 
 
 
@@ -211,7 +211,7 @@ def get_filtered_df(df_chart, df_filter, filter_attr, filter_condition, filter_v
     return df_filtered
 
 
-df, df_filter = get_perf_data()
+df_0, df_filter = get_perf_data()
 #data_refresh_date = df.index[-1]
 #st.write(df.columns)
 
@@ -221,6 +221,16 @@ st.markdown('<p style="font-size:36px;font-weight: bold;text-align:center;vertic
 
 st.markdown('<BR>',unsafe_allow_html=True)
 st.markdown('<BR>',unsafe_allow_html=True)
+
+st.markdown("**:blue[Fund Type]**")
+selected_option = st.radio("Select an option:", ["Debt MF", "Equity/Other MF"], 1, horizontal=True, label_visibility="collapsed")
+
+if selected_option == 'Debt MF':
+    df = df_0[df_0['Scheme_Type'] == 'Debt Scheme']
+else:
+    df = df_0[df_0['Scheme_Type'] != 'Debt Scheme']
+
+
 
 left,right = st.columns((13,16))
 
