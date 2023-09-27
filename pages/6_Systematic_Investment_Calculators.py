@@ -330,12 +330,17 @@ with sip:
     fig.update_layout(height=300)
     fig.update_layout(width=450)
 
-    #col2.markdown('<BR>',unsafe_allow_html=True)
     col2.plotly_chart(fig,config=config)
     #col2.markdown(html_text,unsafe_allow_html=True)
 
-    col1.markdown('<BR><BR>',unsafe_allow_html=True)
+    col1.markdown('<BR>',unsafe_allow_html=True)
+
     checked = col1.checkbox("Back Test with MF Market Data")
+
+    st.markdown("-----------------------------------------")
+
+    col1,col,col2 = st.columns((6,1,7))
+
 
     if checked:
         st_date = col1.date_input("Start Date", dt.date(2018, 1, 1))
@@ -509,7 +514,7 @@ with swp:
     df_mf = get_historical_nav(amfi_code,tday.day)
     df_mf = df_mf[(df_mf.index > swp_st_date.date()) & (df_mf.index < swp_end_date.date())]
 
-    df_swp = get_swp(df_mf,corpus, swp_withdrawal_amount, swp_freq,swp_inflation)
+    df_swp = get_swp(df_mf,corpus, swp_withdrawal_amount, swp_freq,swp_inflation/100.0)
 
     fy_rec = []
     for fy in df_swp['FY'].unique():
@@ -537,7 +542,7 @@ with swp:
     #col1.write(mkt_value)
     swp_xirr = round(optimize.newton(xirr, 3, args=(df_cash_flow, mkt_value,)),2)
     html_table = get_markdown_table(df_fy_data)
-    col1.markdown('<BR>',unsafe_allow_html=True)
+    col1.markdown('<BR><BR>',unsafe_allow_html=True)
     col1.markdown(html_table,unsafe_allow_html=True)
     #col1.write(df_fy_data)
     #col2.write(df_swp['Net_Value'])
@@ -636,7 +641,7 @@ with stp:
     schm_list_dest = [ "{}-{}".format(j, df_mf_perf_sel.loc[j]['Scheme_Name']) for j in df_mf_perf_sel.index if j != amfi_code_source ]
 
 
-    schm_select_dest = col2.selectbox("Select SWP Scheme",schm_list_dest,0)
+    schm_select_dest = col2.selectbox("Select STP Target Scheme",schm_list_dest,0)
     amfi_code_dest = int(schm_select_dest.split("-")[0])
     schm_select_dest = schm_select_dest.split("-")[1]
 
@@ -710,6 +715,8 @@ with stp:
 
     fig.update_layout(height=550)
     fig.update_layout(width=600)
+
+    st.markdown("-----------------------------------------")
 
     col1, col2, col3 = st.columns((8,1,4))
 
