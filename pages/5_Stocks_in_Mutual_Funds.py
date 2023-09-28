@@ -56,8 +56,6 @@ df_perf,df_port_dtl, stock_list = get_mf_portfolio()
 
 #col1,col2 = st.columns((2,4))
 Reverse_Search, Top_20 = st.tabs(["Stock Reverse Search", "Top 20 Most Traded Stocks in MF"])
-
-
 with Reverse_Search:
     st.markdown("<BR>",unsafe_allow_html=True)
 
@@ -71,9 +69,10 @@ with Reverse_Search:
 
     df_search['AUM'] = 0.0
 
-    #for i in df_search.index:
-    #    sch_name = df_search.loc[i]['Scheme_Name']
-    #    df_search.at[i,'AUM'] = df_perf.loc[sch_name]['AUM']
+
+    for i in df_search.index:
+        sch_name = df_search.loc[i,'Scheme_Name']
+        df_search.at[i,'AUM'] = df_perf.loc[sch_name,'AUM']
 
     tot_increase = df_search[df_search['Status'] == 'Increased']['Scheme_Name'].count()
     tot_decrease = df_search[df_search['Status'] == 'Decreased']['Scheme_Name'].count()
