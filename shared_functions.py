@@ -227,7 +227,7 @@ def generate_pdf_report(fig_1, fig_2, retirement_dict, df_goals, df_ret_income, 
 
     ret_text, ret_advise = get_retirement_summary_text(Name,RetScore,FundShort,SIPNeed,OptXIRR, RetAge, Cagr)
 
-    image_bytes = pio.to_image(fig_1, format="jpeg", engine="kaleido")
+    image_bytes = pio.to_image(fig_2, format="jpeg", engine="kaleido")
     pil_image = Image.open(io.BytesIO(image_bytes))
 
     temp_image = tempfile.NamedTemporaryFile(delete=False, suffix=".png")
