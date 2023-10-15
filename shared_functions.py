@@ -221,7 +221,7 @@ def generate_pdf_report(fig_1, fig_2, retirement_dict, df_goals, df_ret_income, 
 
     ret_text, ret_advise = get_retirement_summary_text(Name,RetScore,FundShort,SIPNeed,OptXIRR, RetAge, Cagr)
 
-    fig_1.write_image(temp_filename)
+    #fig_1.write_image(temp_filename)
     try:
 
         # Create a PDF document
@@ -235,11 +235,11 @@ def generate_pdf_report(fig_1, fig_2, retirement_dict, df_goals, df_ret_income, 
         pdf.set_xy(48,30)
         pdf.set_text_color(255,0,0)
 
-        pdf.cell(75,5,'Retirement Score', align='L')
-        pdf.image(temp_filename, x=0, y=39, w=110)
+        #pdf.cell(75,5,'Retirement Score', align='L')
+        #pdf.image(temp_filename, x=0, y=39, w=110)
 
-        if os.path.exists(temp_filename):
-            os.remove(temp_filename)
+        #if os.path.exists(temp_filename):
+        #    os.remove(temp_filename)
 
 
         line_gap = 5
@@ -478,14 +478,14 @@ def generate_pdf_report(fig_1, fig_2, retirement_dict, df_goals, df_ret_income, 
 
 
 
-        pdf.add_page()
-        pdf.image("gw_header.png",5,3,WIDTH-10,24)
-        pdf.image("gw_footer.png",5,HEIGHT-15,WIDTH-10,12)
+        #pdf.add_page()
+        #pdf.image("gw_header.png",5,3,WIDTH-10,24)
+        #pdf.image("gw_footer.png",5,HEIGHT-15,WIDTH-10,12)
 
-        fig_2.write_image(report_filenm)
-        pdf.image(report_filenm, x=12, y=25,w=280,h=165)
+        #fig_2.write_image(report_filenm)
+        #pdf.image(report_filenm, x=12, y=25,w=280,h=165)
 
-        if os.path.exists(report_filenm):
+        #if os.path.exists(report_filenm):
             os.remove(report_filenm)
 
 
