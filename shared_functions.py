@@ -1,5 +1,7 @@
 import pandas as pd
 import streamlit as st
+import plotly.io as pio
+from PIL import Image
 from fpdf import FPDF
 import tempfile
 import io
@@ -221,6 +223,12 @@ def generate_pdf_report(fig_1, fig_2, retirement_dict, df_goals, df_ret_income, 
 
     ret_text, ret_advise = get_retirement_summary_text(Name,RetScore,FundShort,SIPNeed,OptXIRR, RetAge, Cagr)
 
+    image_bytes = pio.to_image(fig_1, format="png")
+    pil_image = Image.open(io.BytesIO(image_bytes))
+
+    temp_image = tempfile.NamedTemporaryFile(delete=False, suffix=".png")
+    pil_image.save(temp_image.name, format="PNG")
+
     #fig_1.write_image(temp_filename)
     try:
 
@@ -235,9 +243,9 @@ def generate_pdf_report(fig_1, fig_2, retirement_dict, df_goals, df_ret_income, 
         pdf.set_xy(48,30)
         pdf.set_text_color(255,0,0)
 
-        #pdf.cell(75,5,'Retirement Score', align='L')
+        pdf.cell(75,5,'Retirement Score', align='L')
         #pdf.image(temp_filename, x=0, y=39, w=110)
-
+        pdf.image(temp_image.name, x=0, y=39, w=110)
         #if os.path.exists(temp_filename):
         #    os.remove(temp_filename)
 
@@ -486,7 +494,7 @@ def generate_pdf_report(fig_1, fig_2, retirement_dict, df_goals, df_ret_income, 
         #pdf.image(report_filenm, x=12, y=25,w=280,h=165)
 
         #if os.path.exists(report_filenm):
-            os.remove(report_filenm)
+            #os.remove(report_filenm)
 
 
 
