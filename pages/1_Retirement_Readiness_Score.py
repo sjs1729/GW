@@ -588,26 +588,4 @@ if n_Retire_1 or n_Retire_2 or n_Retire_3:
     # Show the chart in Streamlit
     #st.plotly_chart(fig_2)
 
-    pdf_bytes = generate_pdf_report(fig_1, fig_2, retirement_dict, df_goals, df_ret_income, retirement_assets)
-
-    # Create a download button for the PDF
-    placeholder_button_1.download_button(
-        label="PDF  ⬇️",
-        data=pdf_bytes,
-        key='download_button_1',
-        file_name="Retirement_Score_{}.pdf".format(name)
-    )
-
-    placeholder_button_2.download_button(
-        label="PDF  ⬇️",
-        data=pdf_bytes,
-        key='download_button_2',
-        file_name="Retirement_Score_{}.pdf".format(name)
-    )
-
-    placeholder_button_3.download_button(
-        label="PDF  ⬇️",
-        data=pdf_bytes,
-        key='download_button_3',
-        file_name="Retirement_Score_{}.pdf".format(name)
-    )
+    
