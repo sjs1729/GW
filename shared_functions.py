@@ -1,14 +1,15 @@
 import pandas as pd
 import streamlit as st
-import plotly.io as pio
-from PIL import Image
+#import plotly.io as pio
+#from PIL import Image
 from fpdf import FPDF
 import tempfile
 import io
-import base64
+#import base64
 import uuid
 import os
 from io import BytesIO
+import math
 
 
 
@@ -151,42 +152,42 @@ def get_retirement_summary_text(name,ret_score,fund_needed,sip_needed,opt_xirr, 
     elif ret_score >= 95 and ret_score < 100:
         ret_text = 'Congratulations {}, you have planned your Retirement well.'.format(name)
         ret_text = ret_text + 'Your Retirement Score is {}, and you are in Green Zone.'.format(ret_score)
-        ret_text = ret_text + ' Although your doing fine, you need to improve your Score to a Perfect 100. Please consult your Financial Advisor'
+        ret_text = ret_text + ' Although your doing fine, you need to improve your Score to a Perfect 100. Please consult your Financial Advisor.'
 
         if fund_needed > 0:
-            ret_advise.append('1. You have a fund shortfall of Rs. {}. Review your Expenses, Goals and Other Income sources'.format(fund_needed))
+            ret_advise.append('1. You have a fund shortfall of {}. Review your Expenses, Goals and Other Income sources.'.format(display_amount(fund_needed).replace('₹','Rs.')))
 
         if sip_needed > 0 and years_to_retire > 0:
-            ret_advise.append('2. You have {} years to retire, you need to save an additional Rs. {} monthly'.format(years_to_retire,sip_needed))
+            ret_advise.append('2. You have {} years to retire, you need to save an additional {} monthly.'.format(years_to_retire,display_amount(sip_needed).replace('₹','Rs.')))
 
         if cagr < opt_xirr:
-            ret_advise.append('3. Your corpus is growing at an annual rate of {}%. You can meet your Retirement Targets if you can grow your assets at {}%'.format(cagr,opt_xirr))
+            ret_advise.append('3. Your corpus is growing at an annual rate of {}%. You can meet your Retirement Targets if you can grow your assets at {}%.'.format(cagr,opt_xirr))
 
 
     elif ret_score >= 75 and ret_score < 95:
-        ret_text = 'Dear {}, your Retirement Score is {}. You are in Amber Zone. Please consult your Financial Advisor to improve your Retirement Planning'.format(name, ret_score)
+        ret_text = 'Dear {}, your Retirement Score is {}. You are in Amber Zone. Please consult your Financial Advisor to improve your Retirement Planning.'.format(name, ret_score)
 
         if fund_needed > 0:
-            ret_advise.append('1. You have a fund shortfall of Rs. {}. Review your Expenses, Goals and Other Income sources'.format(fund_needed))
+            ret_advise.append('1. You have a fund shortfall of {}. Review your Expenses, Goals and Other Income sources.'.format(display_amount(fund_needed).replace('₹','Rs.')))
 
         if sip_needed > 0 and years_to_retire > 0:
-            ret_advise.append('2. You have {} years to retire, you need to save an additional Rs. {} monthly'.format(years_to_retire,sip_needed))
+            ret_advise.append('2. You have {} years to retire, you need to save an additional {} monthly.'.format(years_to_retire,display_amount(sip_needed).replace('₹','Rs.')))
 
         if cagr < opt_xirr:
-            ret_advise.append('3. Your corpus is growing at an annual rate of {}%. You can meet your Retirement Targets if you can grow your assets at {}%'.format(cagr,opt_xirr))
+            ret_advise.append('3. Your corpus is growing at an annual rate of {}%. You can meet your Retirement Targets if you can grow your assets at {}%.'.format(cagr,opt_xirr))
 
 
     else:
-        ret_text = 'Dear {}, your Retirement Score is {}. You are in Red Zone and need immediate help. Please consult your Financial Advisor to improve your Retirement Planning'.format(name, ret_score)
+        ret_text = 'Dear {}, your Retirement Score is {}. You are in Red Zone and need immediate help. Please consult your Financial Advisor to improve your Retirement Planning.'.format(name, ret_score)
 
         if fund_needed > 0:
-            ret_advise.append('1. You have a fund shortfall of Rs. {}. Review your Expenses, Goals and Other Income sources'.format(fund_needed))
+            ret_advise.append('1. You have a fund shortfall of {}. Review your Expenses, Goals and Other Income sources.'.format(display_amount(fund_needed).replace('₹','Rs.')))
 
         if sip_needed > 0 and years_to_retire > 0:
-            ret_advise.append('2. You have {} years to retire, you need to save an additional Rs. {} monthly'.format(years_to_retire,sip_needed))
+            ret_advise.append('2. You have {} years to retire, you need to save an additional {} monthly.'.format(years_to_retire,display_amount(sip_needed).replace('₹','Rs.')))
 
         if cagr < opt_xirr:
-            ret_advise.append('3. Your corpus is growing at an annual rate of {}%. You can meet your Retirement Targets if you can grow your assets at {}%'.format(cagr,opt_xirr))
+            ret_advise.append('3. Your corpus is growing at an annual rate of {}%. You can meet your Retirement Targets if you can grow your assets at {}%.'.format(cagr,opt_xirr))
 
 
 
@@ -227,13 +228,7 @@ def generate_pdf_report(fig_1, fig_2, retirement_dict, df_goals, df_ret_income, 
 
     ret_text, ret_advise = get_retirement_summary_text(Name,RetScore,FundShort,SIPNeed,OptXIRR, RetAge, Cagr)
 
-    image_bytes = pio.to_image(fig_2, format="jpeg", engine="kaleido")
-    pil_image = Image.open(io.BytesIO(image_bytes))
 
-    temp_image = tempfile.NamedTemporaryFile(delete=False, suffix=".png")
-    pil_image.save(temp_image.name, format="PNG")
-
-    #fig_1.write_image(temp_filename)
     try:
 
         # Create a PDF document
@@ -248,10 +243,7 @@ def generate_pdf_report(fig_1, fig_2, retirement_dict, df_goals, df_ret_income, 
         pdf.set_text_color(255,0,0)
 
         pdf.cell(75,5,'Retirement Score', align='L')
-        #pdf.image(temp_filename, x=0, y=39, w=110)
-        pdf.image(temp_image.name, x=0, y=39, w=110)
-        #if os.path.exists(temp_filename):
-        #    os.remove(temp_filename)
+        pdf.image("dial_guage.png", x=10, y=39, w=110)
 
 
         line_gap = 5
@@ -278,6 +270,7 @@ def generate_pdf_report(fig_1, fig_2, retirement_dict, df_goals, df_ret_income, 
 
 
         pdf.image(qr_code_img, x=70, y=163, w=60)
+
 
         pdf.line(135,28,135,195)
 
@@ -321,14 +314,14 @@ def generate_pdf_report(fig_1, fig_2, retirement_dict, df_goals, df_ret_income, 
         pdf.set_font('Arial', 'B', 8)
         pdf.cell(25, 10, "Annual Income:", align='L')
         pdf.set_font('Arial', '', 8)
-        pdf.cell(10, 10, f"Rs. {AnnInc}" , align='L')
+        pdf.cell(10, 10, display_amount(AnnInc).replace('₹','Rs.') , align='L')
 
         start_pos_x = start_pos_x + 50
         pdf.set_xy(start_pos_x,start_pos_y)
         pdf.set_font('Arial', 'B', 8)
         pdf.cell(25, 10, "Annual Expense:", align='L')
         pdf.set_font('Arial', '', 8)
-        pdf.cell(10, 10, f"Rs. {AnnExp}" , align='L')
+        pdf.cell(10, 10, display_amount(AnnExp).replace('₹','Rs.') , align='L')
 
         start_pos_x = start_pos_x + 50
         pdf.set_xy(start_pos_x,start_pos_y)
@@ -345,7 +338,7 @@ def generate_pdf_report(fig_1, fig_2, retirement_dict, df_goals, df_ret_income, 
         pdf.set_font('Arial', 'B', 8)
         pdf.cell(25, 10, "Current Networth:", align='L')
         pdf.set_font('Arial', '', 8)
-        pdf.cell(10, 10, f"Rs. {Corpus}" , align='L')
+        pdf.cell(10, 10, display_amount(Corpus).replace('₹','Rs.') , align='L')
 
         start_pos_x = start_pos_x + 50
         pdf.set_xy(start_pos_x,start_pos_y)
@@ -357,12 +350,12 @@ def generate_pdf_report(fig_1, fig_2, retirement_dict, df_goals, df_ret_income, 
         start_pos_x = start_pos_x + 50
         pdf.set_xy(start_pos_x,start_pos_y)
         pdf.set_font('Arial', 'B', 8)
-        pdf.cell(25, 10, f"Networth at {PlanAge}:", align='L')
+        pdf.cell(25, 10, f"Residual Networth:", align='L')
         pdf.set_font('Arial', '', 8)
         if TermCorp > 0:
-            pdf.cell(10, 10, f"Rs. {TermCorp}" , align='L')
+            pdf.cell(10, 10, display_amount(TermCorp).replace('₹','Rs.') , align='L')
         else:
-            pdf.cell(10, 10, " -- " , align='L')
+            pdf.cell(10, 10, "  N/A " , align='L')
 
         #pil_image.save(temp_image.name, format="PNG")
 
@@ -431,7 +424,7 @@ def generate_pdf_report(fig_1, fig_2, retirement_dict, df_goals, df_ret_income, 
                     pdf.cell(15,line_height,"--",border=1, align='C')
 
                 pdf.cell(55,line_height,f"{df_goals.loc[j,'Desc']}",border=1, align='C')
-                pdf.cell(20,line_height,f"Rs. {str(df_goals.loc[j,'Amount'])}",border=1, align='C')
+                pdf.cell(20,line_height,display_amount(df_goals.loc[j,'Amount']).replace('₹','Rs.'),border=1, align='C')
                 pdf.cell(20,line_height,f"{freq_text}",border=1, align='C')
                 pdf.cell(15,line_height,f"{str(infl)}",border=1, align='C')
 
@@ -481,37 +474,178 @@ def generate_pdf_report(fig_1, fig_2, retirement_dict, df_goals, df_ret_income, 
                 if freq > 0:
                     pdf.cell(15,line_height,f"{df_ret_income.loc[j,'End_Age']}",border=1, align='C')
                 else:
-                    pdf.cell(15,line_height,"--",border=1, align='C')
+                    pdf.cell(15,line_height," --",border=1, align='C')
 
                 pdf.cell(55,line_height,f"{df_ret_income.loc[j,'Desc']}",border=1, align='C')
-                pdf.cell(20,line_height,f"Rs. {str(df_ret_income.loc[j,'Amount'])}",border=1, align='C')
+                pdf.cell(20,line_height,display_amount(df_ret_income.loc[j,'Amount']).replace('₹','Rs.'),border=1, align='C')
+
+                display_amount(df_goals.loc[j,'Amount']).replace('₹','Rs.')
+
                 pdf.cell(20,line_height,f"{freq_text}",border=1, align='C')
                 pdf.cell(15,line_height,f"{str(incr_pct)}",border=1, align='C')
 
 
+        pdf.set_line_width(1)
+        #pdf.line(65,83,65,45)
 
-        #pdf.add_page()
-        #pdf.image("gw_header.png",5,3,WIDTH-10,24)
-        #pdf.image("gw_footer.png",5,HEIGHT-15,WIDTH-10,12)
+        theta = 180 - (180.0 * RetScore/100.0)
+        if theta < 1:
+            theta = 1
+        elif theta > 179:
+            theta = 179
+
+        arrow_height = 38.5
+        arrow_x0 = 66
+        arrow_y0 = 82.5
+        cos_theta = math.cos(math.radians(theta))
+        sin_theta = math.sin(math.radians(theta))
+        x2 = arrow_x0 + arrow_height * cos_theta
+        y2 = arrow_y0 - arrow_height * sin_theta
+        #st.write(theta,cos_theta, sin_theta,x2,y2)
+        pdf.line(arrow_x0,arrow_y0,x2,y2)
+
+        theta_1 = theta - 1
+        theta_2 = theta + 1
+
+        r_1 = 0.95 * arrow_height
+        ax_1 = arrow_x0 + r_1 * math.cos(math.radians(theta_1))
+        ax_2 = arrow_x0 + r_1 * math.cos(math.radians(theta_2))
+        ay_1 = arrow_y0 - r_1 * math.sin(math.radians(theta_1))
+        ay_2 = arrow_y0 - r_1 * math.sin(math.radians(theta_2))
+
+        pdf.line(ax_1,ay_1,x2,y2)
+        pdf.line(ax_2,ay_2,x2,y2)
+
+        pdf.set_line_width(0.2)
+        pdf.ellipse(arrow_x0 - 1,arrow_y0 - 1,2,2)
+
+        if RetScore > 95:
+            pdf.set_text_color(0, 255, 25)
+        elif RetScore > 75:
+            pdf.set_text_color(255, 150, 0)
+        else:
+            pdf.set_text_color(255, 0, 25)
+
+        pdf.set_font('Arial', 'B', 55)
+
+
+
+        if theta < 75 or theta > 105:
+            pdf.text(56,74,str(int(RetScore)) )
+        elif theta > 75 and theta < 90:
+            pdf.text(56,74,str(int(RetScore)) )
+        elif theta > 90 and theta < 105:
+            pdf.text(56,74,str(int(RetScore)) )
+
+
+
+        pdf.add_page()
+        pdf.image("gw_header.png",5,3,WIDTH-10,24)
+        pdf.image("gw_footer.png",5,HEIGHT-15,WIDTH-10,12)
+
+        nBars = len(retirement_assets)
+        chart_x0 = 25
+        chart_y0 = 180
+        chart_width = 262
+        chart_height = 125
+        bar_gap = 1
+        bar_width = (chart_width - bar_gap * nBars )/nBars
+
+        pdf.set_text_color(4,51,255)
+
+
+        #pdf.rect(chart_x0, chart_y0 - chart_height , chart_width, chart_height )
+        if RetScore > 0:
+            pos_max = retirement_assets[retirement_assets['Networth'] > 0]['Networth'].max()
+        else:
+            pos_max = 0
+
+        if RetScore < 100:
+            neg_max = abs(retirement_assets[retirement_assets['Networth'] < 0]['Networth'].min())
+        else:
+            neg_max = 0
+
+        if neg_max == 0:
+            x_axis_pos = 180
+        elif pos_max == 0:
+            x_axis_pos = 50
+        else:
+            x_axis_pos = chart_y0 - chart_height * neg_max / (pos_max + neg_max)
+
+
+        #st.write(nBars,bar_width,pos_max,neg_max,(pos_max + neg_max)/6,y_interval)
+        #pdf.line(chart_x0, x_axis_pos, chart_x0 + chart_width, x_axis_pos)
+
+        pdf.line(chart_x0, chart_y0,chart_x0,chart_y0 - chart_height)
+
+
+        for i in retirement_assets.index:
+            age_x = retirement_assets.loc[i,'Age']
+            networth_y = retirement_assets.loc[i,'Networth']
+
+            bar_i_x = chart_x0 + i * (bar_gap + bar_width) - bar_width/2.0
+
+            bar_height_x = chart_height * (networth_y/ (pos_max + neg_max))
+            if networth_y > 0:
+                pdf.set_fill_color(0,150,80)
+                pdf.rect(bar_i_x,x_axis_pos - bar_height_x,bar_width,bar_height_x, style='FD')
+            else:
+                pdf.set_fill_color(255,0,0)
+                pdf.rect(bar_i_x,x_axis_pos,bar_width,abs(bar_height_x), style='FD')
+
+            if age_x % 10 == 0:
+                pdf.dashed_line(bar_i_x + bar_width/2.0,chart_y0,bar_i_x + bar_width/2.0,chart_y0 - chart_height)
+                pdf.set_font('Arial', '', 7)
+                #pdf.set_text_color(0, 0, 255)
+                pdf.text(bar_i_x,chart_y0 +5,str(age_x) )
+
+
+
+        #st.write(retirement_assets)
+
+        pdf.set_font('Arial', 'B', 10)
+        #pdf.set_text_color(0, 0, 255)
+        pdf.text(chart_x0 + 0.43 * chart_width,chart_y0 +10,"Age ( in Year )" )
+
+        y_interval = int(int(((pos_max + neg_max)/6.0)/25.0) * 25)
+
+        pdf.set_font('Arial', '', 7)
+
+        tick = 0
+        while tick < pos_max:
+            tick_interval = chart_height * (tick / (pos_max + neg_max))
+            pdf.dashed_line(chart_x0,x_axis_pos - tick_interval,bar_i_x + 2*bar_width,x_axis_pos - tick_interval)
+            pdf.text(chart_x0 - 6,x_axis_pos - tick_interval,str(tick) )
+            tick = tick + y_interval
+
+        tick = 0
+        while tick > -1 * neg_max:
+            tick_interval = chart_height * (tick / (pos_max + neg_max))
+            pdf.dashed_line(chart_x0,x_axis_pos - tick_interval,bar_i_x + 2*bar_width,x_axis_pos - tick_interval)
+            pdf.text(chart_x0 - 6,x_axis_pos - tick_interval,str(tick) )
+            tick = tick - y_interval
+
+        pdf.line(chart_x0, x_axis_pos, bar_i_x + 2*bar_width, x_axis_pos)
 
         #fig_2.write_image(report_filenm)
         #pdf.image(report_filenm, x=12, y=25,w=280,h=165)
 
         #if os.path.exists(report_filenm):
-            #os.remove(report_filenm)
+        #    os.remove(report_filenm)
 
+        pdf.set_text_color(255,25,25)
+        pdf.set_font('Arial', 'BU', 20)
+        pdf.text(chart_x0 + 0.38 * chart_width, chart_y0 - chart_height - 12, "Retirement Corpus by Age" )
+
+
+        pdf.image("y_axis_label.png",chart_x0 - 20,chart_y0 - 0.75 * chart_height,8,53 )
 
 
     except Exception as e:
         st.write(e)
-        if os.path.exists(temp_filename):
-            os.remove(temp_filename)
 
-        if os.path.exists(report_filenm):
-            os.remove(report_filenm)
-
-
-
+        #if os.path.exists(report_filenm):
+        #    os.remove(report_filenm)
 
 
 
