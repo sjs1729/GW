@@ -377,6 +377,7 @@ if n_Retire_1 or n_Retire_2 or n_Retire_3:
             df_expense.loc[goals[key][0]]['Expenses'] = df_expense.loc[goals[key][0]]['Expenses'] + goals[key][2]
 
     #st.write(cagr,curr_age, c_annual_income, age_at_retirement, c_corpus)
+    #st.write(df_expense)
 
     fut_income = []
     if len(df_ret_income) > 0:
