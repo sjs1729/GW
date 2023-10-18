@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 import datetime as dt
 import plotly.graph_objects as go
-from plotly.subplots import make_subplots
+#from plotly.subplots import make_subplots
 import plotly.express as px
 from scipy.optimize import minimize
 from scipy import optimize
@@ -226,7 +226,7 @@ placeholder_fund = user_inputs[3].empty()
 
 #placeholder_header_1.markdown('<p style="font-size:20px;font-weight:bold;text-align:center;vertical-align:middle;color:brown;margin:0px;padding:0px"><u>Retirement Score</u></p>', unsafe_allow_html=True)
 
-n_Retire_1 = user_inputs[0].button('Score  ⬇️', key="Button 1")
+n_Retire_1 = user_inputs[0].button('Calculate Score', key="Button 1")
 placeholder_button_1 = user_inputs[1].empty()
 
 
@@ -240,7 +240,7 @@ end_age = plan_till
 
 st.write("---")
 left, mid, mid_right, right = st.columns((2,4,1.5,2))
-left.markdown("****:red[FUTURE INCOMES (optional)]****")
+left.markdown("****:red[OTHER INCOME SOURCES (If Applicable)]****")
 mid_right.markdown(":red[No of Income Rows]")
 n_pr_incomes = right.slider("", min_value=1, max_value=6, step=1, value=4, label_visibility="collapsed")
 
@@ -253,7 +253,7 @@ p_inputs[3].markdown("**:blue[Amount]**")
 p_inputs[4].markdown("**:blue[Frequency]**")
 p_inputs[5].markdown("**:blue[Increment %]**")
 
-
+help_txt_1 = "Age at which this Income Starts"
 i_start_age = [p_inputs[0].number_input("i_Start_Age", key=f"Start_Age_{col}",min_value=st_age, max_value=end_age, step=1, value=st_age,label_visibility="collapsed") for col in range(n_pr_incomes)]
 i_end_age = [p_inputs[1].number_input("i_End_Age", key=f"End_Age_{col}",min_value=i_start_age[col], max_value=end_age, step=1, value=end_age, label_visibility="collapsed") for col in range(n_pr_incomes)]
 i_income_desc = [p_inputs[2].text_input("i_Income",value="",key=f"Desc_{col}", label_visibility="collapsed")  for col in range(n_pr_incomes)]
@@ -261,8 +261,8 @@ i_income_amt = [p_inputs[3].number_input("i_Amount", key=f"Income_amt_{col}", mi
 i_income_freq = [p_inputs[4].selectbox("i_Frequency",freq_options,0,key=f"Income_Frequency_{col}", label_visibility="collapsed")  for col in range(n_pr_incomes)]
 i_income_incr_pct = [p_inputs[5].number_input("i_income_incr_pct",key=f"Income_incr_{col}",min_value=0.00, step=0.05, value=0.00, help="Income Increment %",label_visibility="collapsed")  for col in range(n_pr_incomes)]
 
-n_Retire_2 = p_inputs[0].button('Score  ⬇️', key="Button 2")
-placeholder_button_2 = p_inputs[1].empty()
+n_Retire_2 = p_inputs[4].button('Calculate Score', key="Button 2")
+placeholder_button_2 = p_inputs[5].empty()
 
 income_rec = []
 for p_i in range(n_pr_incomes):
@@ -279,7 +279,7 @@ df_ret_income = pd.DataFrame(income_rec,columns=['Start_Age','End_Age','Desc','A
 st.write("---")
 
 left, mid, mid_right, right = st.columns((2,4,1.5,2))
-left.markdown("****:red[FUTURE GOALS (Optional)]****")
+left.markdown("****:red[OTHER EXPENSES - LIFE GOALS (If Applicable)]****")
 mid_right.markdown(":red[No of Goal Rows]")
 n_goals = right.slider("", min_value=1, max_value=10, step=1, value=4, label_visibility="collapsed")
 
@@ -300,8 +300,8 @@ g_amt = [g_inputs[3].number_input("Amount", key=f"gAmt_{col}", min_value=0, step
 g_freq = [g_inputs[4].selectbox("Frequency",freq_options,0,key=f"gFrequency_{col}", label_visibility="collapsed")  for col in range(n_goals)]
 g_infl_pct = [g_inputs[5].number_input("Inflation_pct",key=f"gInflation_pct_{col}",min_value=0.00, step=0.05, value=0.00,label_visibility="collapsed")  for col in range(n_goals)]
 
-n_Retire_3 = g_inputs[0].button('Score  ⬇️', key="Button 3")
-placeholder_button_3 = g_inputs[1].empty()
+n_Retire_3 = g_inputs[4].button('Calculate Score', key="Button 3")
+placeholder_button_3 = g_inputs[5].empty()
 
 goal_rec = []
 for g_i in range(n_goals):
@@ -395,7 +395,7 @@ if n_Retire_1 or n_Retire_2 or n_Retire_3:
     df_corpus = get_corpus(cagr,curr_age, c_annual_income, age_at_retirement, c_corpus, df_expense, fut_income,"Corpus@{} %".format(cagr))
 
     retirement_assets = df_expense.merge(df_corpus, on='Years')
-
+    retirement_assets_pdf = retirement_assets
     be_year = plan_till
     for i in retirement_assets.index:
         expense_y = retirement_assets.loc[i][0]
@@ -549,18 +549,18 @@ if n_Retire_1 or n_Retire_2 or n_Retire_3:
 
 
 
-    retirement_assets.reset_index(inplace=True)
-    retirement_assets.columns = ['Age','Expenses','Networth','Opt_Networth']
-    retirement_assets['Networth'] = retirement_assets['Networth'] * 100
+    retirement_assets_pdf.reset_index(inplace=True)
+    retirement_assets_pdf.columns = ['Age','Expenses','Networth']
+    retirement_assets_pdf['Networth'] = retirement_assets_pdf['Networth'] /100000.0
 
     fig_2 = px.bar(
-        retirement_assets, x='Age', y='Networth',
+        retirement_assets_pdf, x='Age', y='Networth',
         title="Retirement Assets by Age",
         labels={'Age': 'Age', 'Networth': 'Networth'}
     )
 
     # Customize the color based on Networth
-    fig_2.update_traces(marker=dict(color=['green' if val >= 0 else 'red' for val in retirement_assets['Networth']]))
+    fig_2.update_traces(marker=dict(color=['green' if val >= 0 else 'red' for val in retirement_assets_pdf['Networth']]))
 
     # Center-align the report title
     fig_2.update_layout(title_x=0.5)
@@ -570,22 +570,44 @@ if n_Retire_1 or n_Retire_2 or n_Retire_3:
     fig_2.update_yaxes(title_text="<b>Networth ₹ (in Lakhs)</b>", showgrid=True, gridwidth=1, gridcolor='lightgray')
 
     # Add annotations at zero
-    zero_index = retirement_assets[retirement_assets['Networth'] <= 0].index[0]
-
-    fig_2.add_annotation(
-        text='Going Under',
-        x=retirement_assets.loc[retirement_assets['Networth'] <= 0, 'Age'].values[0],
-        y=0,
-        showarrow=True,
-        arrowhead=1,
-        arrowwidth=2,
-        arrowsize=1,
-        arrowcolor='black'
-    )
+    if len(retirement_assets_pdf[retirement_assets_pdf['Networth'] <= 0]) > 0:
+        #zero_index = retirement_assets[retirement_assets['Networth'] <= 0].index[0]
+        fig_2.add_annotation(
+            text='Going Under',
+            x=retirement_assets_pdf.loc[retirement_assets_pdf['Networth'] <= 0, 'Age'].values[0],
+            y=0,
+            showarrow=True,
+            arrowhead=1,
+            arrowwidth=2,
+            arrowsize=1,
+            arrowcolor='black'
+        )
 
     fig_2.update_layout(width=720, height=500)
 
     # Show the chart in Streamlit
     #st.plotly_chart(fig_2)
 
-    
+    pdf_bytes = generate_pdf_report(fig_1, fig_2, retirement_dict, df_goals, df_ret_income, retirement_assets_pdf)
+
+    # Create a download button for the PDF
+    placeholder_button_1.download_button(
+        label="Download PDF",
+        data=pdf_bytes,
+        key='download_button_1',
+        file_name="Retirement_Score_{}.pdf".format(name)
+    )
+
+    placeholder_button_2.download_button(
+        label="Download PDF",
+        data=pdf_bytes,
+        key='download_button_2',
+        file_name="Retirement_Score_{}.pdf".format(name)
+    )
+
+    placeholder_button_3.download_button(
+        label="Download PDF",
+        data=pdf_bytes,
+        key='download_button_3',
+        file_name="Retirement_Score_{}.pdf".format(name)
+    )
