@@ -303,7 +303,7 @@ def generate_pdf_report(fig_1, fig_2, retirement_dict, df_goals, df_ret_income, 
         start_pos_x = start_pos_x + 50
         pdf.set_xy(start_pos_x,start_pos_y)
         pdf.set_font('Arial', 'B', 8)
-        pdf.cell(25, 10, "Plan Till:", align='L')
+        pdf.cell(28, 10, "Plan Till:", align='L')
         pdf.set_font('Arial', '', 8)
         pdf.cell(10, 10, f"{PlanAge}" , align='L')
         #pil_image.save(temp_image.name, format="PNG")
@@ -326,7 +326,7 @@ def generate_pdf_report(fig_1, fig_2, retirement_dict, df_goals, df_ret_income, 
         start_pos_x = start_pos_x + 50
         pdf.set_xy(start_pos_x,start_pos_y)
         pdf.set_font('Arial', 'B', 8)
-        pdf.cell(25, 10, "Annual Hike:", align='L')
+        pdf.cell(28, 10, "Annual Hike:", align='L')
         pdf.set_font('Arial', '', 8)
         pdf.cell(10, 10, f"{AnnHikPct} %" , align='L')
         #pil_image.save(temp_image.name, format="PNG")
@@ -350,7 +350,7 @@ def generate_pdf_report(fig_1, fig_2, retirement_dict, df_goals, df_ret_income, 
         start_pos_x = start_pos_x + 50
         pdf.set_xy(start_pos_x,start_pos_y)
         pdf.set_font('Arial', 'B', 8)
-        pdf.cell(25, 10, f"Residual Networth:", align='L')
+        pdf.cell(28, 10, f"Residual Networth:", align='L')
         pdf.set_font('Arial', '', 8)
         if TermCorp > 0:
             pdf.cell(10, 10, display_amount(TermCorp).replace('₹','Rs.') , align='L')
