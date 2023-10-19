@@ -3,3 +3,4 @@ pandas==1.2.4
 scipy==1.6.2
 plotly==5.13.1
 datetime==5.1
+fpdf==1.7.1
