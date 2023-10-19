@@ -1,11 +1,8 @@
 import pandas as pd
 import streamlit as st
-#import plotly.io as pio
-#from PIL import Image
 from fpdf import FPDF
 import tempfile
 import io
-#import base64
 import uuid
 import os
 from io import BytesIO
