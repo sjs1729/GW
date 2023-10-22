@@ -476,7 +476,6 @@ def generate_pdf_report(fig_1, fig_2, retirement_dict, df_goals, df_ret_income, 
                 pdf.cell(55,line_height,f"{df_ret_income.loc[j,'Desc']}",border=1, align='C')
                 pdf.cell(20,line_height,display_amount(df_ret_income.loc[j,'Amount']).replace('₹','Rs.'),border=1, align='C')
 
-                display_amount(df_goals.loc[j,'Amount']).replace('₹','Rs.')
 
                 pdf.cell(20,line_height,f"{freq_text}",border=1, align='C')
                 pdf.cell(15,line_height,f"{str(incr_pct)}",border=1, align='C')
