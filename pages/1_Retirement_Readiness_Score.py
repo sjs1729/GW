@@ -188,10 +188,10 @@ user_inputs[0].markdown(' ')
 user_inputs[1].markdown(' ')
 
 c_annual_income = user_inputs[0].number_input(":blue[Annual Income]", value=1200000,step=100000)
-user_inputs[0].markdown('<p style="font-size:12px;font-weight: bold;text-align:center;vertical-align:middle;color:red;margin:0px;padding:0px">({})</p>'.format(display_amount(c_annual_income)), unsafe_allow_html=True)
+user_inputs[0].markdown('<p style="font-size:12px;font-weight: bold;text-align:center;vertical-align:middle;color:green;margin:0px;padding:0px">({})</p>'.format(display_amount(c_annual_income)), unsafe_allow_html=True)
 
 c_annual_expense = user_inputs[1].number_input(":blue[Annual Expense]", value=800000,step=100000)
-user_inputs[1].markdown('<p style="font-size:12px;font-weight: bold;text-align:center;vertical-align:middle;color:red;margin:0px;padding:0px">({})</p>'.format(display_amount(c_annual_expense)), unsafe_allow_html=True)
+user_inputs[1].markdown('<p style="font-size:12px;font-weight: bold;text-align:center;vertical-align:middle;color:green;margin:0px;padding:0px">({})</p>'.format(display_amount(c_annual_expense)), unsafe_allow_html=True)
 
 user_inputs[0].markdown(' ')
 user_inputs[1].markdown(' ')
@@ -203,10 +203,10 @@ user_inputs[0].markdown(' ')
 user_inputs[1].markdown(' ')
 
 c_corpus = user_inputs[0].number_input(":blue[Current Corpus]", value=7500000,step=100000,help="Your Total Current Savings")
-user_inputs[0].markdown('<p style="font-size:12px;font-weight: bold;text-align:center;vertical-align:middle;color:red;margin:0px;padding:0px">({})</p>'.format(display_amount(c_corpus)), unsafe_allow_html=True)
+user_inputs[0].markdown('<p style="font-size:12px;font-weight: bold;text-align:center;vertical-align:middle;color:green;margin:0px;padding:0px">({})</p>'.format(display_amount(c_corpus)), unsafe_allow_html=True)
 
 terminal_corpus = user_inputs[1].number_input(":blue[Terminal Corpus]", value=0,step=100000, help="Money you want to leave behind")
-user_inputs[1].markdown('<p style="font-size:12px;font-weight: bold;text-align:center;vertical-align:middle;color:red;margin:0px;padding:0px">({})</p>'.format(display_amount(terminal_corpus)), unsafe_allow_html=True)
+user_inputs[1].markdown('<p style="font-size:12px;font-weight: bold;text-align:center;vertical-align:middle;color:green;margin:0px;padding:0px">({})</p>'.format(display_amount(terminal_corpus)), unsafe_allow_html=True)
 
 user_inputs[0].markdown(' ')
 user_inputs[1].markdown(' ')
