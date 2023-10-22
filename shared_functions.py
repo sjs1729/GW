@@ -325,7 +325,7 @@ def generate_pdf_report(fig_1, fig_2, retirement_dict, df_goals, df_ret_income, 
         pdf.set_font('Arial', 'B', 8)
         pdf.cell(28, 10, "Annual Hike:", align='L')
         pdf.set_font('Arial', '', 8)
-        pdf.cell(10, 10, f"{AnnHikPct} %" , align='L')
+        pdf.cell(10, 10, f"{round(AnnHikPct,2)} %" , align='L')
         #pil_image.save(temp_image.name, format="PNG")
 
 
@@ -382,7 +382,7 @@ def generate_pdf_report(fig_1, fig_2, retirement_dict, df_goals, df_ret_income, 
             pdf.set_font('Arial', 'BU', 7)
             pdf.set_text_color(255,0,0)
 
-            pdf.cell(30, 10, "Retirement Goals:" , align='L')
+            pdf.cell(30, 10, "Other Expenses (Life Goals):" , align='L')
             pdf.set_font('Arial', '', 5)
             pdf.set_text_color(4,51,255)
 
@@ -528,7 +528,11 @@ def generate_pdf_report(fig_1, fig_2, retirement_dict, df_goals, df_ret_income, 
 
 
         if theta < 75 or theta > 105:
-            pdf.text(56,74,str(int(RetScore)) )
+            if RetScore == 100:
+                pdf.text(50 ,74,str(int(RetScore)) )
+            else:
+                pdf.text(56,74,str(int(RetScore)) )
+
         elif theta > 75 and theta < 90:
             pdf.text(56,74,str(int(RetScore)) )
         elif theta > 90 and theta < 105:
