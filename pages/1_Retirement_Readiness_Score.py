@@ -254,7 +254,7 @@ p_inputs[4].markdown("**:blue[Frequency]**")
 p_inputs[5].markdown("**:blue[Increment %]**")
 
 help_txt_1 = "Age at which this Income Starts"
-i_start_age = [p_inputs[0].number_input("i_Start_Age", key=f"Start_Age_{col}",min_value=st_age, max_value=end_age, step=1, value=st_age,label_visibility="collapsed") for col in range(n_pr_incomes)]
+i_start_age = [p_inputs[0].number_input("i_Start_Age", key=f"Start_Age_{col}",min_value=st_age + 1, max_value=end_age, step=1, value=st_age + 1 ,label_visibility="collapsed") for col in range(n_pr_incomes)]
 i_end_age = [p_inputs[1].number_input("i_End_Age", key=f"End_Age_{col}",min_value=i_start_age[col], max_value=end_age, step=1, value=end_age, label_visibility="collapsed") for col in range(n_pr_incomes)]
 i_income_desc = [p_inputs[2].text_input("i_Income",value="",key=f"Desc_{col}", label_visibility="collapsed")  for col in range(n_pr_incomes)]
 i_income_amt = [p_inputs[3].number_input("i_Amount", key=f"Income_amt_{col}", min_value=0, step=10000, value=0, help="Income Annual Value", label_visibility="collapsed")  for col in range(n_pr_incomes)]
@@ -293,7 +293,7 @@ g_inputs[4].markdown("**:blue[Frequency]**")
 g_inputs[5].markdown("**:blue[Inflation %]**")
 
 
-g_start_age = [g_inputs[0].number_input("Start Age", key=f"gStart_Age_{col}",min_value=st_age, max_value=end_age, step=1, value=st_age,label_visibility="collapsed") for col in range(n_goals)]
+g_start_age = [g_inputs[0].number_input("Start Age", key=f"gStart_Age_{col}",min_value=st_age + 1, max_value=end_age, step=1, value=st_age + 1,label_visibility="collapsed") for col in range(n_goals)]
 g_end_age = [g_inputs[1].number_input("End Age", key=f"gEnd_Age_{col}",min_value=g_start_age[col], max_value=end_age, step=1, value=end_age, label_visibility="collapsed") for col in range(n_goals)]
 g_desc = [g_inputs[2].text_input("Desc",value="",key=f"gDesc_{col}", label_visibility="collapsed")  for col in range(n_goals)]
 g_amt = [g_inputs[3].number_input("Amount", key=f"gAmt_{col}", min_value=0, step=10000, value=0, help="Income Annual Value", label_visibility="collapsed")  for col in range(n_goals)]
@@ -424,15 +424,15 @@ if n_Retire_1 or n_Retire_2 or n_Retire_3:
 
     #st.write(opt_corpus)
     #st.write(root)
-        if 0 < root < 25:
+        if -10 < root < 50:
             optimised_rate = get_corpus(root,curr_age, c_annual_income, age_at_retirement, c_corpus, df_expense, fut_income,"Optimised Corpus@{}%".format(root))
             retirement_assets = retirement_assets.merge(optimised_rate, on='Years')
         else:
-            placeholder_fund.markdown(":red[ Error: Optimized Rate out of Range. Check input data!]")
+            placeholder_fund.markdown(":red[ Warning: Optimised IRR is out of bounds. Input data seems too high/low]")
             optimised_rate = ""
 
     except:
-        placeholder_fund.markdown(":red[ Error: Solution for Optimized Rate not possible. Check input data!]")
+        placeholder_fund.markdown(":red[ Error: Solution for Optimized IRR not possible. Input data seems too high/low]")
     #optimised_corpus = get_corpus(cagr,curr_age, c_annual_income, age_at_retirement, opt_corpus, df_expense, fut_income,"Optimised Corpus-{}".format(cagr))
     #retirement_assets = retirement_assets.merge(optimised_corpus, on='Years')
 
@@ -496,7 +496,7 @@ if n_Retire_1 or n_Retire_2 or n_Retire_3:
                 {'range': [75, 95], 'color': "orange"},
                 {'range': [95, 100], 'color': "green"}]
             }))
-    fig_1.update_layout(margin=dict(l=90,r=10,b=10,t=10))
+    fig_1.update_layout(margin=dict(l=30,r=10,b=10,t=10))
     fig_1.update_layout(height=200)
     fig_1.update_layout(width=475)
 
