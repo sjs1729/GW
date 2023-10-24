@@ -139,12 +139,14 @@ def get_data_refresh_date():
     return data['Date'].iloc[-1]
 
 
-def get_retirement_summary_text(name,ret_score,fund_needed,sip_needed,opt_xirr, years_to_retire, cagr):
+def get_retirement_summary_text(name,ret_score,fund_needed,sip_needed,opt_xirr, years_to_retire, cagr, final_networth):
 
     ret_text = ''
     ret_advise = []
     if ret_score == 100:
-        ret_text = 'Congratulations {}!!! You have a Perfect Retirement Score.'.format(name)
+        ret_text = 'Congratulations {}!!! You have a Perfect Retirement Score, and at the end, you will still be left with a surplus of {}.'.format(name, display_amount(final_networth).replace('₹','Rs.'))
+        if opt_xirr/cagr <= 0.85:
+            ret_text = ret_text + " Enjoy Life, you have earned the freedom to be bit more extravagant"
 
     elif ret_score >= 95 and ret_score < 100:
         ret_text = 'Congratulations {}, you have planned your Retirement well.'.format(name)
@@ -219,11 +221,12 @@ def generate_pdf_report(fig_1, fig_2, retirement_dict, df_goals, df_ret_income, 
     SIPNeed = int(retirement_dict['SIPNeed'])
     OptXIRR = retirement_dict['OptXIRR']
 
+    final_networth = retirement_assets.iloc[-1]['Networth'] * 100000
 
     #st.write(retirement_assets)
 
 
-    ret_text, ret_advise = get_retirement_summary_text(Name,RetScore,FundShort,SIPNeed,OptXIRR, RetAge, Cagr)
+    ret_text, ret_advise = get_retirement_summary_text(Name,RetScore,FundShort,SIPNeed,OptXIRR, RetAge, Cagr, final_networth)
 
 
     try:
@@ -266,7 +269,7 @@ def generate_pdf_report(fig_1, fig_2, retirement_dict, df_goals, df_ret_income, 
                 pdf.multi_cell(120,5,advise_text)
 
 
-        pdf.image(qr_code_img, x=70, y=163, w=60)
+        pdf.image(qr_code_img, x=80, y=163, w=50)
 
 
         pdf.line(135,28,135,195)
