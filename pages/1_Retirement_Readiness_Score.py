@@ -251,7 +251,7 @@ p_inputs[1].markdown("**:blue[End Age]**")
 p_inputs[2].markdown("**:blue[Description]**")
 p_inputs[3].markdown("**:blue[Amount]**")
 p_inputs[4].markdown("**:blue[Frequency]**")
-p_inputs[5].markdown("**:blue[Increment %]**")
+p_inputs[5].markdown("**:blue[Yearly Increment %]**")
 
 help_txt_1 = "Age at which this Income Starts"
 i_start_age = [p_inputs[0].number_input("i_Start_Age", key=f"Start_Age_{col}",min_value=st_age + 1, max_value=end_age, step=1, value=st_age + 1 ,label_visibility="collapsed") for col in range(n_pr_incomes)]
@@ -290,7 +290,7 @@ g_inputs[1].markdown("**:blue[End Age]**")
 g_inputs[2].markdown("**:blue[Description]**")
 g_inputs[3].markdown("**:blue[Amount]**")
 g_inputs[4].markdown("**:blue[Frequency]**")
-g_inputs[5].markdown("**:blue[Inflation %]**")
+g_inputs[5].markdown("**:blue[Annual Inflation %]**")
 
 
 g_start_age = [g_inputs[0].number_input("Start Age", key=f"gStart_Age_{col}",min_value=st_age + 1, max_value=end_age, step=1, value=st_age + 1,label_visibility="collapsed") for col in range(n_goals)]
