@@ -158,7 +158,7 @@ placeholder_summary.markdown(html_text, unsafe_allow_html=True)
 
 
 
-html_text = '<p><span style="color: rgb(4, 51, 255);">Based on your Expected Rate of Return & Years Remaining, the suggested Asset Allocation: &nbsp;&nbsp; </span>'
+html_text = '<p><span style="color: rgb(4, 51, 255);">Based on your Expected Rate of Return & Years to Goal, the suggested Asset Allocation: &nbsp;&nbsp; </span>'
 html_text = html_text +  '<strong><span style="color: rgb(148, 33, 147);"> {}</span></strong></p><BR><BR><BR>'.format(risk_matrix['Asset_Allocation'])
 html_text = html_text + '<p><span style="color: rgb(255, 50, 50); font-size: 13px;">Consult your Financial Advisor for specific guidance.'
 html_text = html_text + 'For MF Investment, you can also email Growealth Investments </span>'
