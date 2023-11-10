@@ -66,6 +66,7 @@ with Reverse_Search:
     stk_select = s_layout[1].selectbox("Search a Stock",stock_list,0,label_visibility="collapsed")
 
     df_search = df_port_dtl[df_port_dtl['Asset_Name']==stk_select][['Scheme_Name','Pct_Holding','Status']]
+    df_search = df_search.sort_values(by=['Pct_Holding'],ascending=False)
 
     df_search['AUM'] = 0.0
 
@@ -84,26 +85,57 @@ with Reverse_Search:
     st.markdown(" ")
     st.markdown(" ")
 
-    s_layout = st.columns((1,1,1,1,1,1))
-    html_text = '<p style="text-align:center;"><strong><span style="font-family: Verdana, Geneva, sans-serif; font-size: 13px;color:blue;">New Addition: </span></strong>'
-    html_text = html_text + '<span style="font-family: Verdana, Geneva, sans-serif; font-size: 13px;color:brown;">{}</span>'.format(tot_new_add)
-    s_layout[0].markdown(html_text,unsafe_allow_html=True)
-    html_text = '<p style="text-align:center;"><strong><span style="font-family: Verdana, Geneva, sans-serif; font-size: 13px;color:blue;">Increased: </span></strong>'
-    html_text = html_text + '<span style="font-family: Verdana, Geneva, sans-serif; font-size: 13px;color:brown;">{}  </span>'.format(tot_increase)
+    s_layout = st.columns((1,7,1,6,1,6,1,6,1,8,1,6))
+    html_text = '<p style="text-align:left;"><strong><span style="font-family: Verdana, Geneva, sans-serif; font-size: 12px;color:blue;">New Addition: </span></strong>'
+    html_text = html_text + '<span style="font-family: Verdana, Geneva, sans-serif; font-size: 13px;color:brown;">({})</span>'.format(tot_new_add)
     s_layout[1].markdown(html_text,unsafe_allow_html=True)
-    html_text = '<p style="text-align:center;"><strong><span style="font-family: Verdana, Geneva, sans-serif; font-size: 13px;color:blue;">Decreased: </span></strong>'
-    html_text = html_text + '<span style="font-family: Verdana, Geneva, sans-serif; font-size: 13px;color:brown;">{}  </span>'.format(tot_decrease)
-    s_layout[2].markdown(html_text,unsafe_allow_html=True)
-    html_text = '<p style="text-align:center;"><strong><span style="font-family: Verdana, Geneva, sans-serif; font-size: 13px;color:blue;">Removed: </span></strong>'
-    html_text = html_text + '<span style="font-family: Verdana, Geneva, sans-serif; font-size: 13px;color:brown;">{} </span>'.format(tot_removed)
+    html_text = '<p style="text-align:left;"><strong><span style="font-family: Verdana, Geneva, sans-serif; font-size: 12px;color:blue;">Increased: </span></strong>'
+    html_text = html_text + '<span style="font-family: Verdana, Geneva, sans-serif; font-size: 13px;color:brown;">({})  </span>'.format(tot_increase)
     s_layout[3].markdown(html_text,unsafe_allow_html=True)
-    html_text = '<p style="text-align:center;"><strong><span style="font-family: Verdana, Geneva, sans-serif; font-size: 13px;color:blue;">No Change: </span></strong>'
-    html_text = html_text + '<span style="font-family: Verdana, Geneva, sans-serif; font-size: 13px;color:brown;">{}  </span>'.format(tot_nochange)
-    s_layout[4].markdown(html_text,unsafe_allow_html=True)
-
-    html_text = '<p style="text-align:center;"><strong><span style="font-family: Verdana, Geneva, sans-serif; font-size: 13px;color:red;">Total: </span></strong>'
-    html_text = html_text + '<span style="font-family: Verdana, Geneva, sans-serif; font-size: 13px;color:brown;">{}  </span>'.format(total)
+    html_text = '<p style="text-align:left;"><strong><span style="font-family: Verdana, Geneva, sans-serif; font-size: 12px;color:blue;">Decreased: </span></strong>'
+    html_text = html_text + '<span style="font-family: Verdana, Geneva, sans-serif; font-size: 13px;color:brown;">({})  </span>'.format(tot_decrease)
     s_layout[5].markdown(html_text,unsafe_allow_html=True)
+    html_text = '<p style="text-align:left;"><strong><span style="font-family: Verdana, Geneva, sans-serif; font-size: 12px;color:blue;">Removed: </span></strong>'
+    html_text = html_text + '<span style="font-family: Verdana, Geneva, sans-serif; font-size: 13px;color:brown;">({}) </span>'.format(tot_removed)
+    s_layout[7].markdown(html_text,unsafe_allow_html=True)
+    html_text = '<p style="text-align:left;"><strong><span style="font-family: Verdana, Geneva, sans-serif; font-size: 12px;color:blue;">No Change: </span></strong>'
+    html_text = html_text + '<span style="font-family: Verdana, Geneva, sans-serif; font-size: 13px;color:brown;">({})  </span>'.format(tot_nochange)
+    s_layout[9].markdown(html_text,unsafe_allow_html=True)
+
+    html_text = '<p style="text-align:left;"><strong><span style="font-family: Verdana, Geneva, sans-serif; font-size: 13px;color:red;">Total: </span></strong>'
+    html_text = html_text + '<span style="font-family: Verdana, Geneva, sans-serif; font-size: 13px;color:brown;">({})  </span>'.format(total)
+    s_layout[11].markdown(html_text,unsafe_allow_html=True)
+
+    chk_addition = s_layout[0].checkbox("New Addition", value=False, label_visibility="collapsed")
+    chk_increase = s_layout[2].checkbox("Increase", value=False, label_visibility="collapsed")
+    chk_decrease = s_layout[4].checkbox("Decrease", value=False, label_visibility="collapsed")
+    chk_removed = s_layout[6].checkbox("Removed", value=False, label_visibility="collapsed")
+    chk_no_change = s_layout[8].checkbox("No Change", value=False, label_visibility="collapsed")
+    #chk_all = s_layout[10].checkbox("All", value=True, label_visibility="collapsed")
+
+    status_filter = []
+
+    if chk_addition:
+        status_filter.append('New Addition')
+
+    if chk_increase:
+        status_filter.append('Increased')
+
+    if chk_decrease:
+        status_filter.append('Decreased')
+
+    if chk_removed:
+        status_filter.append('Removed')
+
+    if chk_no_change:
+        status_filter.append('No Change')
+
+
+    if len(status_filter) > 0:
+        df_search = df_search[df_search['Status'].isin(status_filter)]
+
+
+
 
     html_text = get_markdown_table(df_search)
     st.markdown(html_text,unsafe_allow_html=True)
