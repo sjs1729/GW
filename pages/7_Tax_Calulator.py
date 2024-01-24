@@ -321,7 +321,8 @@ if tot_other_income < 0:
 std_deduction = 50000.0
 total_income = tot_other_income + gross_salary + long_debt + short_debt
 total_income = max(total_income - std_deduction,0)
-slab_0_new = 700000.0 + max_nps_ded
+#slab_0_new = 700000.0 + max_nps_ded
+slab_0_new = 700000.0 
 slab_0_old = 500000.0 + total_deductions
 
 ltcg_taxrate = 0.1
@@ -329,7 +330,8 @@ stcg_taxrate = 0.15
 
 tick_emoji = "\u2705"
 
-new_regime_tax = get_tax_new_regime(total_income - max_nps_ded)
+#new_regime_tax = get_tax_new_regime(total_income - max_nps_ded)
+new_regime_tax = get_tax_new_regime(total_income)
 old_regime_tax = get_tax_old_regime(total_income, total_deductions, curr_age )
 
 
