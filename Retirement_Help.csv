@@ -1,0 +1,23 @@
+Field_Name,Tab_Name,Help_Text
+Year to Retire,Basic Information,Number of years left for retirement
+Expected Life Span,Basic Information,Expected years of Life to be considered for Retirement Planning
+Annual Income,Basic Information,Annual after-Tax Income from Job/Business. Any other income from rent or investment should not be considered here
+Annual Hike %,Basic Information,Annual increment % in Salary that is expected. This should ideally be considered from 2-5%
+Annual Expense,Basic Information,Annual Expense. All adhoc/non-regular  expenses should be considered under other Expenses
+Inflation,Basic Information,The rate at which Expenses increase after every year.
+Current Corpus,Basic Information,"All current savings and assets (including Jewellery, Financial Investments (FD, Stock, Mutual Funds, Real Estate (other than where currently residing)"
+Return on Asset %,Basic Information,The annual rate at which the Current Corpus is growing. It should ideally be the average rate of return of different asset types.
+Expense,Basic Information,"Expenses are increasing annually at the rate of Inflation considered. There is a possibility that due to various factors (primarily propensity to spend), the Annual expenses does not increase after a certain age. Expense Cap is that Age  after which Annual Expense can be considered static. It is defaulted to the Life Span, however depending on anticipated life style change, it can be reduced if required."
+Terminal Corpus,Basic Information,The amount one wants to leave behind.
+Start Age,Other Incomes,Age at which this Other Income starts
+End Age ,Other Incomes,Age at which this Other Income ends. Only applicable when this Other Income is recurring.
+Description,Other Incomes,"Description of the Other Income (e.g. Rental Income, Inheritance, Maturity of Life Insurance, Miscellaneous)"
+Amount,Other Incomes,Annual value of  the Other Income
+Frequency,Other Incomes,"Frequency of the Income  - One Time / Once Every Year / Once in 2 Years, etc"
+Yearly Increment %,Other Incomes,"For recurring Other Income, does the income increases after each year (e.g. Rental Income can be considered increasing annually)"
+Start Age,Other Expenses,Age at which this Other Expense starts
+End Age ,Other Expenses,Age at which this Other Expense ends. Only applicable when this Other Expense is recurring.
+Description,Other Expenses,"Description of the Other Expense (e.g. Annual Travel, Special Occasion like Marriage, Higher Education, Medical Emergency, etc)"
+Amount,Other Expenses,Annual value of  the Other Expense
+Frequency,Other Expenses,"Frequency of the Income  - One Time / Once Every Year / Once in 2 Years, etc"
+Annual Inflation %,Other Expenses,The rate at which the Other Income is increasing annually.
