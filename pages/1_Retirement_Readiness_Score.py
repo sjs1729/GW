@@ -39,7 +39,10 @@ c_1, c_2 = st.columns((8,4))
 c_2.image('growealth-logo_long.png')
 
 
-
+@st.cache_data()
+def get_help_texts():
+    help_text_df = pd.read_csv("Retirement_Help.csv")
+    return help_text_df
 
 
 def get_goals(st_age,end_age,desc,amt,freq,infl):
@@ -165,69 +168,103 @@ def xirr(rate,cash_flow,terminal_value=0):
 st.markdown('<p style="font-size:36px;font-weight: bold;text-align:center;vertical-align:middle;color:blue;margin:0px;padding:0px">Retirement Readiness Score</p>', unsafe_allow_html=True)
 st.markdown('<p style="font-size:36px;font-weight: bold;text-align:center;vertical-align:middle;color:blue;margin:0px;padding:0px"></p>', unsafe_allow_html=True)
 st.markdown('<p style="font-size:36px;font-weight: bold;text-align:center;vertical-align:middle;color:blue;margin:0px;padding:0px"></p>', unsafe_allow_html=True)
-st.markdown('<p style="font-size:36px;font-weight: bold;text-align:center;vertical-align:middle;color:blue;margin:0px;padding:0px"></p>', unsafe_allow_html=True)
+
+
+st.markdown('<p><BR></p>', unsafe_allow_html=True)
+
+left, buf, right = st.columns((10,1,14))
+placeholder_header_1 = left.empty()
+placeholder_score = left.empty()
+placeholder_score_txt = left.empty()
+placeholder_header_2 = right.empty()
+placeholder_chart = right.empty()
+placeholder_fund = right.empty()
+
+
+dummy1, place_here, dummy2 = st.columns((5,2,5))
+
+placeholder_button = place_here.empty()
+
+st.markdown('<p><BR></p>', unsafe_allow_html=True)
+
+basic_info,oth_incomes,oth_expenses, help = st.tabs(["Basic Information","Other Incomes", "Other Expenses","Help"])
+
+
+with basic_info:
+
+    user_inputs = st.columns((3,6,1,4,6))
+
+    #user_inputs[0].markdown('<p><BR></p>', unsafe_allow_html=True)
+    #user_inputs[1].markdown('<p><BR></p>', unsafe_allow_html=True)
+
+    user_inputs[0].markdown('<p style="font-size:16px;font-weight: bold;text-align:center;vertical-align:middle;color:blue;margin:0px;padding:4px">Name:</p><p>', unsafe_allow_html=True)
+    name = user_inputs[1].text_input(":blue[Name]",label_visibility="collapsed", value="John Doe")
+    user_inputs[3].markdown('<p style="font-size:16px;font-weight: bold;text-align:center;vertical-align:middle;color:blue;margin:0px;padding:4px">Current Age:</p><p>', unsafe_allow_html=True)
+    curr_age = user_inputs[4].number_input(":blue[Your Current Age?]",label_visibility="collapsed",  min_value=18, max_value=100, step=1, value=40)
+
+    user_inputs[0].markdown(' ')
+    user_inputs[3].markdown(' ')
+
+    user_inputs[0].markdown('<p style="font-size:16px;font-weight: bold;text-align:center;vertical-align:middle;color:blue;margin:0px;padding:4px">Years to Retire:</p><p>', unsafe_allow_html=True)
+    user_inputs[3].markdown('<p style="font-size:16px;font-weight: bold;text-align:center;vertical-align:middle;color:blue;margin:0px;padding:4px">Expected Life Span:</p><p>', unsafe_allow_html=True)
+    yrs_to_retire = user_inputs[1].number_input(":blue[Years to Retire:]", label_visibility="collapsed", min_value=0, max_value=30, step=1, value=10,help="How many years till Retirement")
+    plan_till = user_inputs[4].number_input("Plan Till", label_visibility="collapsed", min_value=curr_age + yrs_to_retire, max_value=100, step=1, value=90,help="Till what age you want to plan for?")
 
 
 
+    user_inputs[0].markdown('<p style="font-size:16px;font-weight: bold;text-align:center;vertical-align:middle;color:blue;margin:0px;padding:4px">Annual Income:</p><BR><BR>', unsafe_allow_html=True)
+    user_inputs[3].markdown('<p style="font-size:16px;font-weight: bold;text-align:center;vertical-align:middle;color:blue;margin:0px;padding:4px">Annual Hike %:</p><BR><BR>', unsafe_allow_html=True)
+    c_annual_income = user_inputs[1].number_input(":blue[Annual Income]", label_visibility="collapsed", value=1200000,step=100000)
+    user_inputs[1].markdown('<p style="font-size:12px;font-weight: bold;text-align:center;vertical-align:middle;color:green;margin:0px;padding:0px">({})</p>'.format(display_amount(c_annual_income)), unsafe_allow_html=True)
+    ann_hike = user_inputs[4].number_input(":blue[Annual Hike %]", label_visibility="collapsed", min_value=0.0, max_value=20.0, step=0.1, value=4.0, help="Expected % increase in Annual Income")
 
-user_inputs = st.columns((4,4,1,12))
+    #user_inputs[0].markdown(' ')
 
-user_inputs[0].markdown('<p><BR></p>', unsafe_allow_html=True)
-user_inputs[1].markdown('<p><BR></p>', unsafe_allow_html=True)
+    user_inputs[1].markdown(' ')
+    user_inputs[4].markdown(' ')
+    user_inputs[4].markdown(' ')
 
-name = user_inputs[0].text_input(":blue[Name]",value="John Doe")
-curr_age = user_inputs[1].number_input(":blue[Your Current Age?]", min_value=18, max_value=100, step=1, value=40)
+    user_inputs[0].markdown('<p style="font-size:16px;font-weight: bold;text-align:center;vertical-align:middle;color:blue;margin:0px;padding:4px">Annual Expense:</p><BR><BR>', unsafe_allow_html=True)
+    user_inputs[3].markdown('<p style="font-size:16px;font-weight: bold;text-align:center;vertical-align:middle;color:blue;margin:0px;padding:4px">Inflation %:</p><BR><BR>', unsafe_allow_html=True)
 
-user_inputs[0].markdown(' ')
-user_inputs[1].markdown(' ')
+    c_annual_expense = user_inputs[1].number_input(":blue[Annual Expense]",label_visibility="collapsed",  value=800000,step=100000)
+    user_inputs[1].markdown('<p style="font-size:12px;font-weight: bold;text-align:center;vertical-align:middle;color:green;margin:0px;padding:0px">({})</p>'.format(display_amount(c_annual_expense)), unsafe_allow_html=True)
+    inflation = user_inputs[4].number_input(":blue[Inflation]", value=4.0,step =0.1,help="Expected Inflation Rate",label_visibility="collapsed")
 
-yrs_to_retire = user_inputs[0].number_input(":blue[Years to Retire:]", min_value=0, max_value=30, step=1, value=10,help="How many years till Retirement")
-plan_till = user_inputs[1].number_input("Plan Till", min_value=curr_age + yrs_to_retire, max_value=100, step=1, value=90,help="Till what age you want to plan for?")
 
-user_inputs[0].markdown(' ')
-user_inputs[1].markdown(' ')
+    user_inputs[0].markdown(' ')
+    user_inputs[1].markdown(' ')
+    user_inputs[3].markdown(' ')
 
-c_annual_income = user_inputs[0].number_input(":blue[Annual Income]", value=1200000,step=100000)
-user_inputs[0].markdown('<p style="font-size:12px;font-weight: bold;text-align:center;vertical-align:middle;color:green;margin:0px;padding:0px">({})</p>'.format(display_amount(c_annual_income)), unsafe_allow_html=True)
+    user_inputs[4].markdown(' ')
+    user_inputs[4].markdown(' ')
 
-c_annual_expense = user_inputs[1].number_input(":blue[Annual Expense]", value=800000,step=100000)
-user_inputs[1].markdown('<p style="font-size:12px;font-weight: bold;text-align:center;vertical-align:middle;color:green;margin:0px;padding:0px">({})</p>'.format(display_amount(c_annual_expense)), unsafe_allow_html=True)
+    user_inputs[0].markdown('<p style="font-size:16px;font-weight: bold;text-align:center;vertical-align:middle;color:blue;margin:0px;padding:4px">Current Corpus:</p><BR><BR>', unsafe_allow_html=True)
+    user_inputs[3].markdown('<p style="font-size:16px;font-weight: bold;text-align:center;vertical-align:middle;color:blue;margin:0px;padding:4px">Return % on Assets:</p><BR><BR>', unsafe_allow_html=True)
 
-user_inputs[0].markdown(' ')
-user_inputs[1].markdown(' ')
 
-ann_hike = user_inputs[0].number_input(":blue[Annual Hike %]", min_value=0.0, max_value=20.0, step=0.1, value=4.0, help="Expected % increase in Annual Income")
-exp_cap_at = user_inputs[1].number_input(":blue[Expense Cap]", min_value=curr_age + yrs_to_retire, max_value=plan_till, step=1, value=plan_till, help="Age after which expense will not increase due to Inflation")
+    c_corpus = user_inputs[1].number_input(":blue[Current Corpus]",label_visibility="collapsed", value=7500000,step=100000,help="Your Total Current Savings")
+    user_inputs[1].markdown('<p style="font-size:12px;font-weight: bold;text-align:center;vertical-align:middle;color:green;margin:0px;padding:0px">({})</p>'.format(display_amount(c_corpus)), unsafe_allow_html=True)
+    cagr = round(user_inputs[4].number_input(":blue[Return on Assets]", label_visibility="collapsed", value=8.0,step=0.10,help="Expected Rate of Return on your Assets"),2)
 
-user_inputs[0].markdown(' ')
-user_inputs[1].markdown(' ')
 
-c_corpus = user_inputs[0].number_input(":blue[Current Corpus]", value=7500000,step=100000,help="Your Total Current Savings")
-user_inputs[0].markdown('<p style="font-size:12px;font-weight: bold;text-align:center;vertical-align:middle;color:green;margin:0px;padding:0px">({})</p>'.format(display_amount(c_corpus)), unsafe_allow_html=True)
+    user_inputs[1].markdown(' ')
+    user_inputs[4].markdown(' ')
+    user_inputs[4].markdown(' ')
 
-terminal_corpus = user_inputs[1].number_input(":blue[Terminal Corpus]", value=0,step=100000, help="Money you want to leave behind")
-user_inputs[1].markdown('<p style="font-size:12px;font-weight: bold;text-align:center;vertical-align:middle;color:green;margin:0px;padding:0px">({})</p>'.format(display_amount(terminal_corpus)), unsafe_allow_html=True)
 
-user_inputs[0].markdown(' ')
-user_inputs[1].markdown(' ')
+    #user_inputs[2].markdown('<p style="font-size:12px;font-weight: bold;text-align:center;vertical-align:middle;color:red;margin:0px;padding:0px">****</p>', unsafe_allow_html=True)
+    #user_inputs[0].markdown(' ')
+    #user_inputs[1].markdown(' ')
+    user_inputs[0].markdown('<p style="font-size:16px;font-weight: bold;text-align:center;vertical-align:middle;color:blue;margin:0px;padding:4px">Expense Cap:</p><BR><BR>', unsafe_allow_html=True)
+    user_inputs[3].markdown('<p style="font-size:16px;font-weight: bold;text-align:center;vertical-align:middle;color:blue;margin:0px;padding:4px">Terminal Corpus:</p><BR><BR>', unsafe_allow_html=True)
 
-cagr = round(user_inputs[0].number_input(":blue[Return on Assets]", value=8.0,step=0.10,help="Expected Rate of Return on your Assets"),2)
-inflation = user_inputs[1].number_input(":blue[Inflation]", value=4.0,step =0.1,help="Expected Inflation Rate")
-#user_inputs[2].markdown('<p style="font-size:12px;font-weight: bold;text-align:center;vertical-align:middle;color:red;margin:0px;padding:0px">****</p>', unsafe_allow_html=True)
-user_inputs[0].markdown(' ')
-user_inputs[1].markdown(' ')
+    exp_cap_at = user_inputs[1].number_input(":blue[Expense Cap]", label_visibility="collapsed",  min_value=curr_age + yrs_to_retire, max_value=plan_till, step=1, value=plan_till, help="Age after which expense will not increase due to Inflation")
 
-placeholder_header_1 = user_inputs[3].empty()
-placeholder_score = user_inputs[3].empty()
-placeholder_score_txt = user_inputs[3].empty()
-placeholder_header_2 = user_inputs[3].empty()
-placeholder_chart = user_inputs[3].empty()
-placeholder_fund = user_inputs[3].empty()
+    terminal_corpus = user_inputs[4].number_input(":blue[Terminal Corpus]", label_visibility="collapsed", value=0,step=100000, help="Money you want to leave behind")
+    user_inputs[4].markdown('<p style="font-size:12px;font-weight: bold;text-align:center;vertical-align:middle;color:green;margin:0px;padding:0px">({})</p>'.format(display_amount(terminal_corpus)), unsafe_allow_html=True)
 
 #placeholder_header_1.markdown('<p style="font-size:20px;font-weight:bold;text-align:center;vertical-align:middle;color:brown;margin:0px;padding:0px"><u>Retirement Score</u></p>', unsafe_allow_html=True)
-
-n_Retire_1 = user_inputs[0].button('Calculate Score', key="Button 1")
-placeholder_button_1 = user_inputs[1].empty()
 
 
 
@@ -238,83 +275,98 @@ freq_options = ['0-One Time','1-Once Every Year','2-Once in 2 Years','3-Once in 
 st_age = curr_age
 end_age = plan_till
 
-st.write("---")
-left, mid, mid_right, right = st.columns((2,4,1.5,2))
-left.markdown("****:red[OTHER INCOME SOURCES (If Applicable)]****")
-mid_right.markdown(":red[No of Income Rows]")
-n_pr_incomes = right.slider("", min_value=1, max_value=6, step=1, value=4, label_visibility="collapsed")
 
-p_inputs = st.columns((4,4,6,6,6,5))
+with oth_incomes:
 
-p_inputs[0].markdown("**:blue[Start Age]**")
-p_inputs[1].markdown("**:blue[End Age]**")
-p_inputs[2].markdown("**:blue[Description]**")
-p_inputs[3].markdown("**:blue[Amount]**")
-p_inputs[4].markdown("**:blue[Frequency]**")
-p_inputs[5].markdown("**:blue[Yearly Increment %]**")
+    left, mid, mid_right, right = st.columns((2,4,1.5,2))
+    left.markdown("****:red[OTHER INCOME SOURCES (If Applicable)]****")
+    mid_right.markdown(":red[No of Income Rows]")
+    n_pr_incomes = right.slider("", min_value=1, max_value=6, step=1, value=4, label_visibility="collapsed")
 
-help_txt_1 = "Age at which this Income Starts"
-i_start_age = [p_inputs[0].number_input("i_Start_Age", key=f"Start_Age_{col}",min_value=st_age + 1, max_value=end_age, step=1, value=st_age + 1 ,label_visibility="collapsed") for col in range(n_pr_incomes)]
-i_end_age = [p_inputs[1].number_input("i_End_Age", key=f"End_Age_{col}",min_value=i_start_age[col], max_value=end_age, step=1, value=end_age, label_visibility="collapsed") for col in range(n_pr_incomes)]
-i_income_desc = [p_inputs[2].text_input("i_Income",value="",key=f"Desc_{col}", label_visibility="collapsed")  for col in range(n_pr_incomes)]
-i_income_amt = [p_inputs[3].number_input("i_Amount", key=f"Income_amt_{col}", min_value=0, step=10000, value=0, help="Income Annual Value", label_visibility="collapsed")  for col in range(n_pr_incomes)]
-i_income_freq = [p_inputs[4].selectbox("i_Frequency",freq_options,0,key=f"Income_Frequency_{col}", label_visibility="collapsed")  for col in range(n_pr_incomes)]
-i_income_incr_pct = [p_inputs[5].number_input("i_income_incr_pct",key=f"Income_incr_{col}",min_value=0.00, step=0.05, value=0.00, help="Income Increment %",label_visibility="collapsed")  for col in range(n_pr_incomes)]
+    p_inputs = st.columns((4,4,6,6,6,5))
 
-n_Retire_2 = p_inputs[4].button('Calculate Score', key="Button 2")
-placeholder_button_2 = p_inputs[5].empty()
+    p_inputs[0].markdown("**:blue[Start Age]**")
+    p_inputs[1].markdown("**:blue[End Age]**")
+    p_inputs[2].markdown("**:blue[Description]**")
+    p_inputs[3].markdown("**:blue[Amount]**")
+    p_inputs[4].markdown("**:blue[Frequency]**")
+    p_inputs[5].markdown("**:blue[Yearly Increment %]**")
 
-income_rec = []
-for p_i in range(n_pr_incomes):
-
-    if i_income_amt[p_i] > 0:
-        values = i_start_age[p_i],i_end_age[p_i],i_income_desc[p_i],i_income_amt[p_i],int(i_income_freq[p_i].split("-")[0]),i_income_incr_pct[p_i]
-        income_rec.append(values)
-
-df_ret_income = pd.DataFrame(income_rec,columns=['Start_Age','End_Age','Desc','Amount','Frequency','Increment_Pct'])
+    help_txt_1 = "Age at which this Income Starts"
+    i_start_age = [p_inputs[0].number_input("i_Start_Age", key=f"Start_Age_{col}",min_value=st_age + 1, max_value=end_age, step=1, value=st_age + 1 ,label_visibility="collapsed") for col in range(n_pr_incomes)]
+    i_end_age = [p_inputs[1].number_input("i_End_Age", key=f"End_Age_{col}",min_value=i_start_age[col], max_value=end_age, step=1, value=end_age, label_visibility="collapsed") for col in range(n_pr_incomes)]
+    i_income_desc = [p_inputs[2].text_input("i_Income",value="",key=f"Desc_{col}", label_visibility="collapsed")  for col in range(n_pr_incomes)]
+    i_income_amt = [p_inputs[3].number_input("i_Amount", key=f"Income_amt_{col}", min_value=0, step=10000, value=0, help="Income Annual Value", label_visibility="collapsed")  for col in range(n_pr_incomes)]
+    i_income_freq = [p_inputs[4].selectbox("i_Frequency",freq_options,0,key=f"Income_Frequency_{col}", label_visibility="collapsed")  for col in range(n_pr_incomes)]
+    i_income_incr_pct = [p_inputs[5].number_input("i_income_incr_pct",key=f"Income_incr_{col}",min_value=0.00, step=0.05, value=0.00, help="Income Increment %",label_visibility="collapsed")  for col in range(n_pr_incomes)]
 
 
 
+    income_rec = []
+    for p_i in range(n_pr_incomes):
 
-st.write("---")
+        if i_income_amt[p_i] > 0:
+            values = i_start_age[p_i],i_end_age[p_i],i_income_desc[p_i],i_income_amt[p_i],int(i_income_freq[p_i].split("-")[0]),i_income_incr_pct[p_i]
+            income_rec.append(values)
 
-left, mid, mid_right, right = st.columns((2,4,1.5,2))
-left.markdown("****:red[OTHER EXPENSES - LIFE GOALS (If Applicable)]****")
-mid_right.markdown(":red[No of Goal Rows]")
-n_goals = right.slider("", min_value=1, max_value=10, step=1, value=4, label_visibility="collapsed")
-
-g_inputs = st.columns((4,4,6,6,6,5))
-
-g_inputs[0].markdown("**:blue[Start Age]**")
-g_inputs[1].markdown("**:blue[End Age]**")
-g_inputs[2].markdown("**:blue[Description]**")
-g_inputs[3].markdown("**:blue[Amount]**")
-g_inputs[4].markdown("**:blue[Frequency]**")
-g_inputs[5].markdown("**:blue[Annual Inflation %]**")
-
-
-g_start_age = [g_inputs[0].number_input("Start Age", key=f"gStart_Age_{col}",min_value=st_age + 1, max_value=end_age, step=1, value=st_age + 1,label_visibility="collapsed") for col in range(n_goals)]
-g_end_age = [g_inputs[1].number_input("End Age", key=f"gEnd_Age_{col}",min_value=g_start_age[col], max_value=end_age, step=1, value=end_age, label_visibility="collapsed") for col in range(n_goals)]
-g_desc = [g_inputs[2].text_input("Desc",value="",key=f"gDesc_{col}", label_visibility="collapsed")  for col in range(n_goals)]
-g_amt = [g_inputs[3].number_input("Amount", key=f"gAmt_{col}", min_value=0, step=10000, value=0, help="Income Annual Value", label_visibility="collapsed")  for col in range(n_goals)]
-g_freq = [g_inputs[4].selectbox("Frequency",freq_options,0,key=f"gFrequency_{col}", label_visibility="collapsed")  for col in range(n_goals)]
-g_infl_pct = [g_inputs[5].number_input("Inflation_pct",key=f"gInflation_pct_{col}",min_value=0.00, step=0.05, value=0.00,label_visibility="collapsed")  for col in range(n_goals)]
-
-n_Retire_3 = g_inputs[4].button('Calculate Score', key="Button 3")
-placeholder_button_3 = g_inputs[5].empty()
-
-goal_rec = []
-for g_i in range(n_goals):
-    if g_amt[g_i] > 0:
-        values = g_start_age[g_i],g_end_age[g_i],g_desc[g_i],g_amt[g_i],int(g_freq[g_i].split("-")[0]),g_infl_pct[g_i]
-        goal_rec.append(values)
-
-df_goals = pd.DataFrame(goal_rec,columns=['Start_Age','End_Age','Desc','Amount','Frequency','Inflation_Pct'])
+    df_ret_income = pd.DataFrame(income_rec,columns=['Start_Age','End_Age','Desc','Amount','Frequency','Increment_Pct'])
 
 
 
 
-if n_Retire_1 or n_Retire_2 or n_Retire_3:
+with oth_expenses:
+    left, mid, mid_right, right = st.columns((2,4,1.5,2))
+    left.markdown("****:red[OTHER EXPENSES - LIFE GOALS (If Applicable)]****")
+    mid_right.markdown(":red[No of Goal Rows]")
+    n_goals = right.slider("", min_value=1, max_value=10, step=1, value=4, label_visibility="collapsed")
+
+    g_inputs = st.columns((4,4,6,6,6,5))
+
+    g_inputs[0].markdown("**:blue[Start Age]**")
+    g_inputs[1].markdown("**:blue[End Age]**")
+    g_inputs[2].markdown("**:blue[Description]**")
+    g_inputs[3].markdown("**:blue[Amount]**")
+    g_inputs[4].markdown("**:blue[Frequency]**")
+    g_inputs[5].markdown("**:blue[Annual Inflation %]**")
+
+
+    g_start_age = [g_inputs[0].number_input("Start Age", key=f"gStart_Age_{col}",min_value=st_age + 1, max_value=end_age, step=1, value=st_age + 1,label_visibility="collapsed") for col in range(n_goals)]
+    g_end_age = [g_inputs[1].number_input("End Age", key=f"gEnd_Age_{col}",min_value=g_start_age[col], max_value=end_age, step=1, value=end_age, label_visibility="collapsed") for col in range(n_goals)]
+    g_desc = [g_inputs[2].text_input("Desc",value="",key=f"gDesc_{col}", label_visibility="collapsed")  for col in range(n_goals)]
+    g_amt = [g_inputs[3].number_input("Amount", key=f"gAmt_{col}", min_value=0, step=10000, value=0, help="Income Annual Value", label_visibility="collapsed")  for col in range(n_goals)]
+    g_freq = [g_inputs[4].selectbox("Frequency",freq_options,0,key=f"gFrequency_{col}", label_visibility="collapsed")  for col in range(n_goals)]
+    g_infl_pct = [g_inputs[5].number_input("Inflation_pct",key=f"gInflation_pct_{col}",min_value=0.00, step=0.05, value=0.00,label_visibility="collapsed")  for col in range(n_goals)]
+
+
+
+    goal_rec = []
+    for g_i in range(n_goals):
+        if g_amt[g_i] > 0:
+            values = g_start_age[g_i],g_end_age[g_i],g_desc[g_i],g_amt[g_i],int(g_freq[g_i].split("-")[0]),g_infl_pct[g_i]
+            goal_rec.append(values)
+
+    df_goals = pd.DataFrame(goal_rec,columns=['Start_Age','End_Age','Desc','Amount','Frequency','Inflation_Pct'])
+
+
+    with help:
+        help_text_df = get_help_texts()
+
+        left, buf, right = st.columns((4,1,10))
+
+        tab_list = [i for i in help_text_df['Tab_Name'].unique()]
+
+        select_tab = left.selectbox("",tab_list,0)
+
+        help_text_tab_df = help_text_df[help_text_df['Tab_Name'] == select_tab][['Field_Name','Help_Text']]
+
+        st.markdown(get_markdown_table(help_text_tab_df, header='Y', footer='N'), unsafe_allow_html=True)
+
+
+st.write("-----")
+n_Retire = st.button('Calculate Score', key="Button 2")
+
+
+if n_Retire:
 
 
     #validation_flag = 'Y'
@@ -470,13 +522,13 @@ if n_Retire_1 or n_Retire_2 or n_Retire_3:
         x=0.7
     ))
 
-    user_inputs[2].write("   ")
-    user_inputs[2].write("   ")
+    #user_inputs[2].write("   ")
+    #user_inputs[2].write("   ")
 
     #user_inputs[2].write("   ")
 
     placeholder_header_2.markdown('<p style="font-size:18px;font-weight: bold;text-align:center;vertical-align:middle;color:brown;margin:0px;padding:0px"><u>Lifetime - Expense vs Savings Chart</u></p>', unsafe_allow_html=True)
-    user_inputs[3].markdown('<BR>',unsafe_allow_html=True)
+    #user_inputs[3].markdown('<BR>',unsafe_allow_html=True)
     #user_inputs[3].markdown('<BR>',unsafe_allow_html=True)
 
 
@@ -521,7 +573,7 @@ if n_Retire_1 or n_Retire_2 or n_Retire_3:
               xaxis_title="Optimised Corpus Required is {}".format(display_amount(opt_corpus)),
               yaxis_title="")
 
-    with user_inputs[3].container():
+    with right.container():
         #placeholder_header_1.markdown('<p style="font-size:20px;font-weight:bold;text-align:center;vertical-align:middle;color:brown;margin:0px;padding:0px"><u>Retirement Score</u></p><BR>', unsafe_allow_html=True)
         placeholder_score.plotly_chart(fig_1,config=config,use_container_width=True)
     #placeholder_score.markdown(":blue[ Retirement Score : {} %]".format(retirement_score))
@@ -554,61 +606,18 @@ if n_Retire_1 or n_Retire_2 or n_Retire_3:
     retirement_assets_pdf.columns = ['Age','Expenses','Networth']
     retirement_assets_pdf['Networth'] = retirement_assets_pdf['Networth'] /100000.0
 
-    fig_2 = px.bar(
-        retirement_assets_pdf, x='Age', y='Networth',
-        title="Retirement Assets by Age",
-        labels={'Age': 'Age', 'Networth': 'Networth'}
-    )
 
-    # Customize the color based on Networth
-    fig_2.update_traces(marker=dict(color=['green' if val >= 0 else 'red' for val in retirement_assets_pdf['Networth']]))
-
-    # Center-align the report title
-    fig_2.update_layout(title_x=0.5)
-    fig_2.update_layout(title_font=dict(size=20))
-    # Customize axis labels and ticks
-    fig_2.update_xaxes(title_text="<b>Age ( in Years)</b>", showgrid=True, gridwidth=1, gridcolor='lightgray')
-    fig_2.update_yaxes(title_text="<b>Networth ₹ (in Lakhs)</b>", showgrid=True, gridwidth=1, gridcolor='lightgray')
-
-    # Add annotations at zero
-    if len(retirement_assets_pdf[retirement_assets_pdf['Networth'] <= 0]) > 0:
-        #zero_index = retirement_assets[retirement_assets['Networth'] <= 0].index[0]
-        fig_2.add_annotation(
-            text='Going Under',
-            x=retirement_assets_pdf.loc[retirement_assets_pdf['Networth'] <= 0, 'Age'].values[0],
-            y=0,
-            showarrow=True,
-            arrowhead=1,
-            arrowwidth=2,
-            arrowsize=1,
-            arrowcolor='black'
-        )
-
-    fig_2.update_layout(width=720, height=500)
 
     # Show the chart in Streamlit
     #st.plotly_chart(fig_2)
 
-    pdf_bytes = generate_pdf_report(fig_1, fig_2, retirement_dict, df_goals, df_ret_income, retirement_assets_pdf)
+    #pdf_bytes = generate_pdf_report(fig_1, fig_2, retirement_dict, df_goals, df_ret_income, retirement_assets_pdf)
+    pdf_bytes = generate_pdf_report( retirement_dict, df_goals, df_ret_income, retirement_assets_pdf)
 
     # Create a download button for the PDF
-    placeholder_button_1.download_button(
-        label="Download PDF",
+    placeholder_button.download_button(
+        label="Download Report",
         data=pdf_bytes,
         key='download_button_1',
-        file_name="Retirement_Score_{}.pdf".format(name)
-    )
-
-    placeholder_button_2.download_button(
-        label="Download PDF",
-        data=pdf_bytes,
-        key='download_button_2',
-        file_name="Retirement_Score_{}.pdf".format(name)
-    )
-
-    placeholder_button_3.download_button(
-        label="Download PDF",
-        data=pdf_bytes,
-        key='download_button_3',
         file_name="Retirement_Score_{}.pdf".format(name)
     )
