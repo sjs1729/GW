@@ -108,6 +108,18 @@ def get_markdown_table(data, header='Y', footer='Y'):
 
     return html_script
 
+
+def get_markdown_col_fields(field_label, field_value, format_amt = 'N'):
+    markdown_txt = '<p><span style="font-family: Verdana, Geneva, sans-serif; font-size: 12px;">'
+    markdown_txt = markdown_txt + '<span style="color: rgb(20,20,255);"><strong>{}: </strong></span>'.format(field_label)
+    if format_amt == 'Y':
+        markdown_txt = markdown_txt + '<span style="color: rgb(0,0,0);">{}</span>'.format(display_amount(field_value))
+    else:
+        markdown_txt = markdown_txt + '<span style="color: rgb(0,0,0);">{}</span>'.format(field_value)
+
+    return markdown_txt
+
+
 def get_markdown_dict(dict, font_size = 10, format_amt = 'N'):
 
 
@@ -193,7 +205,9 @@ def get_retirement_summary_text(name,ret_score,fund_needed,sip_needed,opt_xirr, 
     return ret_text, ret_advise
 
 
-def generate_pdf_report(fig_1, fig_2, retirement_dict, df_goals, df_ret_income, retirement_assets):
+#def generate_pdf_report(fig_1, fig_2, retirement_dict, df_goals, df_ret_income, retirement_assets):
+def generate_pdf_report( retirement_dict, df_goals, df_ret_income, retirement_assets):
+
 
     WIDTH = 297
     HEIGHT = 210
@@ -223,7 +237,6 @@ def generate_pdf_report(fig_1, fig_2, retirement_dict, df_goals, df_ret_income, 
 
     final_networth = retirement_assets.iloc[-1]['Networth'] * 100000
 
-    #st.write(retirement_assets)
 
 
     ret_text, ret_advise = get_retirement_summary_text(Name,RetScore,FundShort,SIPNeed,OptXIRR, RetAge, Cagr, final_networth)
