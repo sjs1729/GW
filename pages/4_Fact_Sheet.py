@@ -389,7 +389,7 @@ df = get_mf_perf()
 
 #st.dataframe(df)
 
-params=st.query_params()
+params=st.experimental_get_query_params()
 
 def_value = 0
 if len(params) > 0:
