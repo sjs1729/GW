@@ -5,7 +5,6 @@ import datetime as dt
 import time
 import plotly.express as px
 from urllib.request import urlopen
-import quantstats as qs
 import json
 from shared_functions import *
 
