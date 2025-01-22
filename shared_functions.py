@@ -1,16 +1,89 @@
 import pandas as pd
 import streamlit as st
 from fpdf import FPDF
+from scipy import optimize
 import tempfile
 import io
 import uuid
 import os
 from io import BytesIO
 import math
+import datetime as dt
+from dateutil.relativedelta import relativedelta
+from urllib.request import urlopen
+import json
+
+tday = dt.datetime.today()
+
+cols=['SCHEMES', 'FUND_HOUSE', 'AUM', 'LAUNCH DATE', '1_DAY_RETURN', '7_DAY_RETURN',
+       '15_DAY_RETURN', '30_DAY_RETURN', '3_MONTH_RETURN', '6_MONTH_RETURN', '1_YEAR_RETURN',
+       '2_YEAR_RETURN', '3_YEAR_RETURN','5_YEAR_RETURN', '7_YEAR_RETURN', '10_YEAR_RETURN',
+       '15_YEAR_RETURN', '20_YEAR_RETURN', '25_YEAR_RETURN','SINCE_INCEPTION_RETURN',
+       'FUND_RATING', 'CATEGORY', 'CURRENT NAV', 'ALPHA', 'BETA', 'MEAN', 'VOLATILITY',
+       'SHARPE', 'SORTINO','FUND MANAGER', 'AVG_MATURITY', 'MODIFIED_DURATION', 'YTM',
+       'PURCHASE MIN AMOUNT', 'SIP MIN AMOUNT', 'LARGE_CAP', 'MID_CAP',
+       'SMALL_CAP', 'PRICE_TO_BOOK', 'PRICE_TO_EARNINGS', 'EXIT_LOAD', 'EQUITY_PCT',
+       'DEBT_PCT', 'GOLD_PCT', 'GLOBAL_EQUITY_PCT', 'OTHER_PCT', 'RSQUARED',
+       'EXPENSE', 'SOV_RATED_DEBT', 'A_RATED_DEBT', 'AA_RATED_DEBT', 'AAA_RATED_DEBT',
+       'BIG', 'CASH','DOWNSIDE_DEVIATION', 'DOWNSIDE_PROBABILITY']
+
+@st.cache_data()
+def get_mf_perf():
+    df = pd.read_csv('MINT_Scheme_Data.csv')
+    df.columns = cols
+    df.set_index("SCHEMES", inplace=True)
+
+    df_mapping = pd.read_csv("MINT_AMFI_MAPPING.csv")
+    df_mapping = df_mapping[df_mapping['AMFI_CODE'].notna()]
+    df_mapping.set_index("MINT_SCHEME", inplace=True)
+
+    df_mapping=df_mapping[['AMFI_CODE','AMFI_SCHEME']]
+    df_mapping['AMFI_CODE']=df_mapping['AMFI_CODE'].apply(lambda x: int(x))
+    df_mapping = df_mapping[df_mapping['AMFI_CODE'].notna()]
 
 
+    for j in df_mapping.index:
+        amfi_code = df_mapping.loc[j,'AMFI_CODE']
+        df.at[j,'AMFI_CODE'] = amfi_code
 
+    df.reset_index(inplace=True)
+    df = df[(df['AMFI_CODE'].notna())]
+    df = df[ (df['FUND_HOUSE'].notna())]
+    df.set_index("AMFI_CODE", inplace=True)
 
+    df['SCHEME_TYPE'] = df['CATEGORY'].apply(lambda x: x.split(":")[0].strip())
+    df['SCHEME_CATEGORY'] = df['CATEGORY'].apply(lambda x: x.split(":")[1].strip())
+
+    df['LAUNCH DATE'] = pd.to_datetime(df['LAUNCH DATE'],dayfirst=False)
+    df['AGE'] = df['LAUNCH DATE'].apply(lambda x: (tday - x).days)
+
+    #st.write(df_mapping.dtypes)
+
+    return df
+
+@st.cache_data()
+def get_historical_nav(amfi_code,tdate):
+    try:
+        success = 'N'
+        url = 'https://api.mfapi.in/mf/{}'.format(amfi_code)
+        response = urlopen(url)
+        result = json.loads(response.read())
+        data = result['data']
+        nav_list = []
+        for rec in reversed(data):
+            dt_rec = dt.datetime.strptime(rec['date'], '%d-%m-%Y').date()
+            nav = float(rec['nav'])
+            values = dt_rec, nav
+            nav_list.append(values)
+
+        df_mf = pd.DataFrame(nav_list,columns=['Date','Nav'])
+        df_mf.set_index('Date',inplace=True)
+
+    except:
+        result='{}'.format(success)
+        return result
+
+    return df_mf
 
 
 def display_amount(amount, paisa='N'):
@@ -674,3 +747,303 @@ def generate_pdf_report( retirement_dict, df_goals, df_ret_income, retirement_as
 
 
     return pdf_bytes
+
+def get_color_code(value):
+    """
+    Returns a hex color code based on the input value.
+
+    Parameters:
+    value (float): Input value.
+
+    Returns:
+    str: Hex color code.
+    """
+    if 0 <= value <= 0.25:
+        return "#ADE5A4"  # Amber
+    elif 0.25 < value <= 1:
+        return "#85D476"  # Light Green
+    elif value > 1:
+        return "#66C84D"  # Dark Green
+    elif 0 > value >= -0.25:
+        return "#EE8A87"  # Light Red
+    elif -0.25 > value >= -1:
+        return "#EB6660"  # Dark Red
+    elif value < -1:
+        return "#E93425"
+
+def get_recent_ret_calendar_display(df):
+
+
+    day0_value = "#FFFFFF"
+    day1_value = "#FFFFFF"
+    day2_value = "#FFFFFF"
+    day3_value = "#FFFFFF"
+    day4_value = "#FFFFFF"
+    week_no = 0
+
+    last_indx = df.index[-1]
+
+
+    rec = []
+    flag = ""
+    for i in df.index:
+        week_day = df.loc[i,'Day']
+        day_change = round(df.loc[i,'DailyChg'],2)
+
+
+
+        if week_day == 0:
+            day0_value = get_color_code(day_change)
+            flag = f"{flag}{week_day}"
+
+        elif week_day == 1:
+            day1_value = get_color_code(day_change)
+            flag = f"{flag}{week_day}"
+
+        elif week_day == 2:
+            day2_value = get_color_code(day_change)
+            flag = f"{flag}{week_day}"
+
+        elif week_day == 3:
+            day3_value = get_color_code(day_change)
+            flag = f"{flag}{week_day}"
+
+        elif week_day == 4 :
+            day4_value = get_color_code(day_change)
+            if week_no == 0:
+                if flag[0] == '1':
+                    if day2_value == "#FFFFFF":
+                        day2_value = "#D6D6D6"
+                    elif day3_value == "#FFFFFF":
+                        day3_value = "#D6D6D6"
+                    elif day4_value == "#FFFFFF":
+                        day4_value = "#D6D6D6"
+                elif flag[0] == '2':
+                    if day3_value == "#FFFFFF":
+                        day3_value = "#D6D6D6"
+                    elif day4_value == "#FFFFFF":
+                        day4_value = "#D6D6D6"
+                elif flag[0] == '3':
+                    if day4_value == "#FFFFFF":
+                        day4_value = "#D6D6D6"
+
+
+            values = week_no, day0_value, day1_value, day2_value, day3_value, day4_value
+            rec.append(values)
+            week_no += 1
+            flag=""
+
+            day0_value = "#D6D6D6"
+            day1_value = "#D6D6D6"
+            day2_value = "#D6D6D6"
+            day3_value = "#D6D6D6"
+            day4_value = "#D6D6D6"
+
+        if i == last_indx and week_day != 4:
+
+            if flag[-1] == '0':
+                values = week_no, day0_value, "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF"
+            elif flag[-1] == '1':
+                values = week_no, day0_value, day1_value , "#FFFFFF", "#FFFFFF", "#FFFFFF"
+            elif flag[-1] == '2':
+                values = week_no, day0_value, day1_value , day2_value, "#FFFFFF", "#FFFFFF"
+            elif flag[-1] == '3':
+                values = week_no, day0_value, day1_value , day2_value, day3_value, "#FFFFFF"
+
+            rec.append(values)
+
+
+
+
+
+
+
+
+    df_mf_cal = pd.DataFrame(rec, columns=['Week','Mon','Tue','Wed','Thu','Fri'])
+    df_mf_cal.set_index('Week',inplace=True)
+
+    html_script = "<table style='border-collapse: collapse; width:80%;margin:0'><tbody>"
+
+    for j in df_mf_cal.index:
+
+        html_script = html_script + "<tr style='border:1px;font-family:Courier; font-size:9px;padding:0px;margin:0';>"
+
+        a = df_mf_cal.loc[j]
+        for k in df_mf_cal.columns:
+
+            html_script = html_script + "<td style='border:2px solid #fff;border-radius:10%;width:3px;height:3px;line-height:3;margin:5px;color:{};text-align:center;background-color:{}' rowspan='1'> A </td>".format(a[k],a[k])
+
+    html_script = html_script + '</tbody></table>'
+
+    return html_script
+
+
+def calculate_cagr(initial_investment, current_value, nyears):
+
+    abs_ret = round(100 * (current_value - initial_investment)/initial_investment,2)
+    cagr = round((((current_value/initial_investment) ** (1/nyears)) - 1) * 100, 2)
+
+    return abs_ret, cagr
+
+def get_lumpsum_inv_ret(df, investment_amount):
+
+    current_date = dt.date.today()
+    incep_date = df.index[0]
+    fund_age = (current_date - incep_date).days/365.0
+
+    one_year_ago = current_date - relativedelta(months=12)
+    three_years_ago = current_date - relativedelta(months=36)
+    five_years_ago = current_date - relativedelta(months=60)
+    ten_years_ago = current_date - relativedelta(months=120)
+
+    rec = []
+
+    if one_year_ago > incep_date:
+        period = 1
+        df_1 = df[df.index >= one_year_ago]
+        current_val = investment_amount * df_1['Nav'].iloc[-1]/df_1['Nav'].iloc[0]
+        abs_ret, cagr = calculate_cagr(investment_amount, current_val, period)
+
+        values = "1 Year", one_year_ago, display_amount(current_val), abs_ret, cagr
+        rec.append(values)
+
+    if three_years_ago > incep_date:
+        period = 3
+        df_3 = df[df.index >= three_years_ago]
+
+        current_val = investment_amount * df_3['Nav'].iloc[-1]/df_3['Nav'].iloc[0]
+        abs_ret, cagr = calculate_cagr(investment_amount, current_val, period)
+
+        values = "3 Year", three_years_ago, display_amount(current_val), abs_ret, cagr
+        rec.append(values)
+
+    if five_years_ago > incep_date:
+        period = 5
+        df_5 = df[df.index >= five_years_ago]
+
+        current_val = investment_amount * df_5['Nav'].iloc[-1]/df_5['Nav'].iloc[0]
+        abs_ret, cagr = calculate_cagr(investment_amount, current_val, period)
+
+        values = "5 Year", five_years_ago, display_amount(current_val), abs_ret, cagr
+        rec.append(values)
+
+    if ten_years_ago > incep_date:
+        period = 10
+        df_10 = df[df.index >= ten_years_ago]
+
+        current_val = investment_amount * df_10['Nav'].iloc[-1]/df_10['Nav'].iloc[0]
+        abs_ret, cagr = calculate_cagr(investment_amount, current_val, period)
+
+        values = "10 Year", ten_years_ago, display_amount(current_val), abs_ret, cagr
+        rec.append(values)
+
+
+
+    current_val = investment_amount * df['Nav'].iloc[-1]/df['Nav'].iloc[0]
+    abs_ret, cagr = calculate_cagr(investment_amount, current_val, fund_age)
+
+    values = "Since Inception", incep_date, display_amount(current_val), abs_ret, cagr
+    rec.append(values)
+
+    df_cagr = pd.DataFrame(rec, columns=['Period Invested for',f"{display_amount(investment_amount)} Invested on","Latest Value","Absolute Returns %","Annualised Returns %"])
+
+    return df_cagr
+
+def xirr(rate,cash_flow,terminal_value=0):
+
+    npv = 0
+    for i in cash_flow.index:
+        nYears = cash_flow.loc[i,'Num_Days']/365
+        pv = cash_flow.loc[i,'SIP_Value']*(pow((1 + rate / 100), nYears))
+        npv = npv + pv
+
+    return  npv+terminal_value
+
+def get_sip_cashflow(df,sip_investment):
+
+    current_date = dt.date.today()
+    curr_nav = df['Nav'].iloc[-1]
+    total_units = 0.0
+    n_sip = 0
+
+    total_investment = 0
+    df['SIP_Value'] = 0
+    for i in df.index:
+        if n_sip % 21 == 0:
+            sip_date = i
+            nav = df.loc[i,'Nav']
+            sip_units = sip_investment / nav
+            total_units  += sip_units
+            df.at[i,'SIP_Value'] = -1 * sip_investment
+            df.at[i,'Num_Days'] = (current_date - i).days
+            total_investment += sip_investment
+
+        n_sip += 1
+
+    df_cash_flow = df[df['SIP_Value'] != 0]
+
+
+    current_value = curr_nav * total_units
+
+    abs_return = 100 * ( current_value - total_investment) / total_investment
+
+    root = round(optimize.newton(xirr, 0, args=(df_cash_flow,current_value,)),2)
+
+    return total_investment, current_value, round(abs_return,2), round(root,2)
+
+
+def get_sip_inv_ret(df,sip_investment):
+
+    current_date = dt.date.today()
+    incep_date = df.index[0]
+    fund_age = (current_date - incep_date).days/365.0
+
+    one_year_ago = current_date - relativedelta(months=12)
+    three_years_ago = current_date - relativedelta(months=36)
+    five_years_ago = current_date - relativedelta(months=60)
+    ten_years_ago = current_date - relativedelta(months=120)
+
+    rec = []
+
+    if one_year_ago > incep_date:
+        period = 1
+        df_1 = df[df.index >= one_year_ago]
+
+
+        total_investment, current_val, abs_ret, root = get_sip_cashflow(df_1,sip_investment)
+        values = "1 Year", one_year_ago, display_amount(total_investment), display_amount(current_val), abs_ret, root
+        rec.append(values)
+
+    if three_years_ago > incep_date:
+        period = 3
+        df_3 = df[df.index >= three_years_ago]
+
+        total_investment, current_val, abs_ret, root = get_sip_cashflow(df_3,sip_investment)
+        values = "3 Year", three_years_ago, display_amount(total_investment), display_amount(current_val), abs_ret, root
+        rec.append(values)
+
+    if five_years_ago > incep_date:
+        period = 5
+        df_5 = df[df.index >= five_years_ago]
+
+        total_investment, current_val, abs_ret, root = get_sip_cashflow(df_5,sip_investment)
+        values = "5 Year", five_years_ago, display_amount(total_investment), display_amount(current_val), abs_ret, root
+        rec.append(values)
+
+    if ten_years_ago > incep_date:
+        period = 10
+        df_10 = df[df.index >= ten_years_ago]
+
+        total_investment, current_val, abs_ret, root = get_sip_cashflow(df_10,sip_investment)
+        values = "10 Year", ten_years_ago, display_amount(total_investment), display_amount(current_val), abs_ret, root
+        rec.append(values)
+
+
+
+    total_investment, current_val, abs_ret, root = get_sip_cashflow(df,sip_investment)
+    values = "Since Inception", incep_date, display_amount(total_investment), display_amount(current_val), abs_ret, root
+    rec.append(values)
+
+    df_sip = pd.DataFrame(rec, columns=['Period Invested for',f"{display_amount(sip_investment)} SIP Started on","Total Investments","Latest Value","Absolute Returns %","Annualised Returns %"])
+
+    return df_sip
