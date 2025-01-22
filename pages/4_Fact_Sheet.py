@@ -438,12 +438,11 @@ with fund_returns:
     df_mf = get_historical_nav(amfi_code, tday)
 
     df_mf['DailyChg']=df_mf['Nav'].pct_change()*100
-    st.write(df_mf[df_mf['DailyChg'] > 4])
     df_mf['1YRollingRet']=df_mf['Nav'].pct_change(252)*100
 
     df_mf['Day'] = df_mf.index.map(lambda x: x.weekday())
 
-    df_chart = df_mf[df_mf['1YRollingRet'] < 5]['1YRollingRet']
+
     first_of_month = dt.date(tday.year,tday.month,1)
 
     #df_mf_curr_mth = df_mf[df_mf.index >= dt.date(tday.year,tday.month,1)]
@@ -455,7 +454,7 @@ with fund_returns:
     left.markdown('<BR><p style="{}">Last 20 Day Heat Map</p>'.format(styles['Field_Label_Top']), unsafe_allow_html=True)
     left.markdown(html_text, unsafe_allow_html=True)
 
-    fig = px.line(df_chart.dropna())
+    fig = px.line(df_mf['1YRollingRet'].dropna())
 
 
 
