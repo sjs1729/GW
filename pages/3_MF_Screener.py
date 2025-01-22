@@ -2,13 +2,10 @@ import streamlit as st
 import numpy as np
 import pandas as pd
 import datetime as dt
-import plotly.graph_objects as go
-from plotly.subplots import make_subplots
+import time
 import plotly.express as px
-from scipy.optimize import minimize
-from scipy import optimize
-import random
-import math
+from urllib.request import urlopen
+import json
 from shared_functions import *
 
 st.set_page_config(
@@ -30,6 +27,9 @@ st.markdown(
     }
 
 
+
+
+
     </style>
     """,
     unsafe_allow_html=True
@@ -38,26 +38,10 @@ c_1, c_2 = st.columns((8,4))
 c_2.image('growealth-logo_long.png')
 
 
-@st.cache_data()
-def get_perf_data():
 
 
-    df_mf_perf = pd.read_csv('revised_mf_perf.csv')
-    df_mf_perf.set_index('Scheme_Code', inplace=True)
-    df_mf_perf['Expense'] = df_mf_perf['Expense'].apply(lambda x: float(x.replace('%','')))
-    df_mf_perf['Pos_Year%']=df_mf_perf['Pos_Year%'].apply(lambda x: float(x))
-    df_mf_perf['NumStocks']=df_mf_perf['NumStocks'].apply(lambda x: float(x))
-    df_mf_perf['Top5_Pct']=df_mf_perf['Top5_Pct'].apply(lambda x: float(x.replace('%','')) if isinstance(x, str) else np.nan)
-    df_mf_perf['Top10_Pct']=df_mf_perf['Top10_Pct'].apply(lambda x: float(x.replace('%','')) if isinstance(x, str) else np.nan )
-    df_mf_perf['Top3_Sector']=df_mf_perf['Top3_Sector'].apply(lambda x: float(x.replace('%','')) if isinstance(x, str) and x!='%' else np.nan )
-    df_mf_perf['Equity_Holding']=df_mf_perf['Equity_Holding'].apply(lambda x: float(x))
-    df_mf_perf['F&O_Holding']=df_mf_perf['F&O_Holding'].apply(lambda x: float(x))
-    df_mf_perf['Foreign_Holding']=df_mf_perf['Foreign_Holding'].apply(lambda x: float(x))
 
-    df_filter = pd.read_csv('filter.csv')
-    df_filter.set_index('Filter_Label', inplace=True)
 
-    return df_mf_perf, df_filter
 
 
 def get_html_table_scroll(data, header='Y'):
@@ -77,15 +61,15 @@ def get_html_table_scroll(data, header='Y'):
         html_script = html_script + "<tr style='border:none;font-family:Courier; color:Red; font-size:12px;'>"
 
         for i in cols:
-            if i in ['Scheme_Name','Scheme_Category','Fund_House']:
+            if i in ['SCHEMES','SCHEME_CATEGORY','FUND_HOUSE']:
                 html_script = html_script + "<th style='text-align:left;background-color: #ffebcc;'>{}</th>".format(i)
             else:
                 html_script = html_script + "<th style='text-align:center;background-color: #ffebcc;'>{}</th>".format(i)
 
     html_script = html_script + "</tr></thead><tbody>"
     for j in data.index:
-        #url_link = "https://localhost:8501/MutualFund_Ready_Reckoner?id={}".format(j)
-        url_link = "https://growealth.streamlit.app/MutualFund_Ready_Reckoner?id={}".format(j)
+        url_link = "http://localhost:8501/Fact_Sheet?id={}".format(j)
+        #url_link = "https://growealth.streamlit.app/MutualFund_Ready_Reckoner?id={}".format(j)
 
 
         html_script = html_script + "<tr style='border:none;font-family:Courier; color:Blue; font-size:10px;'>"
@@ -93,11 +77,12 @@ def get_html_table_scroll(data, header='Y'):
         for k in cols:
             if k in ['Rel_MaxDD','Prob_10Pct','NIFTY_CORR']:
                 html_script = html_script + "<td style='padding:2px;text-align:center' rowspan='1'>{}</td>".format(round(a[k],2))
-            elif k in ['Scheme_Category','Fund_House']:
+            elif k in ['SCHEME_CATEGORY','FUND_HOUSE']:
                 html_script = html_script + "<td style='padding:2px;text-align:left' rowspan='1'>{}</td>".format(a[k])
-            elif k == 'Scheme_Name':
-                #html_script = html_script + "<td style='padding:2px;text-align:left' rowspan='1'><a href={} target='_self'>{}</a></td>".format(url_link,a[k])
+            elif k == 'SCHEMES':
+                #html_script = html_script + "<td style='padding:2px;text-align:left' rowspan='1'><a href={}>{}</a></td>".format(url_link,a[k])
                 html_script = html_script + "<td style='padding:2px;text-align:left' rowspan='1'><a href={}>{}</a></td>".format(url_link,a[k])
+                #st.write(url_link,a[k])
             else:
                 html_script = html_script + "<td style='padding:2px;text-align:center' rowspan='1'>{}</td>".format(a[k])
 
@@ -114,15 +99,17 @@ def plot_chart(df_chart,chart_x_axis,chart_y_axis,chart_color,chart_size):
         y_spread = df_chart[chart_y_axis].max() - df_chart[chart_y_axis].min()
         yrange = [df_chart[chart_y_axis].min() - 0.1 * y_spread, df_chart[chart_y_axis].max() + 0.1 * y_spread]
         x_spread = df_chart[chart_x_axis].max() - df_chart[chart_x_axis].min()
-        xrange = [df_chart[chart_x_axis].min() - 0.1 * y_spread, df_chart[chart_x_axis].max() + 0.1 * y_spread]
+        xrange = [df_chart[chart_x_axis].min() - 0.1 * x_spread, df_chart[chart_x_axis].max() + 0.1 * x_spread]
         x_mid = (df_chart[chart_x_axis].max() + df_chart[chart_x_axis].min())/2
         y_mid = (df_chart[chart_y_axis].max() + df_chart[chart_y_axis].min())/2
+
+        #st.write(chart_x_axis,x_spread)
 
         cols = [chart_x_axis,chart_y_axis,chart_color,chart_size]
 
 
         fig = px.scatter(df_chart, x=df_chart[chart_x_axis], y=df_chart[chart_y_axis], color=df_chart[chart_color],
-                         size=df_chart[chart_size], size_max=25, hover_name=df_chart['Scheme_Name'], color_continuous_scale='plasma')
+                         size=df_chart[chart_size], size_max=25, hover_name=df_chart['SCHEMES'], color_continuous_scale='plasma')
 
 
         # fig.update_xaxes(type=[])
@@ -173,7 +160,7 @@ def plot_chart(df_chart,chart_x_axis,chart_y_axis,chart_color,chart_size):
         #   showarrow=False,  font=dict(family="Arial", size=10,color="red"),
         #   bgcolor="Yellow"
         #   )
-        
+
 
 
 
@@ -186,32 +173,26 @@ def plot_chart(df_chart,chart_x_axis,chart_y_axis,chart_color,chart_size):
 
 def get_filtered_df(df_chart, df_filter, filter_attr, filter_condition, filter_value):
 
-    filter_df_col_name = df_filter[df_filter.index == filter_attr]['Column_Name'].iloc[0]
-
-    if filter_attr == 'Crisil Rating':
-        if filter_condition == 'IN':
-            df_filtered = df_chart[df_chart[filter_df_col_name].isin(filter_value)]
-        else:
-            df_filtered = df_chart[~df_chart[filter_df_col_name].isin(filter_value)]
-    else:
-
-        if filter_condition == 'Less Than':
-            df_filtered = df_chart[df_chart[filter_df_col_name] < filter_value]
-        elif filter_condition == 'Less or Equals':
-            df_filtered = df_chart[df_chart[filter_df_col_name] <= filter_value]
-        elif filter_condition == 'Equals':
-            df_filtered = df_chart[df_chart[filter_df_col_name] == filter_value]
-        elif filter_condition == 'Not Equals':
-            df_filtered = df_chart[df_chart[filter_df_col_name] != filter_value]
-        elif filter_condition == 'Greater or Equals':
-            df_filtered = df_chart[df_chart[filter_df_col_name] >= filter_value]
-        elif filter_condition == 'Greater Than':
-            df_filtered = df_chart[df_chart[filter_df_col_name] > filter_value]
+    if filter_condition == 'Less Than':
+        df_filtered = df_chart[df_chart[filter_attr] < filter_value]
+    elif filter_condition == 'Less or Equals':
+        df_filtered = df_chart[df_chart[filter_attr] <= filter_value]
+    elif filter_condition == 'Equals':
+        df_filtered = df_chart[df_chart[filter_attr] == filter_value]
+    elif filter_condition == 'Not Equals':
+        df_filtered = df_chart[df_chart[filter_attr] != filter_value]
+    elif filter_condition == 'Greater or Equals':
+        df_filtered = df_chart[df_chart[filter_attr] >= filter_value]
+    elif filter_condition == 'Greater Than':
+        df_filtered = df_chart[df_chart[filter_attr] > filter_value]
 
     return df_filtered
 
 
-df_0, df_filter = get_perf_data()
+df_0=get_mf_perf()
+
+#st.dataframe(df_0)
+
 #data_refresh_date = df.index[-1]
 #st.write(df.columns)
 
@@ -226,71 +207,109 @@ st.markdown("**:blue[Fund Type]**")
 selected_option = st.radio("Select an option:", ["Debt MF", "Equity/Other MF"], 1, horizontal=True, label_visibility="collapsed")
 
 if selected_option == 'Debt MF':
-    df = df_0[df_0['Scheme_Type'] == 'Debt Scheme']
+    df = df_0[df_0['SCHEME_TYPE'] == 'Debt']
 else:
-    df = df_0[df_0['Scheme_Type'] != 'Debt Scheme']
+    df = df_0[df_0['SCHEME_TYPE'] != 'Debt']
 
 
 
 left,right = st.columns((13,16))
 
-fh_list = [x for x in df['Fund_House'].unique()]
+fh_list = [x for x in df['FUND_HOUSE'].unique()]
 
 left.markdown("**:blue[Fund House]**")
 fh_option = left.multiselect("Select Fund House", fh_list, label_visibility="collapsed")
 
-screen_layout = st.columns((6,2,6))
 if len(fh_option) == 0:
     df_1 = df
 else:
-    df_1 = df[df['Fund_House'].isin(fh_option)]
+    df_1 = df[df['FUND_HOUSE'].isin(fh_option)]
 
 
 
 
-
-sch_cat_list = [x for x in df_1['Scheme_Category'].unique()]
+sch_cat_list = [x for x in df_1['SCHEME_CATEGORY'].unique()]
 right.markdown("**:blue[Scheme Category]**")
 sch_cat_option = right.multiselect("Select Fund Category", sch_cat_list, label_visibility="collapsed")
 if len(sch_cat_option) > 0:
-    df_2 = df_1[df_1['Scheme_Category'].isin(sch_cat_option)]
+    df_2 = df_1[df_1['SCHEME_CATEGORY'].isin(sch_cat_option)]
 else:
     df_2 = df_1
 
 
+left.markdown("**:blue[Fund Manager]**")
+fm_list = [ x for x in df_2['FUND MANAGER'].unique()]
+fm_option = left.multiselect("Select Fund Manager", fm_list, label_visibility="collapsed")
 
-chart_cols = ['Scheme_Name','AUM','Age','Sharpe Ratio','Volatility','1Y Ret','3Y Ret','Expense']
-display_columns = ['Scheme_Name','Scheme_Category','Fund_House','Expense', 'AUM', 'CrisilRank', 'Age', '3M Ret', \
-                   '1Y Ret','3Y Ret', '5Y Ret', 'Ret Inception', 'Sharpe Ratio', 'Sortino Ratio', 'Pos_Year%',   \
-                   'Volatility', 'Rel_MaxDD','Roll_Ret_1Y', 'Roll_Ret_3Y', 'Roll_Ret_Inception', 'Prob_10Pct',   \
-                   'NumStocks', 'Top5_Pct', 'Top10_Pct', 'Top3_Sector','Equity_Holding', 'F&O_Holding', \
-                   'Foreign_Holding', 'GT_1PCT','GT_3PCT', 'GT_5PCT', 'LT_NEG_1PCT', 'LT_NEG_3PCT', 'LT_NEG_5PCT',  \
-                   'POS_PCT', 'NIFTY_CORR', 'PCT_GT_NIFTY']
-basic_columns = ['Scheme_Name','Scheme_Category','Fund_House']
-config_columns = ['Expense', 'AUM', 'CrisilRank', 'Age', '3M Ret', \
-                   '1Y Ret','3Y Ret', '5Y Ret', 'Ret Inception', 'Sharpe Ratio', 'Sortino Ratio', 'Pos_Year%',   \
-                   'Volatility', 'Rel_MaxDD','Roll_Ret_1Y', 'Roll_Ret_3Y', 'Roll_Ret_Inception', 'Prob_10Pct',   \
-                   'NumStocks', 'Top5_Pct', 'Top10_Pct', 'Top3_Sector','Equity_Holding', 'F&O_Holding', \
-                   'Foreign_Holding', 'GT_1PCT','GT_3PCT', 'GT_5PCT', 'LT_NEG_1PCT', 'LT_NEG_3PCT', 'LT_NEG_5PCT',  \
-                   'POS_PCT', 'NIFTY_CORR', 'PCT_GT_NIFTY']
+if len(fm_option) == 0:
+    df_3 = df_2
+else:
+    df_3 = df_2[df['FUND MANAGER'].isin(fm_option)]
+
+
+
+right.markdown("**:blue[Fund Rating]**")
+rating_list = ['0 Star','1 Star','2 Stars', '3 Stars', '4 Stars', '5 Stars']
+rating_option = right.multiselect("Select Fund Rating", rating_list, default=rating_list, label_visibility="collapsed")
+
+rating_values = []
+if len(rating_option) > 0:
+    for ratings in rating_option:
+        if ratings == '0 Star':
+            rating_values.insert(0,0)
+        elif ratings == '1 Star':
+            rating_values.insert(0,1)
+        elif ratings == '2 Stars':
+            rating_values.insert(0,2)
+        elif ratings == '3 Stars':
+            rating_values.insert(0,3)
+        elif ratings == '4 Stars':
+            rating_values.insert(0,4)
+        elif ratings == '5 Stars':
+            rating_values.insert(0,5)
+
+    df_4 = df_3[df_3['FUND_RATING'].isin(rating_values)]
+else:
+    df_4 = df_3
+
+
+
+
+filter_cols = ['30_DAY_RETURN', '3_MONTH_RETURN', '6_MONTH_RETURN', '1_YEAR_RETURN',
+               '2_YEAR_RETURN', '3_YEAR_RETURN','5_YEAR_RETURN', '7_YEAR_RETURN', '10_YEAR_RETURN',
+               '15_YEAR_RETURN', '20_YEAR_RETURN', '25_YEAR_RETURN','SINCE_INCEPTION_RETURN',
+               'ALPHA', 'BETA', 'VOLATILITY', 'SHARPE','SORTINO', 'AVG_MATURITY', 'MODIFIED_DURATION','AGE',
+               'YTM','LARGE_CAP','MID_CAP','SMALL_CAP','PRICE_TO_BOOK', 'PRICE_TO_EARNINGS',
+               'EQUITY_PCT','DEBT_PCT', 'GOLD_PCT', 'GLOBAL_EQUITY_PCT', 'OTHER_PCT', 'RSQUARED',
+               'EXPENSE', 'SOV_RATED_DEBT', 'A_RATED_DEBT', 'AA_RATED_DEBT', 'AAA_RATED_DEBT', 'BIG', 'CASH']
+
+filter_df = df_4.describe()[filter_cols]
+
+#st.write(filter_df)
+
+chart_cols = ['SCHEMES','AUM','AGE','SHARPE','STDEV','1_YEAR_RETURN', '3_YEAR_RETURN','EXPENSE']
+display_columns = ['SCHEMES','SCHEME_CATEGORY','FUND_HOUSE','EXPENSE', 'AUM', 'FUND_RATING', 'AGE', '3_MONTH_RETURN', \
+                  '6_MONTH_RETURN', '1_YEAR_RETURN','2_YEAR_RETURN', '3_YEAR_RETURN','5_YEAR_RETURN', '7_YEAR_RETURN', \
+                   '10_YEAR_RETURN', '15_YEAR_RETURN', '20_YEAR_RETURN', '25_YEAR_RETURN','SINCE_INCEPTION_RETURN', \
+                   'SHARPE', 'SORTINO', 'RSQUARED', 'VOLATILITY',  'BETA','ALPHA','PRICE_TO_BOOK', 'PRICE_TO_EARNINGS', \
+                   'EQUITY_PCT', 'DEBT_PCT', 'GOLD_PCT','GLOBAL_EQUITY_PCT', 'OTHER_PCT', \
+                   'LARGE_CAP','MID_CAP','SMALL_CAP','CASH','SOV_RATED_DEBT', 'A_RATED_DEBT', 'AA_RATED_DEBT', 'AAA_RATED_DEBT']
+
+basic_columns = ['SCHEMES','SCHEME_CATEGORY','FUND_HOUSE','FUND MANAGER']
+config_columns = ['EXPENSE', 'AUM', 'FUND_RATING', 'AGE', '3_MONTH_RETURN', \
+                  '6_MONTH_RETURN', '1_YEAR_RETURN','2_YEAR_RETURN', '3_YEAR_RETURN','5_YEAR_RETURN', '7_YEAR_RETURN', \
+                   '10_YEAR_RETURN', '15_YEAR_RETURN', '20_YEAR_RETURN', '25_YEAR_RETURN','SINCE_INCEPTION_RETURN', \
+                   'SHARPE', 'SORTINO', 'RSQUARED', 'VOLATILITY',  'BETA','ALPHA','PRICE_TO_BOOK', 'PRICE_TO_EARNINGS', \
+                   'EQUITY_PCT', 'DEBT_PCT', 'GOLD_PCT','GLOBAL_EQUITY_PCT', 'OTHER_PCT', \
+                   'LARGE_CAP','MID_CAP','SMALL_CAP','CASH','SOV_RATED_DEBT', 'A_RATED_DEBT', 'AA_RATED_DEBT', 'AAA_RATED_DEBT']
 
 #df_chart = df_2[chart_cols]
 
-df_chart = df_2
-
-
-
-#df_chart['AUM'] = df_chart['AUM'].apply(lambda x: float(str(x).replace(",","")))
-
-#st.write(df_chart)
+df_chart = df_4
 
 
 
 
-
-#placeholder_chart = st.empty()
-#fig = plot_chart(df_chart)
-#placeholder_chart.plotly_chart(fig, use_container_width=True)
 
 crisil_option = ['1 Star', '3 Stars', '2 Stars', '4 Stars', '5 Stars', 'Not Rated']
 operator_list = ['Less Than','Less or Equals','Equals','Not Equals','Greater or Equals','Greater Than']
@@ -300,50 +319,40 @@ left.markdown("**:blue[Filter Criteria]**")
 centre.markdown("**:blue[Condition]**")
 right.markdown("**:blue[Value]**")
 
-filter_list1 = [x for x in df_filter.index]
+filter_list1 = [x for x in filter_df.columns]
 
 filter_1 = left.selectbox("Filter 1", filter_list1, 0, label_visibility="collapsed")
-filter_1_col = df_filter[df_filter.index == filter_1]['Column_Name'].iloc[0]
 
 
-if filter_1 != 'Crisil Rating':
-    filter_min_value_1 = df_filter[df_filter.index == filter_1]['Min_Value'].iloc[0]
-    filter_max_value_1 = df_filter[df_filter.index == filter_1]['Max_Value'].iloc[0]
-    filter_step_value_1 = df_filter[df_filter.index == filter_1]['Steps'].iloc[0]
+filter_min_value_1 = filter_df.loc['min',filter_1]
+filter_max_value_1 = filter_df.loc['max',filter_1]
+#filter_step_value_1 = df_filter[df_filter.index == filter_1]['Steps'].iloc[0]
 
-    operator_1 = centre.selectbox('Operator_1',operator_list,0,label_visibility="collapsed")
-    filter_1_value = right.number_input("Value_1",min_value=filter_min_value_1, max_value=filter_max_value_1, step=filter_step_value_1, value=filter_max_value_1, label_visibility="collapsed")
+operator_1 = centre.selectbox('Operator_1',operator_list,0,label_visibility="collapsed")
+filter_1_value = right.number_input("Value_1",min_value=filter_min_value_1, max_value=filter_max_value_1, value=filter_max_value_1, label_visibility="collapsed")
 
-else:
-    operator_1 = centre.selectbox('Operator_1',('IN','NOT IN'),0,label_visibility="collapsed")
-    filter_1_value = right.multiselect("Value_1",crisil_option, default=crisil_option,label_visibility="collapsed")
 
-    if len(filter_1_value) == 0:
-        filter_1_value = crisil_option
 
-df_filter_1 = get_filtered_df(df_2,df_filter,filter_1,operator_1,filter_1_value)
+df_filter_1 = get_filtered_df(df_4,filter_df,filter_1,operator_1,filter_1_value)
 
-filter_2 = left.selectbox("Filter 2", filter_list1, 1, label_visibility="collapsed")
-filter_2_col = df_filter[df_filter.index == filter_2]['Column_Name'].iloc[0]
+filter_list2 = [x for x in filter_df.columns if x != filter_1]
 
-if filter_2 != 'Crisil Rating':
-    filter_min_value_2 = df_filter[df_filter.index == filter_2]['Min_Value'].iloc[0]
-    filter_max_value_2 = df_filter[df_filter.index == filter_2]['Max_Value'].iloc[0]
-    filter_step_value_2 = df_filter[df_filter.index == filter_2]['Steps'].iloc[0]
+#st.dataframe(df_filter_1)
 
-    operator_2 = centre.selectbox('Operator_2',operator_list,0,label_visibility="collapsed")
-    filter_2_value = right.number_input("Value_2",min_value=filter_min_value_2, max_value=filter_max_value_2, step=filter_step_value_2, value=filter_max_value_2, label_visibility="collapsed")
+filter_2 = left.selectbox("Filter 2", filter_list2, 1, label_visibility="collapsed")
 
-else:
-    operator_2 = centre.selectbox('Operator_2',('IN','NOT IN'),0,label_visibility="collapsed")
-    filter_2_value = right.multiselect("Value_1",crisil_option, default=crisil_option,label_visibility="collapsed")
+filter_min_value_2 = filter_df.loc['min',filter_2]
+filter_max_value_2 = filter_df.loc['max',filter_2]
 
-    if len(filter_2_value) == 0:
-        filter_2_value = crisil_option
+operator_2 = centre.selectbox('Operator_2',operator_list,0,label_visibility="collapsed")
+filter_2_value = right.number_input("Value_2",min_value=filter_min_value_2, max_value=filter_max_value_2, value=filter_max_value_2, label_visibility="collapsed")
+
+
+
 
 #st.write(df_filter_1)
 if len(df_filter_1) > 0:
-    df_filter_2 = get_filtered_df(df_filter_1,df_filter,filter_2,operator_2,filter_2_value)
+    df_filter_2 = get_filtered_df(df_filter_1,filter_df,filter_2,operator_2,filter_2_value)
 else:
     df_filter_2 = df_filter_1
 
@@ -361,19 +370,22 @@ ch_1, ch_2 = st.columns((4,16))
 
 ch_1.markdown('<BR><BR>',unsafe_allow_html=True)
 ch_1.markdown("**:blue[Configure X-Axis]**")
-chart_x_axis = ch_1.selectbox('chart_x_axis',['Volatility','Volatility_1Y','NumStocks'],0,label_visibility="collapsed")
+chart_x_axis = ch_1.selectbox('chart_x_axis',['VOLATILITY','PRICE_TO_BOOK','PRICE_TO_EARNINGS'],0,label_visibility="collapsed")
 ch_1.markdown('<BR>',unsafe_allow_html=True)
 
 ch_1.markdown("**:blue[Configure Y-Axis]**")
-chart_y_axis = ch_1.selectbox('chart_y_axis',['3M Ret','1Y Ret','3Y Ret', '5Y Ret', 'Ret Inception','Roll_Ret_1Y', 'Roll_Ret_3Y', 'Roll_Ret_Inception'],0,label_visibility="collapsed")
+chart_y_axis = ch_1.selectbox('chart_y_axis',['3_MONTH_RETURN', '6_MONTH_RETURN', '1_YEAR_RETURN','2_YEAR_RETURN',
+                                              '3_YEAR_RETURN','5_YEAR_RETURN', '7_YEAR_RETURN', '10_YEAR_RETURN',
+                                              '15_YEAR_RETURN', '20_YEAR_RETURN', '25_YEAR_RETURN','SINCE_INCEPTION_RETURN'],0,
+                                              label_visibility="collapsed")
 ch_1.markdown('<BR>',unsafe_allow_html=True)
 
 ch_1.markdown("**:blue[Configure Colour]**")
-chart_color = ch_1.selectbox('chart_color',['Sharpe Ratio', 'Sortino Ratio','Sharpe_1Y','Sortino_1Y','Expense'],0,label_visibility="collapsed")
+chart_color = ch_1.selectbox('chart_color',['SHARPE', 'SORTINO','EXPENSE'],0,label_visibility="collapsed")
 ch_1.markdown('<BR>',unsafe_allow_html=True)
 
 ch_1.markdown("**:blue[Configure Size]**")
-chart_size = ch_1.selectbox('chart_size',['AUM', 'Age'],0,label_visibility="collapsed")
+chart_size = ch_1.selectbox('chart_size',['AUM', 'AGE'],0,label_visibility="collapsed")
 
 
 ch_2.markdown('<BR>',unsafe_allow_html=True)
@@ -389,9 +401,9 @@ else:
 
 
 
-df_filter_2 = df_filter_2.sort_values([filter_1_col,filter_2_col])
+df_filter_2 = df_filter_2.sort_values([filter_1,filter_2])
 
-basic_columns = [ 'Scheme_Name','Scheme_Category','Fund_House','Age', filter_1_col, filter_2_col,chart_x_axis,chart_y_axis,chart_color, chart_size]
+basic_columns = [ 'SCHEMES','SCHEME_CATEGORY','FUND_HOUSE','AGE', filter_1, filter_2,chart_x_axis,chart_y_axis,chart_color, chart_size]
 #if len(report_columns) == 0:
 #    report_columns = config_columns
 
