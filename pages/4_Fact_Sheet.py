@@ -389,12 +389,12 @@ df = get_mf_perf()
 
 #st.dataframe(df)
 
-params=st.experimental_get_query_params()
+params=st.query_params
 
 def_value = 0
 if len(params) > 0:
     try:
-        def_schm_id = int(float(params['id'][0]))
+        def_schm_id = int(float(params['id']))
         def_value = df.index.get_loc(def_schm_id)
     except:
         def_value = 0
