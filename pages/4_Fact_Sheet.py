@@ -441,7 +441,7 @@ with t_peer:
     right.markdown(f" &mdash; :blue[**{int(df_cat.loc[amfi_code,'RANK'])}/{len(df_cat)}**] based on :blue-background[:blue[**1 Year Returns**]] ")
 
     df_cat['RANK'] = df_cat['SHARPE'].rank(ascending=False, method='dense')
-    right.markdown(f" &mdash; :blue[**{int(df_cat.loc[amfi_code,'RANK'])}/{len(df_cat)}**]based on :blue-background[:blue[**3-Year Sharpe Ratio**]] ")
+    right.markdown(f" &mdash; :blue[**{int(df_cat.loc[amfi_code,'RANK'])}/{len(df_cat)}**] based on :blue-background[:blue[**3-Year Sharpe Ratio**]] ")
 
     df_cat['RANK'] = df_cat['FUND_RATING'].rank(ascending=False)
     right.markdown(f" &mdash; :blue[**{int(df_cat.loc[amfi_code,'RANK'])}/{len(df_cat)}**] based on :blue-background[:blue[**Fund Rating**]] ")
