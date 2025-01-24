@@ -96,6 +96,8 @@ def get_html_table_scroll(data, header='Y'):
 def plot_chart(df_chart,chart_x_axis,chart_y_axis,chart_color,chart_size):
     if len(df_chart) > 0:
 
+        df_chart = df_chart[(df_chart[chart_x_axis] > 0) & (df_chart[chart_x_axis] < 90)]
+
         y_spread = df_chart[chart_y_axis].max() - df_chart[chart_y_axis].min()
         yrange = [df_chart[chart_y_axis].min() - 0.1 * y_spread, df_chart[chart_y_axis].max() + 0.1 * y_spread]
         x_spread = df_chart[chart_x_axis].max() - df_chart[chart_x_axis].min()
@@ -432,6 +434,6 @@ st.markdown(html_text, unsafe_allow_html=True)
 #st.write(df_filter_1[display_columns])
 
 
-notice_txt = '<p><BR><BR><span style="font-family: Verdana, Geneva, sans-serif; font-size: 10px;">'
-notice_txt = notice_txt + '<span style="color: rgb(255,0,20);">Note:Market Data as on {}</span>'.format(get_data_refresh_date())
-st.markdown(notice_txt,unsafe_allow_html=True)
+#notice_txt = '<p><BR><BR><span style="font-family: Verdana, Geneva, sans-serif; font-size: 10px;">'
+#notice_txt = notice_txt + '<span style="color: rgb(255,0,20);">Note:Market Data as on {}</span>'.format(get_data_refresh_date())
+#st.markdown(notice_txt,unsafe_allow_html=True)
