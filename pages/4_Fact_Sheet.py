@@ -94,7 +94,7 @@ def display_fund_manager(fund_manager, amfi_code):
 
         st.markdown('<BR>', unsafe_allow_html=True)
         st.markdown(get_markdown_col_fields('Total AUM Managed',f"{display_amount(tot_aum)} Cr"), unsafe_allow_html=True)
-        st.markdown(get_markdown_col_fields('Average Fund rating',f"{average_rating} stars"), unsafe_allow_html=True)
+        st.markdown(get_markdown_col_fields('Average Fund rating',f"{round(average_rating,2)} stars"), unsafe_allow_html=True)
 
         st.markdown('<BR><p style="{}">Other Funds Managed</p>'.format(styles['Display_Info']), unsafe_allow_html=True)
         html_text = get_markdown_table(df_fund_mgr[df_fund_mgr.index != amfi_code][col_basic_display])
