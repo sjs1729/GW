@@ -142,7 +142,8 @@ def display_amount(amount, paisa='N'):
 
 def get_markdown_table_highlighted_row(data, highlight_index, header='Y', footer='Y'):
 
-
+    st.write(data)
+    st.write(highlight_index)
     if header == 'Y':
 
         cols = data.columns
