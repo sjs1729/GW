@@ -140,6 +140,58 @@ def display_amount(amount, paisa='N'):
 
     return amt_str
 
+def get_markdown_table_highlighted_row(data, highlight_index, header='Y', footer='Y'):
+
+
+    if header == 'Y':
+
+        cols = data.columns
+        ncols = len(cols)
+        if ncols < 5:
+            html_script = "<table><style> table {border-collapse: collapse;width: 100%; border: 1px solid #ddd;}th {background-color: #ffebcc;padding:0px;} td {font-size='5px;text-align:center;padding:0px;'}tr:nth-child(even) {background-color: #f2f2f2;}</style><thead><tr style='width:100%;border:none;font-family:Courier; color:Red; font-size:14px'>"
+        elif ncols < 7:
+            html_script = "<table><style> table {border-collapse: collapse;width: 100%; border: 1px solid #ddd;}th {background-color: #ffebcc;padding:0px;} td {font-size='5px;text-align:center;padding:0px;'}tr:nth-child(even) {background-color: #f2f2f2;}</style><thead><tr style='width:100%;border:none;font-family:Courier; color:Red; font-size:12px'>"
+        else:
+            html_script = "<table><style> table {border-collapse: collapse;width: 100%; border: 1px solid #ddd;}th {background-color: #ffebcc;padding:0px;} td {font-size='5px;text-align:center;padding:0px;'}tr:nth-child(even) {background-color: #f2f2f2;}</style><thead><tr style='width:100%;border:none;font-family:Courier; color:Red; font-size:10px'>"
+
+
+        for i in cols:
+            if 'Fund' in i or 'Name' in i:
+                html_script = html_script + "<th style='text-align:left'>{}</th>".format(i)
+            else:
+                html_script = html_script + "<th style='text-align:center''>{}</th>".format(i)
+
+    html_script = html_script + "</tr></thead><tbody>"
+    for j in data.index:
+
+        if j == highlight_index:
+            if ncols < 5:
+                html_script = html_script + "<tr style='border:none;font-family:Courier; color:Red; font-size:12px;padding:1px;';>"
+            elif ncols < 7:
+                html_script = html_script + "<tr style='border:none;font-family:Courier; color:Red; font-size:11px;padding:1px;';>"
+            else:
+                html_script = html_script + "<tr style='border:none;font-family:Courier; color:Red; font-size:9px;font-weight:bold;padding:1px;';>"
+        else:
+            if ncols < 5:
+                html_script = html_script + "<tr style='border:none;font-family:Courier; color:Blue; font-size:12px;padding:1px;';>"
+            elif ncols < 7:
+                html_script = html_script + "<tr style='border:none;font-family:Courier; color:Blue; font-size:11px;padding:1px;';>"
+            else:
+                html_script = html_script + "<tr style='border:none;font-family:Courier; color:Blue; font-size:9px;padding:1px;';>"
+
+
+        a = data.loc[j]
+        for k in cols:
+            if 'Fund' in k or 'Name' in k:
+                html_script = html_script + "<td style='padding:2px;text-align:left' rowspan='1'>{}</td>".format(a[k])
+            else:
+                html_script = html_script + "<td style='padding:2px;text-align:center' rowspan='1'>{}</td>".format(a[k])
+
+    html_script = html_script + '</tbody></table>'
+
+    return html_script
+
+
 def get_markdown_table(data, header='Y', footer='Y'):
 
 
