@@ -438,15 +438,16 @@ with t_peer:
     left, right = st.columns((1,20))
 
     df_cat['RANK'] = df_cat['1_YEAR_RETURN'].rank(ascending=False, method='dense')
-    right.markdown(f" &mdash; :blue[**{int(df_cat.loc[amfi_code,'RANK'])}/{len(df_cat)}**] based on :blue-background[**1 Year Returns**] ")
+    right.markdown(f" &mdash; :blue[**{int(df_cat.loc[amfi_code,'RANK'])}/{len(df_cat)}**] based on :blue-background[:blue[**1 Year Returns**]] ")
 
     df_cat['RANK'] = df_cat['SHARPE'].rank(ascending=False, method='dense')
-    right.markdown(f" &mdash; :blue[**{int(df_cat.loc[amfi_code,'RANK'])}/{len(df_cat)}**]based on :blue-background[**3-Year Sharpe Ratio**] ")
+    right.markdown(f" &mdash; :blue[**{int(df_cat.loc[amfi_code,'RANK'])}/{len(df_cat)}**]based on :blue-background[:blue[**3-Year Sharpe Ratio**]] ")
 
     df_cat['RANK'] = df_cat['FUND_RATING'].rank(ascending=False)
-    right.markdown(f" &mdash; :blue[**{int(df_cat.loc[amfi_code,'RANK'])}/{len(df_cat)}**] based on :blue-background[**Fund Rating**] ")
+    right.markdown(f" &mdash; :blue[**{int(df_cat.loc[amfi_code,'RANK'])}/{len(df_cat)}**] based on :blue-background[:blue[**Fund Rating**]] ")
 
-    st.markdown('<BR><p style="{}">Complete List of {}:{} Schemes</p>'.format(styles['Display_Info'],fund_type,fund_category), unsafe_allow_html=True)
+    st.markdown('<BR>', unsafe_allow_html=True)
+    st.markdown(':green[Complete List of ] :green-background[:green[**{}:{}**]] :green[Schemes]'.format(fund_type,fund_category))
     df_cat['FUND_RATING'] = df_cat['FUND_RATING'].replace(0,np.nan)
     html_text = get_markdown_table_highlighted_row(df_cat[col_cat_display],amfi_code)
     st.markdown(html_text,unsafe_allow_html=True)
