@@ -810,6 +810,8 @@ def get_recent_ret_calendar_display(df):
 
         elif week_day == 4 :
             day4_value = get_color_code(day_change)
+            flag = f"{flag}{week_day}"
+
             if week_no == 0:
                 if flag[0] == '1':
                     if day2_value == "#FFFFFF":
