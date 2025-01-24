@@ -72,44 +72,36 @@ def fund_age(age_in_days):
 
 
 
-def show_fund_details(schm_name, start_date):
-
-    cols = ['Nifty',schm_name]
-    df_mf=df[df.index >= start_date][cols].dropna()
-
-    df_mf_norm = df_mf * 100 / df_mf.iloc[0]
 
 
-    fig = px.line(df_mf_norm)
-
-    st.markdown('<BR>',unsafe_allow_html=True)
-
-    fig.update_layout(title_text="{} vs Nifty".format(schm_select),
-                              title_x=0.35,
-                              title_font_size=17,
-                              xaxis_title="",
-                              yaxis_title="Value of Rs.100")
-    fig.update_layout(showlegend=True)
-    fig.update_layout(legend_title='')
-    fig.update_layout(legend=dict(
-                        x=0.3,
-                        y=-0.25,
-                        traceorder='normal',
-                        font=dict(size=12,)
-                     ))
-
-    fig.update_layout(height=500)
-    fig.update_layout(width=800)
-
-    return fig
+col_basic_display = ['SCHEMES', 'SCHEME_CATEGORY','FUND_RATING','AUM', '1_YEAR_RETURN',
+                     'VOLATILITY', 'SHARPE', 'PRICE_TO_EARNINGS', 'EXPENSE']
 
 
-def show_debt_fund_details(schm_code, schm_name, start_date):
 
-    fig = show_fund_details(schm_name, start_date)
 
-    return fig
+def display_fund_manager(fund_manager, amfi_code):
 
+    df_fund_mgr = df[df['FUND MANAGER'] == fund_manager]
+    tot_aum = df_fund_mgr['AUM'].sum()
+    df_fund_mgr['FUND_RATING'] = df_fund_mgr['FUND_RATING'].replace(0,np.nan)
+    #average_rating = df_fund_mgr[df_fund_mgr['FUND_RATING'] > 0]['FUND_RATING'].mean()
+    average_rating = df_fund_mgr['FUND_RATING'].mean()
+    schm_nm = df.loc[amfi_code,'SCHEMES']
+    #st.write(schm_nm)
+
+    if (len(df_fund_mgr) > 1):
+
+        st.markdown('<BR>', unsafe_allow_html=True)
+        st.markdown(get_markdown_col_fields('Total AUM Managed',f"{display_amount(tot_aum)} Cr"), unsafe_allow_html=True)
+        st.markdown(get_markdown_col_fields('Average Fund rating',f"{average_rating} stars"), unsafe_allow_html=True)
+
+        st.markdown('<BR><p style="{}">Other Funds Managed</p>'.format(styles['Display_Info']), unsafe_allow_html=True)
+        html_text = get_markdown_table(df_fund_mgr[df_fund_mgr.index != amfi_code][col_basic_display])
+
+        st.markdown(html_text,unsafe_allow_html=True)
+    else:
+        st.markdown('<BR><p style="{}">{} manages no Funds other than {} </p><BR>'.format(styles['Subheading'],fund_manager,schm_nm), unsafe_allow_html=True)
 
 def display_debt_schemes():
 
@@ -137,7 +129,7 @@ def display_debt_schemes():
     right1.markdown(get_markdown_col_fields('Fund Type',df.loc[amfi_code]['SCHEME_TYPE']), unsafe_allow_html=True)
     right2.markdown(get_markdown_col_fields('Fund Category',df.loc[amfi_code]['SCHEME_CATEGORY']), unsafe_allow_html=True)
 
-    right1.markdown(get_markdown_col_fields('Crisil Rating',fund_rtg_stars(int(df.loc[amfi_code]['FUND_RATING']    ))), unsafe_allow_html=True)
+    right1.markdown(get_markdown_col_fields('Fund Rating',fund_rtg_stars(int(df.loc[amfi_code]['FUND_RATING']    ))), unsafe_allow_html=True)
     right2.markdown(get_markdown_col_fields('Expense Ratio',df.loc[amfi_code]['EXPENSE']), unsafe_allow_html=True)
 
     right1.markdown(get_markdown_col_fields('YTM',df.loc[amfi_code]['YTM']), unsafe_allow_html=True)
@@ -408,6 +400,15 @@ main_layout = st.columns((13,8))
 schm_select = main_layout[0].selectbox("Select Scheme",schm_list,def_value,label_visibility="collapsed")
 amfi_code = int(float(schm_select.split("-")[0]))
 schm_select = schm_select.split("-")[1]
+fund_manager = df.loc[amfi_code,'FUND MANAGER']
+fund_house = df.loc[amfi_code,'FUND_HOUSE']
+fund_category = df.loc[amfi_code,'SCHEME_CATEGORY']
+fund_type = df.loc[amfi_code,'SCHEME_TYPE']
+
+
+
+
+
 
 #comp_date   = main_layout[1].date_input("Select Date", dt.date(2022, 1, 1), label_visibility="collapsed")
 #comp_date = dt.date(comp_date.year, comp_date.month, comp_date.day)
@@ -420,17 +421,48 @@ st.markdown('<BR>',unsafe_allow_html=True)
 
 
 
-overview, fund_returns = st.tabs(["Fund Overview","Fund Returns"])
+t_overview, t_fund_returns, t_fund_mgr, t_peer = st.tabs(["Fund Overview","Fund Returns",f"Fund Manager - {fund_manager}",f"Peers - {fund_type}:{fund_category}"])
 
+with t_peer:
 
-with overview:
+    col_cat_display = ['SCHEMES','AUM','FUND_RATING', '3_MONTH_RETURN', '6_MONTH_RETURN','1_YEAR_RETURN',
+                     'VOLATILITY', 'SHARPE', 'PRICE_TO_EARNINGS', 'EXPENSE']
+
+    df_cat = df[df['SCHEME_CATEGORY'] == fund_category].sort_values(by='1_YEAR_RETURN', ascending=False)
+    df_cat['AUM'] = df_cat['AUM'].apply(lambda x: f"{display_amount(x)} Cr")
+
+    df_cat['RANK'] = df_cat['1_YEAR_RETURN'].rank(ascending=False, method='dense')
+
+    st.markdown(f" :blue[**{schm_select}**] is ranked within the :blue[**{fund_type}:{fund_category} Category**]")
+
+    left, right = st.columns((1,20))
+
+    df_cat['RANK'] = df_cat['1_YEAR_RETURN'].rank(ascending=False, method='dense')
+    right.markdown(f" &mdash; :blue[**{int(df_cat.loc[amfi_code,'RANK'])}/{len(df_cat)}**] based on :blue-background[**1 Year Returns**] ")
+
+    df_cat['RANK'] = df_cat['SHARPE'].rank(ascending=False, method='dense')
+    right.markdown(f" &mdash; :blue[**{int(df_cat.loc[amfi_code,'RANK'])}/{len(df_cat)}**]based on :blue-background[**3-Year Sharpe Ratio**] ")
+
+    df_cat['RANK'] = df_cat['FUND_RATING'].rank(ascending=False)
+    right.markdown(f" &mdash; :blue[**{int(df_cat.loc[amfi_code,'RANK'])}/{len(df_cat)}**] based on :blue-background[**Fund Rating**] ")
+
+    st.markdown('<BR><p style="{}">Complete List of {}:{} Schemes</p>'.format(styles['Display_Info'],fund_type,fund_category), unsafe_allow_html=True)
+    df_cat['FUND_RATING'] = df_cat['FUND_RATING'].replace(0,np.nan)
+    html_text = get_markdown_table_highlighted_row(df_cat[col_cat_display],amfi_code)
+    st.markdown(html_text,unsafe_allow_html=True)
+
+with t_fund_mgr:
+
+    display_fund_manager(fund_manager, amfi_code)
+
+with t_overview:
 
     if schm_type == 'Debt':
         display_debt_schemes()
     else:
         display_equity_schemes()
 
-with fund_returns:
+with t_fund_returns:
 
 
     left, buf, right = st.columns((6,2,10))
