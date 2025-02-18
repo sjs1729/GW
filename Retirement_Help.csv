@@ -5,9 +5,9 @@ Annual Income,Basic Information,Annual after-Tax Income from Job/Business. Any o
 Annual Hike %,Basic Information,Annual increment % in Salary that is expected. This should ideally be considered from 2-5%
 Annual Expense,Basic Information,Annual Expense. All adhoc/non-regular  expenses should be considered under other Expenses
 Inflation,Basic Information,The rate at which Expenses increase after every year.
-Current Corpus,Basic Information,"All current savings and assets (including Jewellery, Financial Investments (FD, Stock, Mutual Funds, Real Estate (other than where currently residing)"
+Current Corpus,Basic Information,"All current savings and assets including Jewellery, Financial Investments (FD, Stock, Mutual Funds), Real Estate (other than where currently residing)"
 Return on Asset %,Basic Information,The annual rate at which the Current Corpus is growing. It should ideally be the average rate of return of different asset types.
-Expense,Basic Information,"Expenses are increasing annually at the rate of Inflation considered. There is a possibility that due to various factors (primarily propensity to spend), the Annual expenses does not increase after a certain age. Expense Cap is that Age  after which Annual Expense can be considered static. It is defaulted to the Life Span, however depending on anticipated life style change, it can be reduced if required."
+Expense Cap,Basic Information,"Expenses are increasing annually at the rate of Inflation considered. There is a possibility that due to various factors (primarily propensity to spend), the Annual expenses does not increase after a certain age. Expense Cap is that Age  after which Annual Expense can be considered static. It is defaulted to the Life Span, however depending on anticipated life style change, it can be reduced if required."
 Terminal Corpus,Basic Information,The amount one wants to leave behind.
 Start Age,Other Incomes,Age at which this Other Income starts
 End Age ,Other Incomes,Age at which this Other Income ends. Only applicable when this Other Income is recurring.
