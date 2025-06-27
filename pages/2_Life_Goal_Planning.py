@@ -127,16 +127,16 @@ left.markdown("**:blue[Corpus I Already Have]**")
 present_corpus = left.number_input("Corpus I Already Have", value=0,step=10000, max_value=goal_amount,label_visibility='collapsed')
 left.markdown('<p style="font-size:12px;font-weight: bold;text-align:center;vertical-align:middle;color:green;margin:0px;padding:0px">({})</p>'.format(display_amount(present_corpus)), unsafe_allow_html=True)
 
-max_rate_of_return = 15.0
+max_rate_of_return = 30.0
 
 if years_to_goal < 3:
     max_rate_of_return = 8.0
 elif years_to_goal < 5:
-    max_rate_of_return = 10.0
-elif years_to_goal < 7:
     max_rate_of_return = 12.0
+elif years_to_goal < 7:
+    max_rate_of_return = 20.0
 else:
-    max_rate_of_return = 15.0
+    max_rate_of_return = 30.0
 
 centre.markdown("**:blue[Return on Assets]**")
 rate = round(centre.number_input("Return on Assets", step=0.10, value=7.0, max_value=max_rate_of_return, min_value=0.0,label_visibility='collapsed'),2)
