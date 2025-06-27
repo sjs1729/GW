@@ -132,9 +132,9 @@ max_rate_of_return = 15.0
 if years_to_goal < 3:
     max_rate_of_return = 8.0
 elif years_to_goal < 5:
-    max_rate_of_return = 12.0
+    max_rate_of_return = 10.0
 elif years_to_goal < 7:
-    max_rate_of_return = 15.0
+    max_rate_of_return = 12.0
 else:
     max_rate_of_return = 15.0
 
