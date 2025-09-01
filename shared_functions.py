@@ -27,6 +27,8 @@ cols=['SCHEMES', 'FUND_HOUSE', 'AUM', 'LAUNCH DATE', '1_DAY_RETURN', '7_DAY_RETU
        'EXPENSE', 'SOV_RATED_DEBT', 'A_RATED_DEBT', 'AA_RATED_DEBT', 'AAA_RATED_DEBT',
        'BIG', 'CASH','DOWNSIDE_DEVIATION', 'DOWNSIDE_PROBABILITY']
 
+
+
 @st.cache_data()
 def get_mf_perf():
     df = pd.read_csv('MINT_Scheme_Data.csv')
@@ -77,10 +79,13 @@ def get_historical_nav(amfi_code,tdate):
             nav_list.append(values)
 
         df_mf = pd.DataFrame(nav_list,columns=['Date','Nav'])
+
         df_mf.set_index('Date',inplace=True)
 
     except:
         result='{}'.format(success)
+        st.warning("AMFI NAV Data not accessible, try after sometime")
+        st.stop()
         return result
 
     return df_mf
@@ -141,6 +146,7 @@ def display_amount(amount, paisa='N'):
     return amt_str
 
 def get_markdown_table_highlighted_row(data, highlight_index, header='Y', footer='Y'):
+
 
     if header == 'Y':
 
@@ -509,7 +515,7 @@ def generate_pdf_report( retirement_dict, df_goals, df_ret_income, retirement_as
         pdf.set_text_color(4,51,255)
 
         if ExpCapAge < PlanAge:
-            pdf.cell(0, 10, f" Annual Inflation considered is {Inflation} % and the effect of Inflation stops when Age = {ExpCapAge}" , align='L')
+            pdf.cell(0, 10, f" Annual Inflation considered is {round(Inflation,2)} % and the effect of Inflation stops when Age > {ExpCapAge}" , align='L')
         else:
             pdf.cell(0, 10, f" Annual Inflation considered is {Inflation} %" , align='L')
 
