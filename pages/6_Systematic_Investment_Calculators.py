@@ -31,13 +31,6 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# Hide Streamlit menu and footer
-hide_streamlit_style = """
-        <style>
-        .stToolbarActions {display: none !important;}
-        </style>
-        """
-st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 np.set_printoptions(precision=3)
 
@@ -46,47 +39,23 @@ tday = dt.datetime.today()
 c_1, c_2 = st.columns((8,4))
 c_2.image('growealth-logo_long.png')
 
-@st.cache_data()
-def get_mf_perf():
-    df = pd.read_csv('mf_data.csv')
-    df['Date'] = df['Date'].apply(lambda x: dt.datetime.strptime(x,'%Y-%m-%d'))
 
-    df.set_index('Date',inplace=True)
+#@st.cache_data()
+#def get_mf_perf():
+#    df = pd.read_csv('mf_data.csv')
+#    df['Date'] = df['Date'].apply(lambda x: dt.datetime.strptime(x,'%Y-%m-%d'))
 
-    df_perf = pd.read_csv('revised_mf_perf.csv')
-    df_perf.set_index('Scheme_Code', inplace=True)
+#    df.set_index('Date',inplace=True)
+#
+#    df_perf.set_index('Scheme_Code', inplace=True)
+#
+#    df_stp_src.set_index('Scheme_Code', inplace=True)
 
-    df_stp_src = pd.read_csv('stp_src_funds.csv')
-    df_stp_src.set_index('Scheme_Code', inplace=True)
+#    df_port_dtl = pd.read_csv('mf_port_detail.csv')
+
+#    return df, df_perf, df_port_dtl, df_stp_src
 
 
-    df_port_dtl = pd.read_csv('mf_port_detail.csv')
-
-    return df, df_perf, df_port_dtl, df_stp_src
-
-@st.cache_data()
-def get_historical_nav(amfi_code,tday):
-    try:
-        success = 'N'
-        url = 'https://api.mfapi.in/mf/{}'.format(amfi_code)
-        response = urlopen(url)
-        result = json.loads(response.read())
-        data = result['data']
-        nav_list = []
-        for rec in reversed(data):
-            dt_rec = dt.datetime.strptime(rec['date'], '%d-%m-%Y').date()
-            nav = float(rec['nav'])
-            values = dt_rec, nav
-            nav_list.append(values)
-
-        df_mf = pd.DataFrame(nav_list,columns=['Date','Nav'])
-        df_mf.set_index('Date',inplace=True)
-
-    except:
-        result='{}'.format(success)
-        return result
-
-    return df_mf
 
 def xirr(rate,cash_flow,terminal_value=0):
 
@@ -266,9 +235,16 @@ html_text = html_text + '<span style="color: rgb(9, 0, 220);text-align:center;">
 
 st.markdown(html_text,unsafe_allow_html=True)
 
-df, df_mf_perf, df_port_dtl, df_stp_src = get_mf_perf()
+#df, df_mf_perf, df_port_dtl, df_stp_src = get_mf_perf()
+
+df_mf_perf = get_mf_perf()
+#st.dataframe(df_mf_perf)
+
+stp_hybrid_categories = ['Equity Savings','Balad Advantage','Arbitrage','Conservative']
+df_stp_src = df_mf_perf[(df_mf_perf['SCHEME_TYPE'] == 'Debt') | ((df_mf_perf['SCHEME_CATEGORY'].isin(stp_hybrid_categories)))]
 
 sip,stp, swp = st.tabs(["SIP - Calculator","STP Calculator", "SWP - Calculator"])
+
 
 
 with sip:
@@ -360,19 +336,19 @@ with sip:
         end_date = dt.datetime(end_date.year, end_date.month, end_date.day)
         end_date = end_date + dt.timedelta(days=1)
 
-        df_mf_perf['Inception_Date']= pd.to_datetime(df_mf_perf['Inception_Date'])
+        #df_mf_perf['Inception_Date']= pd.to_datetime(df_mf_perf['Inception_Date'])
 
-        df_mf_perf_sel = df_mf_perf[df_mf_perf['Inception_Date'] < st_date]
-        schm_list = [ "{}-{}".format(j, df_mf_perf_sel.loc[j]['Scheme_Name']) for j in df_mf_perf_sel.index ]
+        df_mf_perf_sel = df_mf_perf[df_mf_perf['LAUNCH DATE'] < st_date]
+        schm_list = [ "{}-{}".format(j, df_mf_perf_sel.loc[j]['SCHEMES']) for j in df_mf_perf_sel.index ]
 
 
 
         schm_select = col1.selectbox("Select Scheme",schm_list,0)
-        amfi_code = int(schm_select.split("-")[0])
+        amfi_code = int(float(schm_select.split("-")[0]))
         schm_select = schm_select.split("-")[1]
 
         df_mf = get_historical_nav(amfi_code,tday.day)
-        #col1.write(type(df_mf.index[0]))
+        col1.write(df_mf.index[0])
         df_mf = df_mf[(df_mf.index > st_date.date()) & (df_mf.index < end_date.date())]
         df_mf['Units'] = 0.0
         df_mf['Tran_Value'] = 0.0
@@ -506,20 +482,21 @@ with swp:
     swp_end_date = swp_end_date + dt.timedelta(days=1)
 
     swp_inflation = col1.number_input("Annual % Increase in Withdrawal", min_value=0.0, max_value=50.0, value=0.0, step=0.5,help="Annual % Increase in Withdrawal Amount due to Inflation")
-    df_mf_perf['Inception_Date']= pd.to_datetime(df_mf_perf['Inception_Date'])
+    #df_mf_perf['Inception_Date']= pd.to_datetime(df_mf_perf['Inception_Date'])
 
-    df_mf_perf_sel = df_mf_perf[df_mf_perf['Inception_Date'] < swp_st_date]
-    schm_list = [ "{}-{}".format(j, df_mf_perf_sel.loc[j]['Scheme_Name']) for j in df_mf_perf_sel.index ]
+    df_mf_perf_sel = df_mf_perf[df_mf_perf['LAUNCH DATE'] < swp_st_date]
+    schm_list = [ "{}-{}".format(j, df_mf_perf_sel.loc[j]['SCHEMES']) for j in df_mf_perf_sel.index ]
 
 
 
     schm_select = col2.selectbox("Select SWP Scheme",schm_list,0)
-    amfi_code = int(schm_select.split("-")[0])
+    amfi_code = int(float(schm_select.split("-")[0]))
     schm_select = schm_select.split("-")[1]
     #col1.write(swp_st_date)
     #col1.write(swp_end_date)
 
-    df_mf = get_historical_nav(amfi_code,tday.day)
+    df_mf = get_historical_nav(amfi_code,tday)
+    #st.write(df_mf.index[0],type(df_mf.index[0]))
     df_mf = df_mf[(df_mf.index > swp_st_date.date()) & (df_mf.index < swp_end_date.date())]
 
     df_swp = get_swp(df_mf,corpus, swp_withdrawal_amount, swp_freq,swp_inflation/100.0)
@@ -628,29 +605,28 @@ with stp:
     stp_end_date = stp_end_date + dt.timedelta(days=1)
 
     #swp_inflation = col1.number_input("Annual % Increase in Withdrawal", min_value=0.0, max_value=50.0, value=0.0, step=0.5,help="Annual % Increase in Withdrawal Amount due to Inflation")
-    df_mf_perf['Inception_Date']= pd.to_datetime(df_mf_perf['Inception_Date'])
-    df_stp_src['Inception_Date']= pd.to_datetime(df_stp_src['Inception_Date'])
+    #df_mf_perf['Inception_Date']= pd.to_datetime(df_mf_perf['Inception_Date'])
+    #df_stp_src['Inception_Date']= pd.to_datetime(df_stp_src['Inception_Date'])
 
-    df_stp_src_sel = df_stp_src[df_stp_src['Inception_Date'] < stp_st_date]
+    df_stp_src_sel = df_stp_src[df_stp_src['LAUNCH DATE'] < stp_st_date]
 
-    schm_list_source = [ "{}-{}".format(j, df_stp_src_sel.loc[j]['Scheme_Name']) for j in df_stp_src_sel.index ]
+    schm_list_source = [ "{}-{}".format(j, df_stp_src_sel.loc[j]['SCHEMES']) for j in df_stp_src_sel.index ]
 
 
 
     schm_select_source = col1.selectbox("Select STP Source Scheme",schm_list_source,0)
-    amfi_code_source = int(schm_select_source.split("-")[0])
+    amfi_code_source = int(float(schm_select_source.split("-")[0]))
     schm_select_source = schm_select_source.split("-")[1]
-    fund_house_source = df_stp_src_sel[df_stp_src_sel.index == amfi_code_source]['Fund_House'].iloc[0]
+    fund_house_source = df_stp_src_sel[df_stp_src_sel.index == amfi_code_source]['FUND_HOUSE'].iloc[0]
     #col1.write(swp_st_date)
     #col1.write(swp_end_date)
 
-    df_mf_perf_sel = df_mf_perf[(df_mf_perf['Inception_Date'] < stp_st_date) & (df_mf_perf['Fund_House'] == fund_house_source)]
-
-    schm_list_dest = [ "{}-{}".format(j, df_mf_perf_sel.loc[j]['Scheme_Name']) for j in df_mf_perf_sel.index if j != amfi_code_source ]
+    df_mf_perf_sel = df_mf_perf[(df_mf_perf['LAUNCH DATE'] < stp_st_date) & (df_mf_perf['FUND_HOUSE'] == fund_house_source)]
+    schm_list_dest = [ "{}-{}".format(j, df_mf_perf_sel.loc[j]['SCHEMES']) for j in df_mf_perf_sel.index if j != amfi_code_source ]
 
 
     schm_select_dest = col2.selectbox("Select STP Target Scheme",schm_list_dest,0)
-    amfi_code_dest = int(schm_select_dest.split("-")[0])
+    amfi_code_dest = int(float(schm_select_dest.split("-")[0]))
     schm_select_dest = schm_select_dest.split("-")[1]
 
     df_mf_source = get_historical_nav(amfi_code_source,tday.day)

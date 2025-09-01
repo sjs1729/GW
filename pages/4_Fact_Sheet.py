@@ -34,15 +34,6 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
-
-# Hide Streamlit menu and footer
-hide_streamlit_style = """
-        <style>
-        .stToolbarActions {display: none !important;}
-        </style>
-        """
-st.markdown(hide_streamlit_style, unsafe_allow_html=True)
-
 c_1, c_2 = st.columns((8,4))
 c_2.image('growealth-logo_long.png')
 
@@ -105,7 +96,7 @@ def display_fund_manager(fund_manager, amfi_code):
         st.markdown(get_markdown_col_fields('Total AUM Managed',f"{display_amount(tot_aum)} Cr"), unsafe_allow_html=True)
         st.markdown(get_markdown_col_fields('Average Fund rating',f"{round(average_rating,2)} stars"), unsafe_allow_html=True)
 
-        st.markdown('<BR><p style="{}">Other Funds Managed</p>'.format(styles['Display_Info']), unsafe_allow_html=True)
+        st.markdown('<BR><p style="{}">Other Funds Managed by {}</p>'.format(styles['Display_Info'],fund_manager), unsafe_allow_html=True)
         html_text = get_markdown_table(df_fund_mgr[df_fund_mgr.index != amfi_code][col_basic_display])
 
         st.markdown(html_text,unsafe_allow_html=True)
@@ -405,7 +396,6 @@ schm_list = [ "{}-{}".format(int(j), df.loc[j]['SCHEMES']) for j in df.index ]
 
 
 main_layout = st.columns((13,8))
-
 schm_select = main_layout[0].selectbox("Select Scheme",schm_list,def_value,label_visibility="collapsed")
 amfi_code = int(float(schm_select.split("-")[0]))
 schm_select = schm_select.split("-")[1]
@@ -434,31 +424,42 @@ t_overview, t_fund_returns, t_fund_mgr, t_peer = st.tabs(["Fund Overview","Fund 
 
 with t_peer:
 
-    col_cat_display = ['SCHEMES','AUM','FUND_RATING', '3_MONTH_RETURN', '6_MONTH_RETURN','1_YEAR_RETURN',
+
+
+
+    col_cat_display = ['SCHEMES','AUM','AGE','FUND_RATING','1_YEAR_RETURN','3_YEAR_RETURN',
                      'VOLATILITY', 'SHARPE', 'PRICE_TO_EARNINGS', 'EXPENSE']
 
     df_cat = df[df['SCHEME_CATEGORY'] == fund_category].sort_values(by='1_YEAR_RETURN', ascending=False)
-    df_cat['AUM'] = df_cat['AUM'].apply(lambda x: f"{display_amount(x)} Cr")
+    df_cat['AUM'] = df_cat['AUM'].apply(lambda x: int(x))
+    df_cat['AGE'] = df_cat['AGE'].apply(lambda x: round(x/365,2))
 
     df_cat['RANK'] = df_cat['1_YEAR_RETURN'].rank(ascending=False, method='dense')
+    #df_cat.fillna("-", inplace=True)
 
-    st.markdown(f" :blue[**{schm_select}**] is ranked within the :blue[**{fund_type}:{fund_category} Category**]")
+    st.markdown('<BR>',unsafe_allow_html=True)
+    #st.markdown(f" :red[How has **{schm_select}**] :red[performed within the] :red[**{fund_type}:{fund_category} Category?**]")
 
-    left, right = st.columns((1,20))
+    selection = st.segmented_control("Peer Performance",['1_YEAR_RETURN','SHARPE','FUND_RATING','AUM'],selection_mode="single", default='1_YEAR_RETURN',label_visibility="collapsed")
 
-    df_cat['RANK'] = df_cat['1_YEAR_RETURN'].rank(ascending=False, method='dense')
-    right.markdown(f" &mdash; :blue[**{int(df_cat.loc[amfi_code,'RANK'])}/{len(df_cat)}**] based on :blue-background[:blue[**1 Year Returns**]] ")
 
-    df_cat['RANK'] = df_cat['SHARPE'].rank(ascending=False, method='dense')
-    right.markdown(f" &mdash; :blue[**{int(df_cat.loc[amfi_code,'RANK'])}/{len(df_cat)}**] based on :blue-background[:blue[**3-Year Sharpe Ratio**]] ")
 
-    df_cat['RANK'] = df_cat['FUND_RATING'].rank(ascending=False)
-    right.markdown(f" &mdash; :blue[**{int(df_cat.loc[amfi_code,'RANK'])}/{len(df_cat)}**] based on :blue-background[:blue[**Fund Rating**]] ")
+    df_cat['RANK'] = df_cat[selection].rank(ascending=False, method='dense')
+
+    #if pd.notnull(df_cat.loc[amfi_code,'RANK']):
+    #    st.markdown(f" &mdash; :blue[**{int(df_cat.loc[amfi_code,'RANK'])}/{len(df_cat)}**] based on :blue-background[:blue[**{selection}**]] ")
+
 
     st.markdown('<BR>', unsafe_allow_html=True)
-    st.markdown(':green[Complete List of ] :green-background[:green[**{}:{}**]] :green[Schemes]'.format(fund_type,fund_category))
+    if pd.notnull(df_cat.loc[amfi_code,'RANK']):
+        st.markdown(':green[**{}** is Ranked **{}/{}** within] :green-background[:green[**{}:{}**]] :green[Schemes based on **{}**]'.format(schm_select,int(df_cat.loc[amfi_code,'RANK']),len(df_cat),fund_type,fund_category,selection))
+        #st.markdown(':green[Rank - **{}/{}** ]'.format(int(df_cat.loc[amfi_code,'RANK']),len(df_cat)))
+    else:
+        st.markdown(':green[**{}** is Unrated within **{}:{}** Schemes based on **{}**]'.format(schm_select,fund_type,fund_category,selection))
+
+
     df_cat['FUND_RATING'] = df_cat['FUND_RATING'].replace(0,np.nan)
-    html_text = get_markdown_table_highlighted_row(df_cat[col_cat_display],amfi_code)
+    html_text = get_markdown_table_highlighted_row(df_cat[col_cat_display].sort_values(selection, ascending=False),amfi_code)
     st.markdown(html_text,unsafe_allow_html=True)
 
 with t_fund_mgr:

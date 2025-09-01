@@ -36,15 +36,6 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
-
-# Hide Streamlit menu and footer
-hide_streamlit_style = """
-        <style>
-        .stToolbarActions {display: none !important;}
-        </style>
-        """
-st.markdown(hide_streamlit_style, unsafe_allow_html=True)
-
 c_1, c_2 = st.columns((8,4))
 c_2.image('growealth-logo_long.png')
 
@@ -74,8 +65,16 @@ def get_risk_profile(years_remaining, exp_roi):
 
     df_risk_mat = get_risk_matrix_data()
 
-    risk_mat = df_risk_mat[(df_risk_mat['Years_Left'] == years_remaining) & (df_risk_mat['Expected_Return'] == round(exp_roi))].iloc[0]
+    try:
+        risk_mat = df_risk_mat[(df_risk_mat['Years_Left'] == years_remaining) & (df_risk_mat['Expected_Return'] == round(exp_roi))].iloc[0]
 
+
+    except:
+        risk_mat = {'Years_Left':years_remaining,
+                    'Expected_Return':exp_roi,
+                    'Risk_Profile':10,
+                    'Asset_Allocation':'Equity - 100%'
+        }
     return risk_mat
 
 
@@ -101,31 +100,30 @@ else:
 left.image(image_path)
 right.markdown('<BR><BR>',  unsafe_allow_html=True)
 
-placeholder_summary = right.empty()
-placeholder_advise = right.empty()
-placeholder_image = right.empty()
+placeholder_summary = left.empty()
+placeholder_advise = left.empty()
+#placeholder_image = right.empty()
 
-gp_flds = st.columns((4,1,4))
+#gp_flds = st.columns((4,1,4))
 
 st.markdown('<BR>',  unsafe_allow_html=True)
 
-left,centre,right = st.columns((7,1,6))
+#left,centre,right = st.columns((7,1,6))
 
 variable_color = "blue"
 markdown_txt = f"**:{variable_color}[{goal_type} ]** :{variable_color}[ (Cost in Today's Price)]"
-left.markdown(markdown_txt)
-goal_amount = left.number_input(f"Cost of {goal_type} (in Today's Price)", value=100000,step=10000, label_visibility='collapsed')
-left.markdown('<p style="font-size:12px;font-weight: bold;text-align:center;vertical-align:middle;color:green;margin:0px;padding:0px">({})</p>'.format(display_amount(goal_amount)), unsafe_allow_html=True)
-left.markdown("  ")
+right.markdown(markdown_txt)
+goal_amount = right.number_input(f"Cost of {goal_type} (in Today's Price)", value=100000,step=10000, label_visibility='collapsed')
+right.markdown('<p style="font-size:12px;font-weight: bold;text-align:center;vertical-align:middle;color:green;margin:0px;padding:0px">({})</p><BR>'.format(display_amount(goal_amount)), unsafe_allow_html=True)
 
 right.markdown("**:blue[In How Many Years?]**")
 years_to_goal = right.slider("Years to Goal?", min_value=1, max_value=30, step=1, value=3, label_visibility='collapsed')
 
-left,buffer,centre,right = st.columns((14,2,6,6))
-
-left.markdown("**:blue[Corpus I Already Have]**")
-present_corpus = left.number_input("Corpus I Already Have", value=0,step=10000, max_value=goal_amount,label_visibility='collapsed')
-left.markdown('<p style="font-size:12px;font-weight: bold;text-align:center;vertical-align:middle;color:green;margin:0px;padding:0px">({})</p>'.format(display_amount(present_corpus)), unsafe_allow_html=True)
+#left,buffer,centre,right = st.columns((14,2,6,6))
+right.markdown('<BR>', unsafe_allow_html=True)
+right.markdown("**:blue[Corpus I Already Have]**")
+present_corpus = right.number_input("Corpus I Already Have", value=0,step=10000, min_value=0,max_value=goal_amount,label_visibility='collapsed')
+right.markdown('<p style="font-size:12px;font-weight: bold;text-align:center;vertical-align:middle;color:green;margin:0px;padding:0px">({})</p><BR>'.format(display_amount(present_corpus)), unsafe_allow_html=True)
 
 max_rate_of_return = 15.0
 
@@ -138,8 +136,8 @@ elif years_to_goal < 7:
 else:
     max_rate_of_return = 15.0
 
-centre.markdown("**:blue[Return on Assets]**")
-rate = round(centre.number_input("Return on Assets", step=0.10, value=7.0, max_value=max_rate_of_return, min_value=0.0,label_visibility='collapsed'),2)
+right.markdown("**:blue[Return on Assets]**")
+rate = round(right.number_input("Return on Assets", step=0.10, value=7.0, max_value=100.0, min_value=0.0,label_visibility='collapsed'),2)
 
 right.markdown("**:blue[Inflation]**")
 infl = right.number_input("Inflation", step =0.1, value=4.0,label_visibility='collapsed')
@@ -168,8 +166,8 @@ placeholder_summary.markdown(html_text, unsafe_allow_html=True)
 
 
 html_text = '<p><span style="color: rgb(4, 51, 255);">Based on your Expected Rate of Return & Years to Goal, the suggested Asset Allocation: &nbsp;&nbsp; </span>'
-html_text = html_text +  '<strong><span style="color: rgb(148, 33, 147);"> {}</span></strong></p><BR><BR><BR>'.format(risk_matrix['Asset_Allocation'])
-html_text = html_text + '<p><span style="color: rgb(255, 50, 50); font-size: 13px;">Consult your Financial Advisor for specific guidance.'
+html_text = html_text +  '<strong><span style="color: rgb(148, 33, 147);"> {}</span></strong></p>'.format(risk_matrix['Asset_Allocation'])
+html_text = html_text + '<p><span style="color: rgb(255, 50, 50); font-size: 12px;">Consult your Financial Advisor for specific guidance.'
 html_text = html_text + 'For MF Investment, you can also email Growealth Investments </span>'
-html_text = html_text + '<span style="color: rgb(4, 51, 255); font-size: 13px;"><u>(helpdesk@gro-wealth.in)</u></span></p>'
+html_text = html_text + '<span style="color: rgb(4, 51, 255); font-size: 12px;"><u>(helpdesk@gro-wealth.in)</u></span></p>'
 placeholder_advise.markdown(html_text, unsafe_allow_html=True)

@@ -34,16 +34,6 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
-
-# Hide Streamlit menu and footer
-hide_streamlit_style = """
-        <style>
-        .stToolbarActions {display: none !important;}
-        </style>
-        """
-st.markdown(hide_streamlit_style, unsafe_allow_html=True)
-
-
 c_1, c_2 = st.columns((8,4))
 c_2.image('growealth-logo_long.png')
 
@@ -262,7 +252,7 @@ else:
 
 right.markdown("**:blue[Fund Rating]**")
 rating_list = ['0 Star','1 Star','2 Stars', '3 Stars', '4 Stars', '5 Stars']
-rating_option = right.multiselect("Select Fund Rating", rating_list, default=rating_list, label_visibility="collapsed")
+rating_option = right.segmented_control("Select Fund Rating", rating_list, default=rating_list,selection_mode='multi', label_visibility="collapsed")
 
 rating_values = []
 if len(rating_option) > 0:
