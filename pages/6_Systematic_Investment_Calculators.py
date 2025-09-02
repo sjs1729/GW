@@ -319,12 +319,12 @@ with sip:
 
     col1.markdown('<BR>',unsafe_allow_html=True)
 
-    checked = col1.checkbox("Back Test with MF Market Data")
 
     st.markdown("-----------------------------------------")
 
     col1,col,col2 = st.columns((6,1,7))
 
+    checked = col1.checkbox("Back Test with MF Market Data")
 
     if checked:
         st_date = col1.date_input("Start Date", dt.date(2018, 1, 1))
@@ -348,7 +348,7 @@ with sip:
         schm_select = schm_select.split("-")[1]
 
         df_mf = get_historical_nav(amfi_code,tday.day)
-        col1.write(df_mf.index[0])
+        #col1.write(df_mf.index[0])
         df_mf = df_mf[(df_mf.index > st_date.date()) & (df_mf.index < end_date.date())]
         df_mf['Units'] = 0.0
         df_mf['Tran_Value'] = 0.0
