@@ -313,8 +313,6 @@
 417,Edelweiss Focused Fund Reg (G),150382,Edelweiss Focused Fund - Regular Plan - Growth
 1097,NJ Arbitrage Fund Reg (G),150366,NJ Arbitrage Fund - Regular Plan - Growth Option
 958,Mirae Asset Nifty SDL Jun 2027 Index Fund (G),150360,Mirae Asset Nifty SDL Jun 2027 Index Fund - Regular Plan - Growth
-20,Aditya Birla SL CRISIL IBX 60:40 SDL + AAA PSU Apr 2025 Index Fund (G),150354,Aditya Birla Sun Life Crisil IBX 60:40 SDL+AAA PSU-APR 2025 Index Fund-Regular Growth
-22,Aditya Birla SL CRISIL IBX 60:40 SDL + AAA PSU Apr 2027 Index Fund Reg (G),150351,Aditya Birla Sun Life Crisil IBX 60:40 SDL+AAA PSU-Apr 2027 Index Fund-Regular Growth
 1464,WhiteOak Capital Flexi Cap Fund (G),150347,WhiteOak Capital Flexi Cap Fund Regular Plan-Growth
 1439,UTI Nifty Midcap 150 Quality 50 Index Fund (G),150312,UTI Nifty Midcap 150 Quality 50 Index Fund - Regular Plan - Growth Option
 289,Baroda BNP Paribas India Consumption Fund Reg (G),150268,BARODA BNP PARIBAS India Consumption Fund - Regular Plan - Growth Option
@@ -322,14 +320,11 @@
 268,Baroda BNP Paribas Aggressive Hybrid Fund Reg (G),150258,Baroda BNP Paribas Aggressive Hybrid Fund- REGULAT PLAN -GROWTH OPTION
 270,Baroda BNP Paribas Arbitrage Fund Reg (G),150250,BARODA BNP PARIBAS ARBITRAGE FUND- REGULAR PLAN- GROWTH OPTION
 277,Baroda BNP Paribas Corporate Bond Fund (G),150235,BARODA BNP PARIBAS CORPORATE BOND FUND - Regular Plan - GROWTH OPTION
-278,Baroda BNP Paribas Corporate Bond Fund Reg (G),150229,BARODA BNP PARIBAS Corporate Bond Fund - Defunct Plan - Growth Option
 298,Baroda BNP Paribas Midcap Fund Reg (G),150209,BARODA BNP PARIBAS Mid Cap Fund - Regular Plan - Growth Option
 276,Baroda BNP Paribas Conservative Hybrid Reg (G),150203,BARODA BNP PARIBAS Conservative Hybrid Fund-Regular Plan-Growth Option
 292,Baroda BNP Paribas Large Cap Fund Reg (G),150185,BARODA BNP PARIBAS LARGE CAP Fund- Regular Plan - Growth Option
 282,Baroda BNP Paribas Dynamic Bond Fund Reg (G),150173,Baroda BNP Paribas Dynamic Bond Fund - Regular Plan - Growth Option
-281,Baroda BNP Paribas Dynamic Bond Fund Plan A Reg (G),150172,Baroda BNP Paribas Dynamic Bond Fund-Defunct Plan - Growth Option
 294,Baroda BNP Paribas Low Duration Fund (G),150165,BARODA BNP PARIBAS LOW DURATION FUND - Regular Plan - GROWTH OPTION
-295,Baroda BNP Paribas Low Duration Fund Reg (G),150160,BARODA BNP PARIBAS LOW DURATION Fund-Defunct Plan-Growth Option
 283,Baroda BNP Paribas ELSS Tax Saver Fund Reg (G),150156,BARODA BNP PARIBAS ELSS Tax Saver Fund - Regular - Growth Option
 984,Motilal Oswal MSCI EAFE Top 100 Select Index Fund Reg (G),150011,Nippon India Nifty AAA CPSE Bond Plus SDL - Apr 2027 Maturity 60:40 Index Fund - Regular Plan - Growth Option
 1065,Nippon India Nifty AAA CPSE Bond Plus SDL Apr 2027 Maturity 60:40 Index Fund Reg (G),150011,Nippon India Nifty AAA CPSE Bond Plus SDL - Apr 2027 Maturity 60:40 Index Fund - Regular Plan - Growth Option
@@ -999,8 +994,6 @@
 1306,Tata Equity Savings Fund Reg (G),101906,Tata Equity Savings Fund -Regular Plan-Growth Option
 832,Kotak Money Market Fund Reg (G),101893,Kotak Money Market Fund - (Growth)
 512,HDFC Dynamic Debt Fund (G),101872,HDFC Dynamic Debt Fund - Growth Option
-513,HDFC Dynamic Debt Fund (G) 54EA,101872,HDFC Dynamic Debt Fund - Growth Option
-514,HDFC Dynamic Debt Fund (G) 54EB,101872,HDFC Dynamic Debt Fund - Growth Option
 877,LIC MF Conservative Hybrid Fund (G),101869,LIC MF Conservative Hybrid Fund-Regular Plan-Growth
 1268,Sundaram Diversified Equity (G),101853,Sundaram Diversified Equity (ELSS) Regular Plan - Growth
 1323,Tata Money Market Fund (G),101847,Tata Money Market Fund-Regular Plan - Growth Option
@@ -1060,7 +1053,6 @@
 1190,SBI Conservative Hybrid Fund Reg (G),100968,SBI Conservative Hybrid Fund - Regular Plan - Growth
 453,Franklin India Debt Hybrid Fund (G),100948,Franklin India Debt Hybrid Fund - Growth
 505,HDFC Childrens Fund Regular Plan,100900,HDFC Childrens Fund - Growth Plan
-506,HDFC Childrens Fund(Lock-in),100900,HDFC Childrens Fund - Growth Plan
 879,LIC MF ELSS Tax Saver (G),100865,LIC MF ELSS Tax Saver-Regular Plan-Growth
 1035,Nippon India Corporate Bond Fund (G),100856,Nippon India Corporate Bond Fund - Growth Plan - Growth Option
 1435,UTI Nifty 50 Index Fund (G),100822,UTI Nifty 50 Index Fund - Regular Plan - Growth Option
@@ -1095,7 +1087,7 @@
 471,Franklin India NSE Nifty 50 Index Fund (G),100484,Franklin India Index Fund- NSE Nifty 50 Index Fund - Growth
 1354,Taurus ELSS Tax Saver Fund (G),100480,Taurus ELSS Tax Saver Fund - Regular Plan - Growth
 1359,Taurus Mid Cap Fund (G),100477,Taurus Mid Cap Fund - Regular Plan - Growth
-1356,Taurus Flexi Cap Fund (G),100476,Taurus Flexi Cap Fund - Regular Plan - Growth 
+1356,Taurus Flexi Cap Fund (G),100476,Taurus Flexi Cap Fund - Regular Plan - Growth
 1320,Tata Large Cap Fund Reg (G),100475,Tata Large Cap Fund -Regular Plan - Growth Option
 475,Franklin India Prima Fund (G),100473,Franklin India Prima Fund-Growth
 450,Franklin India Bluechip Fund (G),100471,Franklin India Bluechip Fund-Growth
@@ -1131,12 +1123,9 @@
 357,DSP Gilt Fund Reg (G),100084,DSP Gilt Fund - Regular Plan - Growth
 884,LIC MF Healthcare Fund (G),100082,DSP Aggressive Hybrid Fund- Regular Plan - IDCW
 339,DSP Aggressive Hybrid Fund Reg (G),100081,DSP Aggressive Hybrid Fund- Regular Plan - Growth
-343,DSP Bond Fund (G) 54EA Benefits,100078,DSP Bond Fund - Growth
-344,DSP Bond Fund (G) 54EB Benefits,100078,DSP Bond Fund - Growth
 345,DSP Bond Fund Reg (G),100078,DSP Bond Fund - Growth
 66,Aditya Birla SL MNC Fund Reg (G),100064,Aditya Birla Sun Life MNC Fund - Growth - Regular Plan
 53,Aditya Birla SL Government Securities Fund (G),100058,Aditya Birla Sun Life Government Securities Fund  - Growth - Regular Plan
-54,Aditya Birla SL Government Securities Fund (G)Instant Gain,100058,Aditya Birla Sun Life Government Securities Fund  - Growth - Regular Plan
 56,Aditya Birla SL Income Fund Reg (G),100038,Aditya Birla Sun Life Income Fund - Growth - Regular Plan
 39,Aditya Birla SL Equity Advantage Fund Reg (G),100033,Aditya Birla Sun Life Equity Advantage Fund - Regular Growth
 3,360 One Flexi Cap Fund Reg (G),151799,

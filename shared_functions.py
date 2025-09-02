@@ -840,7 +840,6 @@ def get_recent_ret_calendar_display(df):
 
     last_indx = df.index[-1]
 
-
     rec = []
     flag = ""
     for i in df.index:
