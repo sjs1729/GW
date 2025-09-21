@@ -24,12 +24,18 @@ st.markdown(
     .css-k1vhr4 {
         margin-top: -60px;
     }
-
-
     </style>
     """,
     unsafe_allow_html=True
 )
+
+# Hide Streamlit menu and footer
+hide_streamlit_style = """
+        <style>
+        .stToolbarActions {display: none !important;}
+        </style>
+        """
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 
 np.set_printoptions(precision=3)
