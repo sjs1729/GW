@@ -592,7 +592,7 @@ if n_Retire:
     placeholder_score_txt.markdown(html_t_text, unsafe_allow_html=True)
 
     #fig_1.update_layout(paper_bgcolor = "lavender", font = {'color': "darkblue", 'family': "Arial"})
-    fig_1.update_layout(title_text= "",
+    fig_1.update_layout(title_text= "Retirement Score",
               title_x=0.32,
               title_y=0.1,
               titlefont=dict(size=1, color='blue', family='Arial, sans-serif'),
