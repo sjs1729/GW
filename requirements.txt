@@ -1,6 +1,6 @@
 pip==24.3.1
 beautifulsoup4==4.9.1
-numpy==1.24.4
+numpy>=1.26.0
 scipy==1.10.1
 pandas==1.2.4
 plotly==5.13.1
