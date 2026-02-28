@@ -523,7 +523,7 @@ if n_Retire:
 
     #st.write(retirement_assets)
     fig = px.line(retirement_assets)
-    fig.update_layout(title_text="",
+    fig.update_layout(title_text=" ",
                       title_x=0.2,
                       title_font_size=20,
                       xaxis_title="Age (in Years) ",
