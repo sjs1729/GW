@@ -127,7 +127,7 @@ def plot_chart(df_chart,chart_x_axis,chart_y_axis,chart_color,chart_size):
         fig.update_layout(title_text="Fund Performance Snapshot",
                       title_x=0.3,
                       title_font_size=30,
-                      titlefont=dict(size=20, color='blue', family='Arial, sans-serif'),
+                      title_font=dict(size=20, color='blue', family='Arial, sans-serif'),
                       xaxis_title=dict(text=chart_x_axis, font=dict(size=16, color='#C7004E')),
                       yaxis_title=dict(text=chart_y_axis, font=dict(size=16, color='#C7004E'))
                       )
