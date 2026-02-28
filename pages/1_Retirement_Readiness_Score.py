@@ -523,7 +523,7 @@ if n_Retire:
 
     #st.write(retirement_assets)
     fig = px.line(retirement_assets)
-    fig.update_layout(title_text="Retirement",
+    fig.update_layout(title_text="",
                       title_x=0.2,
                       title_font_size=20,
                       xaxis_title="Age (in Years) ",
@@ -595,7 +595,7 @@ if n_Retire:
     fig_1.update_layout(title_text= "Retirement Score",
               title_x=0.32,
               title_y=0.1,
-              titlefont=dict(size=1, color='blue', family='Arial, sans-serif'),
+              title_font=dict(size=1, color='blue', family='Arial, sans-serif'),
               xaxis_title="Optimised Corpus Required is {}".format(display_amount(opt_corpus)),
               yaxis_title="")
 
