@@ -64,7 +64,7 @@ def get_mf_perf():
     return df
 
 @st.cache_data()
-def get_historical_nav(amfi_code,tdate):
+def get_historical_nav_1(amfi_code,tdate):
     try:
         success = 'N'
         url = 'https://api.mfapi.in/mf/{}'.format(amfi_code)
@@ -89,6 +89,38 @@ def get_historical_nav(amfi_code,tdate):
         return result
 
     return df_mf
+
+def get_historical_nav(amfi_code, tdate):
+    url = f"https://api.mfapi.in/mf/{amfi_code}"
+
+    try:
+        response = requests.get(url, timeout=30)
+
+        response.raise_for_status()
+
+        result = response.json()
+
+        data = result["data"]
+
+        nav_list = []
+
+        for rec in reversed(data):
+            dt_rec = dt.datetime.strptime(
+                rec["date"], "%d-%m-%Y"
+            ).date()
+
+            nav = float(rec["nav"])
+
+            nav_list.append((dt_rec, nav))
+
+        df = pd.DataFrame(nav_list, columns=["Date", "Nav"])
+        df.set_index("Date", inplace=True)
+
+        return df
+
+    except Exception as e:
+        st.error(f"Error fetching NAV: {e}")
+        return None
 
 
 def display_amount(amount, paisa='N'):
