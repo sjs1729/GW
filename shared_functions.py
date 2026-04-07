@@ -12,6 +12,7 @@ import datetime as dt
 from dateutil.relativedelta import relativedelta
 from urllib.request import urlopen
 import json
+import requests
 
 tday = dt.datetime.today()
 
