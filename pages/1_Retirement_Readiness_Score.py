@@ -402,13 +402,13 @@ if n_Retire:
     goals = []
     if len(df_goals) > 0:
 
-        for i in df_goals.index:
-            gc_st_age = df_goals.loc[i][0]
-            gc_end_age = df_goals.loc[i][1]
-            gc_amt = df_goals.loc[i]['Amount']
-            gc_freq =df_goals.loc[i][4]
-            gc_infl = df_goals.loc[i][5]
-            g_desc = df_goals.loc[i][2]
+        for idx, row in df_goals.iterrows():
+            gc_st_age = row["Start Age"]
+            gc_end_age = row["End Age"]
+            g_desc = row["Description"]
+            gc_amt = row["Amount"]
+            gc_freq = row["Frequency"]
+            gc_infl = row["Inflation"]
 
             if gc_amt !=0:
                 goals = goals + get_goals(gc_st_age, gc_end_age, g_desc, gc_amt, gc_freq, gc_infl)
