@@ -449,12 +449,13 @@ if n_Retire:
 
     fut_income = []
     if len(df_ret_income) > 0:
-        for i in df_ret_income.index:
-            fi_st_age = df_ret_income.loc[i][0]
-            fi_end_age = df_ret_income.loc[i][1]
-            fi_amt = df_ret_income.loc[i]['Amount']
-            fi_freq = df_ret_income.loc[i][4]
-            fi_incr = df_ret_income.loc[i][5]
+
+        for idx, row in df_ret_income.iterrows():
+            fi_st_age = row["Start_Age"]
+            fi_end_age = row["End_Age"]
+            fi_amt = row["Amount"]
+            fi_freq = row["Frequency"]
+            fi_incr = row["Increment_Pct"]
 
             if fi_amt > 0:
                 fut_income = fut_income + get_fut_income(fi_st_age,fi_end_age,fi_amt,fi_freq,fi_incr)
