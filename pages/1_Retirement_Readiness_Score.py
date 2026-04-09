@@ -582,12 +582,20 @@ if n_Retire:
     placeholder_score_txt.markdown(html_t_text, unsafe_allow_html=True)
 
     #fig_1.update_layout(paper_bgcolor = "lavender", font = {'color': "darkblue", 'family': "Arial"})
-    fig_1.update_layout(title_text= "",
-              title_x=0.32,
-              title_y=0.1,
-              titlefont=dict(size=1, color='blue', family='Arial, sans-serif'),
-              xaxis_title="Optimised Corpus Required is {}".format(display_amount(opt_corpus)),
-              yaxis_title="")
+    
+
+    fig_1.update_layout(
+        title=dict(
+            text="",
+            x=0.32,
+            y=0.1,
+            font=dict(
+                size=1,
+                color="blue",
+                family="Arial, sans-serif"
+            )
+        )
+    )
 
     with right.container():
         #placeholder_header_1.markdown('<p style="font-size:20px;font-weight:bold;text-align:center;vertical-align:middle;color:brown;margin:0px;padding:0px"><u>Retirement Score</u></p><BR>', unsafe_allow_html=True)
