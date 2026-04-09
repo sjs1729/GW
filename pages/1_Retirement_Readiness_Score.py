@@ -462,15 +462,13 @@ if n_Retire:
     #st.write(fut_income)
 
     df_corpus = get_corpus(cagr,curr_age, c_annual_income, ann_hike, age_at_retirement, c_corpus, df_expense, fut_income,"Corpus@{} %".format(cagr))
-    st.write(df_corpus)
 
     retirement_assets = df_expense.merge(df_corpus, on='Years')
-    st.write(retirement_assets)
     retirement_assets_pdf = retirement_assets
     be_year = plan_till
     for i in retirement_assets.index:
-        expense_y = retirement_assets.loc[i][0]
-        corpus_y  = retirement_assets.loc[i][1]
+        expense_y = retirement_assets.loc[i,0]
+        corpus_y  = retirement_assets.loc[i,1]
 
         if corpus_y < expense_y:
             be_year = i
