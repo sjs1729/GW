@@ -466,12 +466,12 @@ if n_Retire:
     retirement_assets = df_expense.merge(df_corpus, on='Years')
     retirement_assets_pdf = retirement_assets
     be_year = plan_till
-    for i in retirement_assets.index:
-        expense_y = retirement_assets.loc[i,0]
-        corpus_y  = retirement_assets.loc[i,1]
+    for idx, row in retirement_assets.iterrows():
+        expense_y = row.iloc[0]
+        corpus_y = row.iloc[1]
 
         if corpus_y < expense_y:
-            be_year = i
+            be_year = idx
             break
 
     retirement_score = round(100 * (be_year - curr_age)/(plan_till - curr_age),2)
