@@ -35,16 +35,6 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
-
-# Hide Streamlit menu and footer
-hide_streamlit_style = """
-        <style>
-        .stToolbarActions {display: none !important;}
-        </style>
-        """
-st.markdown(hide_streamlit_style, unsafe_allow_html=True)
-
-
 c_1, c_2 = st.columns((8,4))
 c_2.image('growealth-logo_long.png')
 
@@ -592,10 +582,10 @@ if n_Retire:
     placeholder_score_txt.markdown(html_t_text, unsafe_allow_html=True)
 
     #fig_1.update_layout(paper_bgcolor = "lavender", font = {'color': "darkblue", 'family': "Arial"})
-    fig_1.update_layout(title_text= "Retirement Score",
+    fig_1.update_layout(title_text= "",
               title_x=0.32,
               title_y=0.1,
-              title_font=dict(size=1, color='blue', family='Arial, sans-serif'),
+              titlefont=dict(size=1, color='blue', family='Arial, sans-serif'),
               xaxis_title="Optimised Corpus Required is {}".format(display_amount(opt_corpus)),
               yaxis_title="")
 
