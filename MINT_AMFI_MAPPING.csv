@@ -253,7 +253,6 @@
 611,HSBC Midcap Fund Reg (G),151034,HSBC Midcap Fund - Regular Growth
 598,HSBC Gilt Fund (G),151013,HSBC Gilt Fund - Regular Growth
 588,HSBC Corporate Bond Fund (G) Plan,150992,HSBC Corporate Bond Fund - Regular Growth
-589,HSBC Corporate Bond Fund 54EA Reg Cum,150992,HSBC Corporate Bond Fund - Regular Growth
 21,Aditya Birla SL CRISIL IBX 60:40 SDL + AAA PSU Apr 2026 Index Fund Reg (G),150936,Aditya Birla Sun Life Crisil IBX 60:40 SDL+AAA PSU APR 2026 Index Fund-Regular Growth
 686,ICICI Pru Nifty Pharma Index Fund Reg (G),150929,ICICI Prudential Nifty Pharma Index Fund - Growth
 919,Mahindra Manulife Small Cap Fund Reg (G),150912,Mahindra Manulife Small Cap Fund - Regular Plan - Growth
@@ -326,8 +325,6 @@
 282,Baroda BNP Paribas Dynamic Bond Fund Reg (G),150173,Baroda BNP Paribas Dynamic Bond Fund - Regular Plan - Growth Option
 294,Baroda BNP Paribas Low Duration Fund (G),150165,BARODA BNP PARIBAS LOW DURATION FUND - Regular Plan - GROWTH OPTION
 283,Baroda BNP Paribas ELSS Tax Saver Fund Reg (G),150156,BARODA BNP PARIBAS ELSS Tax Saver Fund - Regular - Growth Option
-984,Motilal Oswal MSCI EAFE Top 100 Select Index Fund Reg (G),150011,Nippon India Nifty AAA CPSE Bond Plus SDL - Apr 2027 Maturity 60:40 Index Fund - Regular Plan - Growth Option
-1065,Nippon India Nifty AAA CPSE Bond Plus SDL Apr 2027 Maturity 60:40 Index Fund Reg (G),150011,Nippon India Nifty AAA CPSE Bond Plus SDL - Apr 2027 Maturity 60:40 Index Fund - Regular Plan - Growth Option
 690,ICICI Pru Nifty SDL Sep 2027 Index Fund (G),149998,ICICI Prudential Nifty SDL Sep 2027 Index Fund - Growth
 375,DSP Nifty SDL Plus G-Sec Jun 2028 30:70 Index Fund Reg (G),149968,DSP Nifty SDL Plus G-Sec Jun 2028 30:70 Index Fund - Regular - Growth
 591,HSBC CRISIL IBX 50:50 Gilt Plus SDL Apr 2028 Index Fund Reg (G),149963,HSBC CRISIL IBX 50:50 Gilt Plus SDL Apr 2028 Index Fund - Regular - Growth
@@ -777,7 +774,7 @@
 187,Bandhan Asset Allocation FoF Conservative Reg (G),112327,BANDHAN Asset Allocation Fund - Regular Plan - Conservative Plan - Growth
 125,Axis ELSS Tax Saver Fund (G),112323,Axis ELSS Tax Saver Fund - Regular Plan - Growth
 393,DSP World Mining FoF Reg (G),112293,DSP World Mining Fund of Fund - Regular Plan - Growth
-107,Axis Bluechip Fund (G),112277,Axis Bluechip Fund - Regular Plan - Growth
+107,Axis Large Cap Fund (G),112277,Axis Bluechip Fund - Regular Plan - Growth
 168,Axis Treasury Advantage Fund (G),112214,Axis Treasury Advantage Fund - Regular Plan - Growth Option
 753,Invesco India PSU Equity Fund (G),112171,Invesco India PSU Equity Fund - Growth
 317,Canara Robeco Consumer Trends Fund Reg.plan (G),112152,CANARA ROBECO CONSUMER TRENDS FUND - REGULAR PLAN - GROWTH OPTION
@@ -1128,7 +1125,9 @@
 53,Aditya Birla SL Government Securities Fund (G),100058,Aditya Birla Sun Life Government Securities Fund  - Growth - Regular Plan
 56,Aditya Birla SL Income Fund Reg (G),100038,Aditya Birla Sun Life Income Fund - Growth - Regular Plan
 39,Aditya Birla SL Equity Advantage Fund Reg (G),100033,Aditya Birla Sun Life Equity Advantage Fund - Regular Growth
+2000,SBI Midcap Fund Reg (G),102941,SBI MIDCAP FUND - REGULAR PLAN - GROWTH
 3,360 One Flexi Cap Fund Reg (G),151799,
+5,360 One Liquid Fund Reg (G),125259,
 6,360 One Quant Fund Reg (G),149317,
 10,Aditya Birla SL Bal Bhavishya Yojna Reg (G),,
 16,Aditya Birla SL Conglomerate Reg (G),,
@@ -1312,7 +1311,7 @@
 1052,Nippon India Index Fund BSE Sensex Plan (G),113269,
 1053,Nippon India Index Fund Nifty 50 Plan (G),113296,
 1054,Nippon India Innovation Fund Reg (G),152034,
-1055,Nippon India Japan Equity Fund (G),106235,
+1055,Nippon India Japan Equity Fund (G),130863,
 1056,Nippon India Large Cap Fund (G),106235,
 1057,Nippon India Liquid Fund (G),100851,
 1060,Nippon India Multi Cap Fund (G),101161,
@@ -1350,7 +1349,7 @@
 1100,NJ Flexi Cap Fund Reg (G),,
 1101,NJ Overnight Fund Reg (G),,
 1108,Parag Parikh Liquid Fund (G),143260,
-1110,PGIM India Balanced Advantage Fund Reg (G),138288,
+1110,PGIM India Balanced Advantage Fund Reg (G),148657,
 1111,PGIM India Banking & PSU Debt Reg Fund (G),,
 1121,PGIM India Global Select Real Estate Securities Fund of Fund Reg (G),149299,
 1122,PGIM India Healthcare Fund Reg (G),153040,
@@ -1419,4 +1418,3 @@
 1425,UTI Liquid Fund Reg (G),,
 1446,UTI Overnight Fund (G),,
 1467,WhiteOak Capital Liquid Fund (G),,
-
