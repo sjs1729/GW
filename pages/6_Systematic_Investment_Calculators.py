@@ -632,6 +632,8 @@ with stp:
 
 
     schm_select_dest = col2.selectbox("Select STP Target Scheme",schm_list_dest,0)
+    st.write(schm_select_dest)
+    st.write(type(schm_select_dest))
     amfi_code_dest = int(float(schm_select_dest.split("-")[0]))
     schm_select_dest = schm_select_dest.split("-")[1]
 
