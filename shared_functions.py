@@ -33,7 +33,8 @@ cols=['SCHEMES', 'FUND_HOUSE', 'AUM', 'LAUNCH DATE', '1_DAY_RETURN', '7_DAY_RETU
 @st.cache_data()
 def get_mf_perf():
     df = pd.read_csv('MINT_Scheme_Data.csv')
-    st.write(len(df.columns),len(cols))
+    st.write(df.columns)
+    st.write(cols)
     df.columns = cols
     df.set_index("SCHEMES", inplace=True)
 
