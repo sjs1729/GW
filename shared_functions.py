@@ -26,15 +26,13 @@ cols=['SCHEMES', 'FUND_HOUSE', 'AUM', 'LAUNCH DATE', '1_DAY_RETURN', '7_DAY_RETU
        'SMALL_CAP', 'PRICE_TO_BOOK', 'PRICE_TO_EARNINGS', 'EXIT_LOAD', 'EQUITY_PCT',
        'DEBT_PCT', 'GOLD_PCT', 'GLOBAL_EQUITY_PCT', 'OTHER_PCT', 'RSQUARED',
        'EXPENSE', 'SOV_RATED_DEBT', 'A_RATED_DEBT', 'AA_RATED_DEBT', 'AAA_RATED_DEBT',
-       'BIG', 'CASH']
+       'BIG', 'CASH','DOWNSIDE_DEVIATION','DOWNSIDE_PROBABILITY']
 
 
 
 @st.cache_data()
 def get_mf_perf():
     df = pd.read_csv('MINT_Scheme_Data.csv')
-    st.write(df.columns)
-    st.write(cols)
     df.columns = cols
     df.set_index("SCHEMES", inplace=True)
 
