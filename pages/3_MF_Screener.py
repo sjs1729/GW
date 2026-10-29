@@ -288,7 +288,7 @@ else:
 filter_cols = ['30_DAY_RETURN', '3_MONTH_RETURN', '6_MONTH_RETURN', '1_YEAR_RETURN',
                '2_YEAR_RETURN', '3_YEAR_RETURN','5_YEAR_RETURN', '7_YEAR_RETURN', '10_YEAR_RETURN',
                '15_YEAR_RETURN', '20_YEAR_RETURN', '25_YEAR_RETURN','SINCE_INCEPTION_RETURN',
-               'ALPHA', 'BETA', 'VOLATILITY', 'SHARPE','SORTINO', 'AVG_MATURITY', 'MODIFIED_DURATION','AGE',
+               'ALPHA', 'BETA', 'VOLATILITY', 'SHARPE','SORTINO', 'INFO Ratio', 'AVG_MATURITY', 'MODIFIED_DURATION','AGE',
                'YTM','LARGE_CAP','MID_CAP','SMALL_CAP','PRICE_TO_BOOK', 'PRICE_TO_EARNINGS',
                'EQUITY_PCT','DEBT_PCT', 'GOLD_PCT', 'GLOBAL_EQUITY_PCT', 'OTHER_PCT', 'RSQUARED',
                'EXPENSE', 'SOV_RATED_DEBT', 'A_RATED_DEBT', 'AA_RATED_DEBT', 'AAA_RATED_DEBT', 'BIG', 'CASH']
@@ -301,7 +301,7 @@ chart_cols = ['SCHEMES','AUM','AGE','SHARPE','STDEV','1_YEAR_RETURN', '3_YEAR_RE
 display_columns = ['SCHEMES','SCHEME_CATEGORY','FUND_HOUSE','EXPENSE', 'AUM', 'FUND_RATING', 'AGE', '3_MONTH_RETURN', \
                   '6_MONTH_RETURN', '1_YEAR_RETURN','2_YEAR_RETURN', '3_YEAR_RETURN','5_YEAR_RETURN', '7_YEAR_RETURN', \
                    '10_YEAR_RETURN', '15_YEAR_RETURN', '20_YEAR_RETURN', '25_YEAR_RETURN','SINCE_INCEPTION_RETURN', \
-                   'SHARPE', 'SORTINO', 'RSQUARED', 'VOLATILITY',  'BETA','ALPHA','PRICE_TO_BOOK', 'PRICE_TO_EARNINGS', \
+                   'SHARPE', 'SORTINO','INFO Ratio', 'RSQUARED', 'VOLATILITY',  'BETA','ALPHA','PRICE_TO_BOOK', 'PRICE_TO_EARNINGS', \
                    'EQUITY_PCT', 'DEBT_PCT', 'GOLD_PCT','GLOBAL_EQUITY_PCT', 'OTHER_PCT', \
                    'LARGE_CAP','MID_CAP','SMALL_CAP','CASH','SOV_RATED_DEBT', 'A_RATED_DEBT', 'AA_RATED_DEBT', 'AAA_RATED_DEBT']
 
@@ -309,7 +309,7 @@ basic_columns = ['SCHEMES','SCHEME_CATEGORY','FUND_HOUSE','FUND MANAGER']
 config_columns = ['EXPENSE', 'AUM', 'FUND_RATING', 'AGE', '3_MONTH_RETURN', \
                   '6_MONTH_RETURN', '1_YEAR_RETURN','2_YEAR_RETURN', '3_YEAR_RETURN','5_YEAR_RETURN', '7_YEAR_RETURN', \
                    '10_YEAR_RETURN', '15_YEAR_RETURN', '20_YEAR_RETURN', '25_YEAR_RETURN','SINCE_INCEPTION_RETURN', \
-                   'SHARPE', 'SORTINO', 'RSQUARED', 'VOLATILITY',  'BETA','ALPHA','PRICE_TO_BOOK', 'PRICE_TO_EARNINGS', \
+                   'SHARPE', 'SORTINO','INFO Ratio', 'RSQUARED', 'VOLATILITY',  'BETA','ALPHA','PRICE_TO_BOOK', 'PRICE_TO_EARNINGS', \
                    'EQUITY_PCT', 'DEBT_PCT', 'GOLD_PCT','GLOBAL_EQUITY_PCT', 'OTHER_PCT', \
                    'LARGE_CAP','MID_CAP','SMALL_CAP','CASH','SOV_RATED_DEBT', 'A_RATED_DEBT', 'AA_RATED_DEBT', 'AAA_RATED_DEBT']
 
@@ -391,7 +391,7 @@ chart_y_axis = ch_1.selectbox('chart_y_axis',['3_MONTH_RETURN', '6_MONTH_RETURN'
 ch_1.markdown('<BR>',unsafe_allow_html=True)
 
 ch_1.markdown("**:blue[Configure Colour]**")
-chart_color = ch_1.selectbox('chart_color',['SHARPE', 'SORTINO','EXPENSE'],0,label_visibility="collapsed")
+chart_color = ch_1.selectbox('chart_color',['SHARPE', 'SORTINO','INFO Ratio','EXPENSE'],0,label_visibility="collapsed")
 ch_1.markdown('<BR>',unsafe_allow_html=True)
 
 ch_1.markdown("**:blue[Configure Size]**")
