@@ -241,7 +241,18 @@ def display_equity_schemes():
     right1.markdown(get_markdown_col_fields('Fund Type',df.loc[amfi_code]['SCHEME_TYPE']), unsafe_allow_html=True)
     right2.markdown(get_markdown_col_fields('Fund Category',df.loc[amfi_code]['SCHEME_CATEGORY']), unsafe_allow_html=True)
 
-    right1.markdown(get_markdown_col_fields('Crisil Rating',fund_rtg_stars(int(df.loc[amfi_code]['FUND_RATING']    ))), unsafe_allow_html=True)
+    rating = df.loc[amfi_code, 'FUND_RATING']
+
+    if pd.notna(rating) and str(rating).strip() != '':
+        rating_display = fund_rtg_stars(int(float(rating)))
+    else:
+        rating_display = '-'
+
+    right1.markdown(
+        get_markdown_col_fields('Crisil Rating', rating_display),
+        unsafe_allow_html=True
+    )
+        
     right2.markdown(get_markdown_col_fields('Expense Ratio',df.loc[amfi_code]['EXPENSE']), unsafe_allow_html=True)
 
 
