@@ -268,6 +268,7 @@ def display_equity_schemes():
     right1.markdown(get_markdown_col_fields('Alpha',df.loc[amfi_code]['ALPHA']), unsafe_allow_html=True)
     right2.markdown(get_markdown_col_fields('Beta',df.loc[amfi_code]['BETA']), unsafe_allow_html=True)
 
+    right1.markdown(get_markdown_col_fields('Info Ratio',df.loc[amfi_code]['INFO Ratio']), unsafe_allow_html=True)
     right1.markdown(get_markdown_col_fields('Fund Manager',df.loc[amfi_code]['FUND MANAGER']), unsafe_allow_html=True)
     right2.markdown(get_markdown_col_fields('Exit Load',df.loc[amfi_code]['EXIT_LOAD']), unsafe_allow_html=True)
 
